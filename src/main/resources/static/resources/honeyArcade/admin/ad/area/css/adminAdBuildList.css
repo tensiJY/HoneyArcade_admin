@@ -1,0 +1,39 @@
+.inputbox{
+	border: 1px solid #bfc9d4;
+    color: #3b3f5c !important;
+    font-size: 14px;
+    padding: 8px 10px;
+    letter-spacing: 1px;
+    background-color: #fff;
+    height: auto;
+    padding: .75rem 1.25rem;
+    border-radius: 6px;
+    box-shadow: none;
+    margin-left: 10px;
+}
+.selectbar{
+	display:none;
+	gap : 10px;
+	flex-wrap: wrap;
+}
+.selectbar.on{
+	display:flex;
+}
+.formbox{
+	border-radius: 10px;
+}
+.form-check label{
+	font-size: 18px;
+	font-weight: bold;
+	color: #3b3f5c;	
+}
+h4{
+	color: #3b3f5c;
+    font-size: 17px;
+    font-weight: 600;
+    margin: 0;
+    padding: 16px 15px;
+}
+.level{
+	height:32px;
+}

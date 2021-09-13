@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="honeyarcade.admin.login.LoginMapper">
+
+	<select id="findByLoginId" resultType="honeyarcade.admin.login.UserVO">
+	<![CDATA[
+		select 
+			*
+		from
+			tb_admin
+		where 
+			admin_id = #{username}
+		and
+			del_flag = 'N'
+	]]>
+	</select>
+	
+	<update id="resetFailureCount">
+	<![CDATA[
+		update
+			tb_owner
+		set
+			owner_fail_cnt = 0
+		where
+			owner_id = #{username}
+	]]>
+	</update>
+	
+	<update id="addFailureCount">
+	<![CDATA[
+		update
+			tb_owner
+		set
+			owner_fail_cnt = owner_fail_cnt+1
+		where
+			owner_id = #{username}
+	]]>
+	</update>
+
+
+	<select id="getFailureCount" resultType="Integer">
+	<![CDATA[
+		select
+			owner_fail_cnt
+		from
+			tb_owner
+		where
+			owner_id = #{username}
+	]]>
+	</select>
+	
+	<update id="disabledUsername">
+	<![CDATA[
+		update
+			tb_owner
+		set
+			owner_status = 1
+		where
+			owner_id = #{username}
+	]]>
+	</update>
+
+
+	
+</mapper>

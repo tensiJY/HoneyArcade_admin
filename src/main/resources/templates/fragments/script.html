@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5" >
+
+<th:block th:fragment="scriptFragment">    
+    <!-- BEGIN GLOBAL MANDATORY SCRIPTS -->
+    <script th:src="@{/resources/cork/assets/js/libs/jquery-3.1.1.min.js}"></script>
+    <script th:src="@{/resources/cork/bootstrap/js/popper.min.js}"></script>
+    <script th:src="@{/resources/cork/bootstrap/js/bootstrap.min.js}"></script>
+    
+    
+    <th:block th:if="${useScriptCsrf=='true'}">
+	    <script th:src="@{/resources/cork/plugins/perfect-scrollbar/perfect-scrollbar.min.js}"></script>
+	    <script th:src="@{/resources/cork/assets/js/app.js}"></script>
+	    <script th:src="@{/resources/honeyArcade/admin/common/js/csrf.js}"></script>
+		<script>
+	        $(document).ready(function() {
+	            App.init();
+	        });
+	    </script>
+	    <script th:src="@{/resources/cork/assets/js/custom.js}"></script>
+	</th:block>
+    
+    <!-- END GLOBAL MANDATORY SCRIPTS -->
+</th:block>
+  
+  <!-- 컨텐츠페이지의 script 영역이 들어감. 즉 contents페이지에 설정된 script를 역으로 받아와서 설정-->  
+<th:block layout:fragment="script"></th:block>    
+</html>

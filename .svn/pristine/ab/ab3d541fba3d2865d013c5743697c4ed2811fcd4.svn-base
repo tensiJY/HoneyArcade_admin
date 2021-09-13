@@ -1,0 +1,37 @@
+package honeyarcade.admin.ad.build;
+
+import java.util.List;
+
+import org.apache.ibatis.annotations.Mapper;
+
+@Mapper
+public interface AdminAdBuildMapper {
+
+	public int getTotalCount(AdminAdBuildVO adminAdBuildVO) throws Exception;
+
+	public List<AdminAdBuildVO> getBuildAdList(AdminAdBuildVO adminAdBuildVO) throws Exception;
+
+	public void delBuildBanner(AdminAdBuildVO vo) throws Exception;
+
+	public void delBuildBannerOfExt(AdminAdBuildVO vo) throws Exception;
+
+	public AdminAdBuildVO getAreaBanner(AdminAdBuildVO adminAdAreaVO) throws Exception;
+
+	public AdminAdBuildVO getAreaBannerOfExt(AdminAdBuildVO adminAdAreaVO) throws Exception;
+	
+	//	지역광고 - 외부 점포 인서트
+	public Integer insertExtBanner(AdminAdBuildVO vo) throws Exception;
+
+	//	TB_DONG_EXT_BANNER 인서트
+	public void insertDongExtBanner(AdminAdBuildVO dongExtBannerVO) throws Exception;
+
+	//	지역광고 - 외부 점포 조회 (TB_DONG_EXT_BANNER) 
+	public List<AdminAdBuildVO> getDongExtBanner(Integer banner_seq) throws Exception;
+
+	//	TB_DONG_EXT_BANNER 삭제
+	public void delDongExtBanner(Integer banner_seq) throws Exception;
+
+	//	지역 광고 - 외부 점포 수정
+	public void updateExtBanner(AdminAdBuildVO adminAdBuildVO)throws Exception;
+	
+}

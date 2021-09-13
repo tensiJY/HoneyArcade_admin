@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="honeyarcade.admin.set.web.AdminSetWebMapper">
+
+	<select id="getHoneyArcadeImg" resultType="honeyarcade.admin.set.web.AdminSetWebVO">
+	<![CDATA[
+		select
+			tb_honeyarcade.file_seq 
+			, tb_file_dtl.file_dtl_seq
+			, tb_file_dtl.file_dtl_path 
+			, tb_file_dtl.file_dtl_desc
+			, tb_file_dtl.file_dtl_origin 
+			, tb_file_dtl.file_dtl_ext 
+			, tb_file_dtl.file_dtl_url_path 
+		from
+			tb_honeyarcade
+		inner join tb_file
+			on tb_honeyarcade.file_seq = tb_file.file_seq
+		inner join tb_file_dtl 
+			on tb_file.file_seq = tb_file_dtl.file_seq
+		where
+			tb_honeyarcade.del_flag = 'N'
+	]]>
+	</select>
+	
+	<select id="getBenefitImg"  resultType="honeyarcade.admin.set.web.AdminSetWebVO">
+	<![CDATA[
+		select
+			tb_benefit.file_seq 
+			, tb_file_dtl.file_dtl_seq
+			, tb_file_dtl.file_dtl_path 
+			, tb_file_dtl.file_dtl_desc
+			, tb_file_dtl.file_dtl_origin 
+			, tb_file_dtl.file_dtl_ext 
+			, tb_file_dtl.file_dtl_url_path 
+		from
+			tb_benefit
+		inner join tb_file
+			on tb_benefit.file_seq = tb_file.file_seq
+		inner join tb_file_dtl 
+			on tb_file.file_seq = tb_file_dtl.file_seq
+		where
+			tb_benefit.del_flag = 'N'
+	
+	]]>
+	</select>
+	
+	
+
+	<select id="insertFileSeq" resultType="Integer" parameterType="honeyarcade.admin.set.web.AdminSetWebVO">
+	<![CDATA[
+		insert into tb_file
+			(
+				  add_dt
+				, add_id
+				, del_flag
+			)
+		values
+			(
+				 getDate()
+				,#{admin_id}
+				, 'N'
+			)
+    	
+    	SELECT @@IDENTITY AS file_seq
+
+	]]>
+	</select>
+	
+	<insert id="insertHoneyArcadeImg" parameterType="honeyarcade.admin.set.web.AdminSetWebVO">
+	<![CDATA[
+		insert into tb_honeyarcade
+			(
+				  file_seq
+				, add_dt
+				, add_id
+				, del_flag
+			)
+		values
+			(
+				  #{new_file_seq}
+				, getDate()
+				, #{admin_id}
+				, 'N'
+			)
+			
+	]]>
+	</insert>
+	
+	<insert id="insertFileDtl" parameterType="honeyarcade.admin.set.web.AdminSetWebVO">
+	<![CDATA[
+		insert into tb_file_dtl
+			(
+				  file_seq
+				, file_type
+				, file_dtl_path
+				, file_dtl_desc
+				, file_dtl_origin
+				, file_dtl_ext
+				, file_dtl_url_path
+				, add_dt
+				, add_id
+				, del_flag
+			)
+		values
+			(
+				  #{new_file_seq}
+				, #{file_type}
+				, #{file_dtl_path}
+				, #{file_dtl_desc}
+				, #{file_dtl_origin}
+				, #{file_dtl_ext}
+				, #{file_dtl_url_path}
+				, getDate()
+				, #{admin_id}
+				, 'N'
+			)
+		
+	]]>
+	</insert>
+
+	<insert id="insertBenefit" parameterType="honeyarcade.admin.set.web.AdminSetWebVO">
+	<![CDATA[
+		insert into tb_benefit
+			(
+				  file_seq
+				, add_dt
+				, add_id
+				, del_flag
+			)
+		values
+			(
+				  #{new_file_seq}
+				, getDate()
+				, #{admin_id}
+				, 'N'
+			)
+			
+	]]>
+	</insert>
+    
+    <update id="delHoneyArcadeImg" parameterType="honeyarcade.admin.set.web.AdminSetWebVO">
+    <![CDATA[
+    	update
+    		tb_honeyarcade
+    	set
+    		  del_dt = getDate()
+    		, del_id = #{admin_id}
+    		, del_flag = 'Y'
+    	where
+    		file_seq = #{old_file_seq}
+    ]]>
+    </update>
+
+
+	<update id="delBenefitImg" parameterType="honeyarcade.admin.set.web.AdminSetWebVO">
+    <![CDATA[
+    	update
+    		tb_benefit
+    	set
+    		  del_dt = getDate()
+    		, del_id = #{admin_id}
+    		, del_flag = 'Y'
+    	where
+    		file_seq = #{old_file_seq}
+    ]]>
+    </update>
+    
+    <update id="delFile" parameterType="honeyarcade.admin.set.web.AdminSetWebVO">
+    <![CDATA[
+    	update
+    		tb_file
+		set
+    		  del_dt = getDate()
+    		, del_id = #{admin_id}
+    		, del_flag = 'Y'
+    	where
+    		file_seq = #{old_file_seq}
+    ]]>
+    </update>
+    
+    
+	<update id="delDtlFile" parameterType="honeyarcade.admin.set.web.AdminSetWebVO">
+    <![CDATA[
+    	update
+    		tb_file_dtl
+		set
+    		  del_dt = getDate()
+    		, del_id = #{admin_id}
+    		, del_flag = 'Y'
+    	where
+    		file_seq = #{old_file_seq}
+    ]]>
+    </update>
+    
+	
+</mapper>

@@ -1,0 +1,13 @@
+.padding-bottom-5px{
+	padding-bottom: 5px;	
+}
+input[disabled], select[disabled], textarea[disabled], input[readonly], select[readonly], textarea[readonly] {
+    cursor: pointer;
+    background-color: #F1F2FA !important;
+    color: #3B3F67;
+}
+
+.area-active{
+	border-color: #1b55e2;
+    color: #3b3f5c;
+}

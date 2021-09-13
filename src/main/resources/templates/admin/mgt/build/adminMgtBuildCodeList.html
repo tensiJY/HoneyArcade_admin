@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5" >
+<head>
+	<th:block th:replace="fragments/meta :: metaFragment(title='코드 관리', useMetaCsrf='true')"></th:block>
+	<th:block th:replace="fragments/style :: styleFragment"></th:block>
+	<link th:href="@{/resources/cork/assets/css/elements/custom-tree_view.css}" rel="stylesheet" type="text/css" />
+	<!--  css style  -->
+	<link th:href="@{/resources/honeyArcade/admin/mgt/build/css/adminMgtBuildCodeList.css}" rel="stylesheet" type="text/css" />
+</head>
+
+
+<body class="sidebar-noneoverflow">
+    
+	<!--  header  -->
+	<th:block th:replace="fragments/header :: headerFragment"></th:block>
+	
+
+    <!--  BEGIN MAIN CONTAINER  -->
+    <div class="main-container" id="container">
+
+        <div class="overlay"></div>
+        <div class="search-overlay"></div>
+
+		<!--  sidebar  -->
+		<th:block th:replace="fragments/sidebar :: sidebarFragment(main='mgt', sub='mgt-build')"></th:block>
+		        
+        <!--  BEGIN CONTENT AREA  -->
+        <div id="content" class="main-content">
+            <div class="layout-px-spacing">
+				<div class="row layout-spacing">
+
+                    <!-- Content -->
+                    <div class="col-xl-4 col-lg-6 col-md-6 col-sm-12 layout-top-spacing">
+                        <div class="user-profile layout-spacing">
+                            <div class="widget-content widget-content-area">
+                                
+                                <div class="d-flex justify-content-between padding-bottom-5px">
+                                    <h3 class="">시, 도</h3>
+                                    <input type="hidden" name="target_sido_seq" id="target_sido_seq">    
+									<input type="hidden" name="target_sigungu_seq" id="target_sigungu_seq">
+									
+										<div class="icon-container btn btn-sm btn-outline-primary" id="sidoAddBtn">
+											<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-plus"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+										</div>
+                                </div>
+                             
+                                <div id="sidoTarget">
+									<th:block th:if="${sidoList.size() != 0}">
+										<th:block th:each="list : ${sidoList}">
+											<div class="padding-bottom-5px">
+												<form method="POST" name="sidoForm">	
+													<div class="d-xl-flex d-block justify-content-between">
+														<div class="evtTextBox">
+															
+															<input type="text" th:value="${list.sido_name}" class="form-control sidoText" name="ori_sido_name" readonly>
+															<input type="text" th:value="${list.sido_name}" class="form-control" style="display:none;" name="sido_name">
+															<input type="hidden" th:value="${list.sido_seq}" name="sido_seq">
+																														
+														</div>
+														<div class="evtBtnBox">
+															
+															<div class="icon-container btn btn-sm btn-outline-warning sidoModBtn">
+																<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-3"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+															</div>
+															
+															<div class="icon-container btn btn-sm btn-outline-warning sidoDelBtn">
+                                                            	<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                                                        	</div>
+
+															<div class="icon-container btn btn-sm btn-outline-danger sidoSaveBtn" style="display: none;">
+                                                           		 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-save"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                                                       		</div>
+                                                       		
+                                                       		<div class="icon-container btn btn-sm btn-outline-danger sidoCancelBtn" style="display: none;">
+                                                            	<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rotate-ccw"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
+                                                      		</div>
+																													
+														</div>
+													</div>
+												</form>
+											</div>
+										</th:block>
+									</th:block>
+                                                                  
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-4 col-lg-6 col-md-6 col-sm-12 layout-top-spacing">
+                        <div class="user-profile layout-spacing">
+                            <div class="widget-content widget-content-area">
+                            
+                                <div class="d-flex justify-content-between padding-bottom-5px">
+                                    <h3 class="">군, 구</h3>
+										<div class="icon-container btn btn-sm btn-outline-primary" id="sigunguAddBtn">
+											<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-plus"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+										</div>
+                                </div>
+                             	
+                             	
+                                <div id="sigunguTarget">
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                    
+                    
+                    <div class="col-xl-4 col-lg-6 col-md-6 col-sm-12 layout-top-spacing">
+                        <div class="user-profile layout-spacing">
+                            <div class="widget-content widget-content-area">
+                                <div class="d-flex justify-content-between padding-bottom-5px">
+                                    <h3 class="">지 역</h3>
+										<div class="icon-container btn btn-sm btn-outline-primary" id="dongAddBtn">
+											<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-plus"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+										</div>
+                                </div>
+                             
+                                <div id="dongTarget">        
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            
+            <!--  footer   -->
+            <th:block th:replace="fragments/footer"></th:block>
+			
+            
+        </div>
+        <!--  END CONTENT AREA  -->
+
+
+    </div>
+    <!-- END MAIN CONTAINER -->
+
+
+
+
+
+
+<div id="sidoAddClone" style="display: none;">
+	<div class="add-cate-code">
+		<h5> 상위 코드를 입력 후 사용하 실수 있습니다 </h5>
+	</div>
+</div>
+
+<div id="nodataCloneDiv" style="display: none;">
+	<div class="not-data-class">
+		<h5> 조회된 데이터가 없습니다 </h5>
+	</div>
+</div>
+
+												
+<div id="sidoCloneDiv" style="display: none;">
+	<div class="padding-bottom-5px">
+		<form method="POST" name="sidoForm">	
+			<div class="d-xl-flex d-block justify-content-between">
+				<div class="evtTextBox">
+					<input type="text"  class="form-control sidoText" name="ori_sido_name" readonly>
+					<input type="text"  class="form-control addSidoText" name="new_sido_name"> <!-- 추가 데이터 -->
+					<input type="text"  class="form-control" style="display:none;" name="sido_name">
+					<input type="hidden" name="sido_seq">												
+				</div>
+				
+				<div class="evtBtnBox">
+					<div class="icon-container btn btn-sm btn-outline-warning sidoModBtn">
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-3"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+					</div>
+					
+					<div class="icon-container btn btn-sm btn-outline-warning sidoDelBtn">
+	                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+	                </div>
+	
+					<div class="icon-container btn btn-sm btn-outline-danger sidoSaveBtn" style="display: none;">
+	                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-save"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+	                 </div>
+	                                            		
+	                 <div class="icon-container btn btn-sm btn-outline-danger sidoCancelBtn" style="display: none;">
+	                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rotate-ccw"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
+	                 </div>
+	                 
+					<div class="icon-container btn btn-sm btn-outline-danger sidoAddBtn" style="display: none;">
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-save"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+	                 </div>
+	                 
+					 <div class="icon-container btn btn-sm btn-outline-danger sidoAddCancelBtn" style="display: none;">
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rotate-ccw"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
+	                 </div>
+																			
+				</div>
+			</div>
+		</form>
+	</div>
+</div>										    
+							
+<div id="sigunguCloneDiv" style="display: none;">
+    
+	<div class="padding-bottom-5px">
+		<form method="POST" name="sigunguForm">	
+			<div class="d-xl-flex d-block justify-content-between">
+				<div class="evtTextBox">
+					<input type="text" value="" class="form-control sigunguText" name="ori_sigungu_name" readonly>
+					<input type="text"  class="form-control addSigunguText" name="new_sigungu_name"> 
+					<input type="text"  class="form-control" style="display:none;" name="sigungu_name">
+					<input type="hidden"  name="sigungu_seq">															
+				</div>
+				
+				<div class="evtBtnBox">
+					<div class="icon-container btn btn-sm btn-outline-warning sigunguModBtn">
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-3"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+					</div>
+															
+					<div class="icon-container btn btn-sm btn-outline-warning sigunguDelBtn">
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+					</div>					
+					
+					<div class="icon-container btn btn-sm btn-outline-danger sigunguSaveBtn" style="display: none;">
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-save"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+					</div>
+                                                       		
+					<div class="icon-container btn btn-sm btn-outline-danger sigunguCancelBtn" style="display: none;">
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rotate-ccw"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
+					</div>		
+					
+					<div class="icon-container btn btn-sm btn-outline-danger sigunguAddBtn" style="display: none;">
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-save"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+	                 </div>
+	                 
+					 <div class="icon-container btn btn-sm btn-outline-danger sigunguAddCancelBtn" style="display: none;">
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rotate-ccw"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
+	                 </div>
+														
+				</div>
+			</div>
+		</form>
+	</div>
+						
+</div>
+
+<div id="dongCloneDiv" style="display: none;">
+    
+	<div class="padding-bottom-5px">
+		<form method="POST" name="dongForm">	
+			<div class="d-xl-flex d-block justify-content-between">
+				<div class="evtTextBox">
+					<input type="text" value="" class="form-control dongText" name="ori_dong_name" readonly>
+					<input type="text"  class="form-control addDongText" name="new_dong_name"> 
+					<input type="text"  class="form-control" style="display:none;" name="dong_name">
+					<input type="hidden"  name="dong_seq">															
+				</div>
+				
+				<div class="evtBtnBox">	
+					<div class="icon-container btn btn-sm btn-outline-warning dongModBtn">
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-3"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+					</div>
+															
+					<div class="icon-container btn btn-sm btn-outline-warning dongDelBtn">
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+					</div>					
+					
+					<div class="icon-container btn btn-sm btn-outline-danger dongSaveBtn" style="display: none;">
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-save"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+					</div>
+                                                       		
+					<div class="icon-container btn btn-sm btn-outline-danger dongCancelBtn" style="display: none;">
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rotate-ccw"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
+					</div>		
+					
+					<div class="icon-container btn btn-sm btn-outline-danger dongAddBtn" style="display: none;">
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-save"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+	                 </div>
+	                 
+					 <div class="icon-container btn btn-sm btn-outline-danger dongAddCancelBtn" style="display: none;">
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rotate-ccw"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
+	                 </div>
+																										
+				</div>
+			</div>
+		</form>
+	</div>
+						
+</div>
+		
+	<th:block th:replace="fragments/script :: scriptFragment(useScriptCsrf='true')"></th:block>
+	<script th:src="@{/resources/honeyArcade/admin/mgt/build/js/adminMgtBuildCodeList.js}"></script>
+	<script th:inline="javascript">
+	/* <![CDATA[ */
+
+	/*]] */
+	</script>
+</body>
+
+</html>

@@ -1,0 +1,6 @@
+/*사이드바 로고*/
+/*.header-container .navbar-nav.theme-brand .theme-logo img {
+	width: 48px;
+	height: 48px;
+	border-radius: 5px; 
+}*/

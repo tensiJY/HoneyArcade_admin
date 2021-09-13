@@ -1,0 +1,89 @@
+.login-title{
+			padding-top: 20px;
+    		padding-bottom: 20px;
+    		font-size: 20px;
+    		color: black;
+    		font-weight: bold;
+		}
+		
+#username-field, #password-field{
+			text-align: center;
+		}
+		
+#username, #password{
+			width:300px;
+		}
+		
+.login-btn-div{
+			text-align: center;
+		}
+		
+.loginBtn{
+			width: 200px;
+		}
+		
+.form-form .form-form-wrap form .field-wrapper svg:not(.feather-eye) {
+    position: absolute;
+    left: 77px;
+    color: #888ea8;
+    fill: rgba(0, 23, 55, 0.08);
+    width: 20px;
+    height: 20px;
+}
+
+.form-form .form-form-wrap form .field-wrapper svg.feather-user {
+    top: 24px;
+ 
+}
+
+.form-form .form-form-wrap form .field-wrapper svg:not(.feather-eye) {
+    position: absolute;
+    left: 77px;
+    color: #888ea8;
+    fill: rgba(0, 23, 55, 0.08);
+    width: 20px;
+    height: 20px;
+}
+
+.form-form .form-form-wrap form .field-wrapper svg.feather-lock {
+    top: 24px;
+}
+		
+
+
+/*로그인 버튼*/
+.form-form .form-form-wrap form .field-wrapper button.btn {
+    align-self: center;
+    width: 300px;
+    padding: 11px 14px;
+    font-size: 16px;
+    letter-spacing: 2px;
+}
+		
+		
+.form-form .form-form-wrap form .field-wrapper svg.feather-eye {
+    position: absolute;
+    top: 24px;
+    right: 83px;
+    color: #888ea8;
+    fill: rgba(0, 23, 55, 0.08);
+    width: 17px;
+    cursor: pointer;
+}
+
+.error-box{
+	
+    padding: 1px 0px 20px 0;
+
+}
+
+.error-msg{
+	text-align: center;
+	color:red;
+}
+
+
+form{
+	padding-bottom : 50px;
+	
+}

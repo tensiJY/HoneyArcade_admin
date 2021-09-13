@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="honeyarcade.admin.common.file.CommonFileMapper">
+
+	<select id="insertFileSeq" parameterType="honeyarcade.admin.common.file.CommonFileVO" resultType="Integer">
+	<![CDATA[
+			insert into tb_file
+				(
+					  add_dt
+					, add_id
+					, del_flag
+				)
+			values
+				(
+					 getDate()
+					,#{admin_id}
+					, 'N'
+				)
+	    	
+	    	SELECT @@IDENTITY AS file_seq
+	
+	]]>
+	</select>
+	
+	<select id="insertFileDtl" parameterType="honeyarcade.admin.common.file.CommonFileVO">
+	<![CDATA[
+		insert into tb_file_dtl
+			(
+				  file_seq
+				, file_dtl_seq
+				, file_type
+				, file_dtl_path
+				, file_dtl_desc
+				, file_dtl_origin
+				, file_dtl_ext
+				, file_dtl_url_path
+			)
+		values
+			(
+				  #{file_seq}
+				, #{file_dtl_seq}  
+				, #{file_type}
+				, #{file_dtl_path}
+				, #{file_dtl_desc}
+				, #{file_dtl_origin}
+				, #{file_dtl_ext}
+				, #{file_dtl_url_path}
+			)
+		
+	]]>
+	</select>
+	
+	<update id="delFileSeq" parameterType="honeyarcade.admin.common.file.CommonFileVO">
+    <![CDATA[
+    	update
+    		tb_file
+		set
+    		  mod_dt = getDate()
+    		, mod_id = #{admin_id}
+    		, del_flag = 'Y'
+    	where
+    		file_seq = #{file_seq}
+    ]]>
+    </update>
+
+	<!-- <select id="insertFileSeq" parameterType="honeyarcade.admin.common.file.CommonFileVO" resultType="Integer">
+	<![CDATA[
+		insert into tb_file
+			(
+				  add_dt
+				, add_id
+				, del_flag
+			)
+		values
+			(
+				 getDate()
+				,#{admin_id}
+				, 'N'
+			)
+    	
+    	SELECT @@IDENTITY AS file_seq
+
+	]]>
+	</select>
+	
+	<select id="insertFileDtl" parameterType="honeyarcade.admin.common.file.CommonFileVO" resultType="Integer">
+	<![CDATA[
+		insert into tb_file_dtl
+			(
+				  file_seq
+				, file_type
+				, file_dtl_path
+				, file_dtl_desc
+				, file_dtl_origin
+				, file_dtl_ext
+				, file_dtl_url_path
+				, add_dt
+				, add_id
+				, del_flag
+			)
+		values
+			(
+				  #{file_seq}
+				, #{file_type}
+				, #{file_dtl_path}
+				, #{file_dtl_desc}
+				, #{file_dtl_origin}
+				, #{file_dtl_ext}
+				, #{file_dtl_url_path}
+				, getDate()
+				, #{admin_id}
+				, 'N'
+			)
+		
+	]]>
+	
+	SELECT @@IDENTITY AS file_dtl_seq
+	</select>
+    
+
+    
+    
+	<update id="delDtlFile" parameterType="honeyarcade.admin.common.file.CommonFileVO">
+    <![CDATA[
+    	update
+    		tb_file_dtl
+		set
+    		  del_dt = getDate()
+    		, del_id = #{admin_id}
+    		, del_flag = 'Y'
+    	where
+    		file_seq = #{file_seq}
+    ]]>
+    </update>
+    
+    
+    <update id="getFileList" parameterType="honeyarcade.admin.common.file.CommonFileVO">
+    <![CDATA[
+    	select 
+			file_dtl_seq 
+			, file_type 
+			, file_dtl_path 
+			, file_dtl_desc 
+			, file_dtl_origin 
+			, file_dtl_ext 
+			, file_dtl_url_path 
+		from tb_file_dtl
+			inner join tb_file
+			on tb_file.file_seq = tb_file_dtl.file_seq
+			and tb_file.del_flag ='N'
+		where
+			tb_file_dtl.file_seq = #{file_seq}
+			and 
+			tb_file_dtl.del_flag = 'N'
+    		
+    ]]>
+    </update> -->
+    
+	
+</mapper>
