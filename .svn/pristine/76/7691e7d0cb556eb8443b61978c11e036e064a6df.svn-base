@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="honeyarcade.admin.ad.req.AdminAdReqMapper">
+	
+	<select id="getTotalCount" parameterType="honeyarcade.admin.ad.req.AdminAdReqVO" resultType="Integer">
+		select
+			 count(tb_sido.sido_seq) as cnt
+		from 
+			tb_sido 
+		inner join tb_sigungu
+			on tb_sido.sido_seq = tb_sigungu.sido_seq 
+			and tb_sigungu.del_flag ='N'
+		inner join tb_dong
+			on tb_sigungu.sigungu_seq  = tb_dong.sigungu_seq 
+			and tb_dong.del_flag ='N'
+		inner join tb_build
+			on tb_build.dong_seq = tb_dong.dong_seq
+			and tb_build.del_flag = 'N'
+		inner join tb_owner 
+			on tb_build.build_seq = tb_owner.build_seq
+			and tb_build.del_flag ='N'
+		inner join tb_ad_req
+			on ad_req_id = tb_owner.owner_id 
+			and tb_sido.sido_seq = tb_ad_req.sido_seq 
+			and tb_sigungu.sigungu_seq = tb_ad_req.sigungu_seq 
+			and tb_dong.dong_seq = tb_ad_req.dong_seq 
+			and tb_build.build_seq = tb_ad_req.build_seq 
+			and tb_ad_req.del_flag = 'N'
+		where
+			tb_sido.del_flag = 'N'
+		<if test="type == 'search'">
+			<if test="sido_seq != null">
+			<![CDATA[
+				and tb_sido.sido_seq = #{sido_seq}
+			]]>
+			</if>
+		
+			<if test="sigungu_seq != null">
+			<![CDATA[
+				and tb_sigungu.sigungu_seq = #{sigungu_seq}
+			]]>
+			</if>
+		
+			<if test="dong_seq != null">
+			<![CDATA[
+				and tb_dong.dong_seq = #{dong_seq}
+			]]>
+			</if>
+			
+			<if test="build_seq != null">
+				and tb_build.build_seq = #{build_seq}
+			</if>
+		
+			<if test="search_text != null || search_text != ''">
+			<![CDATA[
+				and 
+					( 1 = 1
+						and
+							tb_sido.sido_name like '%'+ #{search_text} + '%'
+						or
+							tb_sigungu.sigungu_name like '%'+ #{search_text} +'%'
+						or 
+							tb_dong.dong_name like '%'+ #{search_text} + '%'
+						or
+							tb_build.build_name like '%' + #{search_text} + '%'							
+						or 
+							tb_owner.store_name like '%'+ #{search_text} + '%'
+						or
+							tb_owner.owner_id like '%'+ #{search_text} + '%'							
+					)
+			]]>
+			</if>
+		</if>
+		
+		<if test="search_type != null">
+			<if test="search_type == 2">
+			<![CDATA[
+				and tb_ad_req.ad_req_status = 1
+			]]>			
+			</if>
+			
+			<if test="search_type == 3">
+			<![CDATA[
+				and tb_ad_req.ad_req_status = 2
+			]]>						
+			</if>
+			
+			<if test="search_type == 4">
+			<![CDATA[
+				and tb_ad_req.ad_req_status = 3
+			]]>
+			</if>
+		</if>			
+	</select>
+	
+	<select id="getAdReqList" parameterType="honeyarcade.admin.ad.req.AdminAdReqVO" resultType="honeyarcade.admin.ad.req.AdminAdReqVO">
+	select
+		*
+	from
+		(	
+			select
+				row_number () over (order by tb_sido.sido_seq) as row_num
+				, tb_sido.sido_name
+				, tb_sigungu.sigungu_name
+				, tb_dong.dong_name
+				, tb_build.build_name 
+				, tb_owner.store_name 
+				, tb_ad_req.ad_req_id
+				, tb_ad_req.ad_seq 
+				, tb_ad_req.ad_req_type 
+				, tb_ad_req.ad_req_total
+				, tb_ad_req.ad_req_status
+				, case when tb_ad_req.ad_req_type = 1 then '건물' 
+				  	   when tb_ad_req.ad_req_type = 2 then '지역'
+				       else '쿠폰' end as 'ad_req_type_text'
+				, case when tb_ad_req.ad_req_status = 1 then '미승인'
+					   when tb_ad_req.ad_req_status = 2 then '승인'
+					   else '요청 반려' end as 'ad_req_status_text'
+			from 
+				tb_sido 
+			inner join tb_sigungu
+				on tb_sido.sido_seq = tb_sigungu.sido_seq 
+				and tb_sigungu.del_flag ='N'
+			inner join tb_dong
+				on tb_sigungu.sigungu_seq  = tb_dong.sigungu_seq 
+				and tb_dong.del_flag ='N'
+			inner join tb_build
+				on tb_build.dong_seq = tb_dong.dong_seq
+				and tb_build.del_flag = 'N'
+			inner join tb_owner 
+				on tb_build.build_seq = tb_owner.build_seq
+				and tb_build.del_flag ='N'
+			inner join tb_ad_req
+				on ad_req_id = tb_owner.owner_id 
+				and tb_sido.sido_seq = tb_ad_req.sido_seq 
+				and tb_sigungu.sigungu_seq = tb_ad_req.sigungu_seq 
+				and tb_dong.dong_seq = tb_ad_req.dong_seq 
+				and tb_build.build_seq = tb_ad_req.build_seq 
+				and tb_ad_req.del_flag = 'N'
+			where
+				tb_sido.del_flag = 'N'
+			<if test="type == 'search'">
+				<if test="sido_seq != null">
+				<![CDATA[
+					and tb_sido.sido_seq = #{sido_seq}
+				]]>
+				</if>
+			
+				<if test="sigungu_seq != null">
+				<![CDATA[
+					and tb_sigungu.sigungu_seq = #{sigungu_seq}
+				]]>
+				</if>
+			
+				<if test="dong_seq != null">
+				<![CDATA[
+					and tb_dong.dong_seq = #{dong_seq}
+				]]>
+				</if>
+				
+				<if test="build_seq != null">
+					and tb_build.build_seq = #{build_seq}
+				</if>
+			
+				<if test="search_text != null || search_text != ''">
+				<![CDATA[
+					and 
+						( 1 = 1
+							and
+								tb_sido.sido_name like '%'+ #{search_text} + '%'
+							or
+								tb_sigungu.sigungu_name like '%'+ #{search_text} +'%'
+							or 
+								tb_dong.dong_name like '%'+ #{search_text} + '%'
+							or
+								tb_build.build_name like '%' + #{search_text} + '%'							
+							or 
+								tb_owner.store_name like '%'+ #{search_text} + '%'
+							or
+								tb_owner.owner_id like '%'+ #{search_text} + '%'
+						)
+				]]>
+				</if>
+			</if>
+			
+			<if test="search_type != null">
+				<if test="search_type == 2">
+				<![CDATA[
+					and  tb_ad_req.ad_req_status = 1
+				]]>			
+				</if>
+				
+				<if test="search_type == 3">
+				<![CDATA[
+					and tb_ad_req.ad_req_status = 2
+				]]>						
+				</if>
+				
+				<if test="search_type == 4">
+				<![CDATA[
+					and tb_ad_req.ad_req_status = 3
+				]]>
+				</if>
+			</if>		
+			) a
+		where
+			row_num between #{start_num} and #{end_num}
+			
+	</select>
+	
+	<update id="reqDelProc" parameterType="honeyarcade.admin.ad.coupon.AdminAdCouponVO">
+		update
+			tb_ad_req
+		set
+			del_flag = 'Y'
+		where
+				ad_seq 		= #{ad_seq}
+			and ad_req_type	= #{ad_req_type}		
+	
+	</update>
+	
+	
+</mapper>

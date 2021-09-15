@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5" >
 <head>
-	<th:block th:replace="fragments/meta :: metaFragment(title='건물 등록')"></th:block>
+	<th:block th:replace="fragments/meta :: metaFragment(title='결제 현황')"></th:block>
 	
 	
 	<!--  css style  -->
@@ -22,7 +22,7 @@
         <div class="search-overlay"></div>
 
 		<!--  sidebar  -->
-		<th:block th:replace="fragments/sidebar :: sidebarFragment(main='ad', sub='ad-req')"></th:block>
+		<th:block th:replace="fragments/sidebar :: sidebarFragment(main='member', sub='member-payment')"></th:block>
 		        
         <!--  BEGIN CONTENT AREA  -->
         <div id="content" class="main-content">
@@ -37,7 +37,7 @@
 							<div class="widget-header">
 								<div class="row">
 									<div class="col-xl-12 col-md-12 col-sm-12 col-12">
-										<h4>광고 요청</h4>
+										<h4>일반 회원</h4>
 									</div>
 								</div>
 							</div>

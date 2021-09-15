@@ -1,0 +1,10 @@
+package honeyarcade.admin.ad.req;
+
+import org.apache.ibatis.annotations.Mapper;
+
+@Mapper
+public interface AdminAdReqMapper {
+
+	public int getTotalCount(AdminAdReqVO adminAdReqVO) throws Exception;
+
+}

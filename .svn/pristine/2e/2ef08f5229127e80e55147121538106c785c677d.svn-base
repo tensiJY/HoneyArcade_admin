@@ -1,0 +1,16 @@
+package honeyarcade.admin.ad.req;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+@Service
+public class AdminAdReqService {
+
+	@Autowired
+	private AdminAdReqMapper adminAdReqMapper; 
+	
+	public int getTotalCount(AdminAdReqVO adminAdReqVO) throws Exception{
+		return adminAdReqMapper.getTotalCount(adminAdReqVO);
+	}
+
+}

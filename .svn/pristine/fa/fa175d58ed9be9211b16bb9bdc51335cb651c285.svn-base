@@ -1,0 +1,18 @@
+package honeyarcade.admin.ad.coupon;
+
+import java.util.List;
+
+import org.apache.ibatis.annotations.Mapper;
+
+@Mapper
+public interface AdminAdCouponMapper {
+
+	public int getTotalCount(AdminAdCouponVO adminAdCouponVO) throws Exception;
+
+	public List<AdminAdCouponVO> getAdCouponList(AdminAdCouponVO adminAdCouponVO) throws Exception;
+
+	public void couponDelProc(AdminAdCouponVO adminAdCouponVO) throws Exception;
+
+	
+	
+}
