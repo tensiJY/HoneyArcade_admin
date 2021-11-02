@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5" >
+
+<th:block th:fragment="sidebarFragment"> 
+        <!--  BEGIN SIDEBAR  -->
+
+        
+        <div class="sidebar-wrapper sidebar-theme">
+        	
+            
+            <nav id="sidebar">
+            	<ul class="list-unstyled menu-categories" id="accordionExample">
+					<li class="menu" th:classappend="${main == 'mgt'}? active">
+						<a href="#menu-mgt" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+							<div class="">
+								<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-home"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+								<span> 건물 관리</span>
+							</div>
+							<div>
+								<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+									stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+									class="feather feather-chevron-right">
+									<polyline points="9 18 15 12 9 6"></polyline>
+								</svg>
+							</div>	
+						</a>		
+						<ul class="collapse submenu list-unstyled" th:classappend="${main == 'mgt'}? show" id="menu-mgt" data-parent="#accordionExample">
+							<li th:classappend="${sub == 'mgt-build'}? active">
+								<a th:href="@{/admin/mgt/build/list}"> 건물 등록 </a>
+							</li>
+							<li th:classappend="${sub == 'mgt-store'}? active">
+								<a th:href="@{/admin/mgt/store/list}"> 점포 관리 </a>
+							</li>
+						</ul>
+					</li>
+					
+					<li class="menu" th:classappend="${main=='ad'}? active">
+						<a href="#menu-ad" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+							<div class="">
+								<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-clipboard"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
+								<span> 광고 관리 </span>
+							</div>
+							<div>
+								<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+									stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+									class="feather feather-chevron-right">
+									<polyline points="9 18 15 12 9 6"></polyline>
+								</svg>
+							</div>
+						</a>	
+						<ul class="collapse submenu list-unstyled" id="menu-ad" data-parent="#accordionExample" th:classappend="${main=='ad'}? show">
+							<li th:classappend="${sub=='ad-area'}? active">
+								<a th:href="@{/admin/ad/area/list}"> 지역 광고 </a>
+							</li>
+							<li th:classappend="${sub=='ad-build'}? active">
+								<a th:href="@{/admin/ad/build/list}"> 건물 광고 </a>
+							</li>
+							<li th:classappend="${sub=='ad-coupon'}? active">
+								<a th:href="@{/admin/ad/coupon/list}"> 쿠폰 관리 </a>
+							</li>
+							<li th:classappend="${sub=='ad-req'}? active">
+								<a th:href="@{/admin/ad/req/list}"> 광고 요청 </a>
+							</li>							
+							
+						</ul>
+					</li>
+					
+					<li class="menu" th:classappend="${main=='member'}? active"> 
+						<a href="#menu-member" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+							<div class="">
+								<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-users"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+								<span> 회원 관리 </span>
+							</div>
+							<div>
+								<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+									stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+									class="feather feather-chevron-right">
+									<polyline points="9 18 15 12 9 6"></polyline>
+								</svg>
+							</div>
+						</a>
+						<ul class="collapse submenu list-unstyled" id="menu-member" data-parent="#accordionExample" th:classappend="${main=='member'}? show">
+							<li th:classappend="${sub=='member-owner'}? active">
+								<a th:href="@{/admin/member/owner/list}"> 점포 관리 </a>
+							</li>
+							<li th:classappend="${sub=='member-user'}? active">
+								<a th:href="@{/admin/member/user/list}"> 일반 회원 </a>
+							</li>
+							<li th:classappend="${sub=='member-payment'}? active">
+								<a th:href="@{/admin/member/payment/list}"> 결제 현황 </a>
+							</li>
+							<li th:classappend="${sub=='member-event'}? active">
+								<a th:href="@{/admin/member/event/list}"> 유료 서비스 </a>
+							</li>
+						</ul>
+					</li>
+					
+					<li class="menu" th:classappend="${main=='im'}? active">
+						<a href="#menu-im" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+							<div>
+								<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-pie-chart"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path><path d="M22 12A10 10 0 0 0 12 2v10z"></path></svg>
+								<span> 통합 관리 </span>
+							</div>
+							<div>
+								<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+									stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+									class="feather feather-chevron-right">
+									<polyline points="9 18 15 12 9 6"></polyline>
+								</svg>
+							</div>
+						</a>
+						<ul class="collapse submenu list-unstyled" id="menu-im" data-parent="#accordionExample" th:classappend="${main=='im'}? show">
+							<li th:classappend="${sub == 'im-sales'}? active">
+								<a th:href="@{/admin/im/sales/list}"> 수익 관리 </a>
+							</li>
+							<li th:classappend="${sub == 'im-data'}? active">
+								<a th:href="@{/admin/im/data/list}"> 상가 점주 </a>
+							</li>
+							<li th:classappend="${sub == 'im-push'}? active">
+								<a th:href="@{/admin/im/push/list}"> 푸쉬 알림 </a>
+							</li>
+						</ul>
+					</li>
+					
+					<li class="menu" th:classappend="${main=='set'}? active">
+						<a href="#menu-set" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+							<div class="">
+								<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-settings"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+								<span> 설정 </span>
+							</div>
+							<div>
+								<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+									stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+									class="feather feather-chevron-right">
+									<polyline points="9 18 15 12 9 6"></polyline>
+								</svg>
+							</div>
+						</a>
+						<ul class="collapse submenu list-unstyled" id="menu-set" data-parent="#accordionExample" th:classappend="${main=='set'}? show">
+							<li th:classappend="${sub == 'set-ntc'}? active" > 
+								<a th:href="@{/admin/set/ntc/list}"> 공지 사항 </a>
+							</li>
+							<li th:classappend="${sub == 'set-web'}? active">
+								<a th:href="@{/admin/set/web/list}"> 점주 웹 이미지 </a>
+							</li>
+							<li th:classappend="${sub == 'set-dir'}? active">
+								<a th:href="@{/admin/set/dir/list}"> 관리자 </a>
+							</li>	
+						</ul>
+					</li>
+					
+            	</ul>
+               
+               
+            </nav>
+
+        </div>
+        <!--  END SIDEBAR  -->
+
+</th:block>
+  
+</html>

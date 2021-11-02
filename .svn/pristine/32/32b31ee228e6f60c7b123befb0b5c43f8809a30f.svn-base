@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5" >
+<head>
+	<th:block th:replace="fragments/meta :: metaFragment(title='광고요청 - 광고요청서', useMetaCsrf='true')"></th:block>
+	
+	<!--  css style  -->
+	<th:block th:replace="fragments/style :: styleFragment"></th:block>
+	<link rel="stylesheet" type="text/css" th:href="@{/resources/honeyArcade/admin/ad/req/css/adminAdReqView.css}">
+</head>
+
+
+<body class="sidebar-noneoverflow">
+    
+	<!--  header  -->
+	<th:block th:replace="fragments/header :: headerFragment"></th:block>
+	
+
+    <!--  BEGIN MAIN CONTAINER  -->
+    <div class="main-container" id="container">
+
+        <div class="overlay"></div>
+        <div class="search-overlay"></div>
+
+		<!--  sidebar  -->
+		<th:block th:replace="fragments/sidebar :: sidebarFragment(main='set', sub='set-dir')"></th:block>
+		        
+        <!--  BEGIN CONTENT AREA  -->
+        <div id="content" class="main-content">
+            <div class="layout-px-spacing">
+
+
+                <!-- CONTENT AREA -->
+                <div class="row layout-top-spacing">
+					
+                 
+					
+                </div>
+                <!-- CONTENT AREA -->
+				
+				
+										
+					
+				
+            </div>
+            
+            
+            <!--  footer   -->
+            <th:block th:replace="fragments/footer"></th:block>
+			
+            
+        </div>
+        <!--  END CONTENT AREA  -->
+
+    </div>
+    <!-- END MAIN CONTAINER -->
+
+
+
+
+
+
+	<th:block th:replace="fragments/script :: scriptFragment(useScriptCsrf='true')"></th:block>
+
+	
+	<script th:inline="javascript">
+	/* <![CDATA[ */
+		
+	/*]] */
+	</script>
+</body>
+
+</html>

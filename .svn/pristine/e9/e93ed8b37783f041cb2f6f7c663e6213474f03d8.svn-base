@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5" >
+<head>
+	<th:block th:replace="fragments/meta :: metaFragment(title='점주회원', useMetaCsrf='true')"></th:block>
+	<link rel="stylesheet" type="text/css" th:href="@{/resources/cork/assets/css/components/tabs-accordian/custom-accordions.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/resources/cork/assets/css/components/custom-modal.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/resources/cork/assets/css/forms/theme-checkbox-radio.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/resources/cork/plugins/bootstrap-select/bootstrap-select.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/resources/cork/plugins/flatpickr/flatpickr.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/resources/honeyArcade/admin/common/css/common.css}">
+	
+	<!--  css style  -->
+	<th:block th:replace="fragments/style :: styleFragment"></th:block>
+	<style>
+		.lcateSelect{
+			border : 1px sienna solid;
+		}
+	</style>
+</head>
+
+
+<body class="sidebar-noneoverflow">
+    
+	<!--  header  -->
+	<th:block th:replace="fragments/header :: headerFragment"></th:block>
+	
+
+    <!--  BEGIN MAIN CONTAINER  -->
+    <div class="main-container" id="container">
+
+        <div class="overlay"></div>
+        <div class="search-overlay"></div>
+
+		<!--  sidebar  -->
+		<th:block th:replace="fragments/sidebar :: sidebarFragment(main='member', sub='member-owner')"></th:block>
+		        
+        <!--  BEGIN CONTENT AREA  -->
+        <div id="content" class="main-content">
+            <div class="layout-px-spacing">
+
+
+                <!-- CONTENT AREA -->
+                <div class="row layout-top-spacing">
+                    
+					<div id="tableHover" class="col-lg-12 col-12 layout-spacing">
+						<div class="statbox widget box box-shadow">
+							<div class="widget-header">
+								<div class="row">
+									<div class="col-xl-12 col-md-12 col-sm-12 col-12">
+										<h4>점주 회원<span class="ml-2 badge outline-badge-primary">[[${ownerInfo.store_name}]]</span></h4>
+									</div>
+								</div>
+							</div>
+							<div class="widget-content widget-content-area">
+								<div id="iconsAccordion" class="accordion-icons">
+								    <div class="card">
+								        <div class="card-header" id="...">
+								            <section class="mb-0 mt-0">
+								                <div role="menu" class="collapsed" data-toggle="collapse" data-target="#iconAccordionOne" aria-expanded="true" aria-controls="iconAccordionOne">
+								                    <div class="accordion-icon">
+								                    	<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-airplay"><path d="M5 17H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-1"></path><polygon points="12 15 17 21 7 21 12 15"></polygon></svg>
+								                    </div>
+								                    	매장 기본 정보  <div class="icons"><svg> ... </svg></div>
+								                </div>
+								            </section>
+								        </div>
+								
+								        <div id="iconAccordionOne" class="collapse show" aria-labelledby="..." data-parent="#iconAccordionOne">
+								            <div class="card-body">
+								                <form>
+								                	<div class="form-row mb-2">
+												        <div class="col-3">
+												            <input type="text" id="owner_id" name="owner_id" class="form-control disabled" placeholder="honeyArcade" th:value="${ownerInfo.owner_id}" readonly>
+												        </div>
+												        <div class="col">
+												            <input type="text" id="owner_email" name="owner_email" class="form-control" placeholder="honeyArcade@naver.com" th:value="${ownerInfo.owner_email}">
+												        </div>
+												        <div class="col">
+												            <input type="text" id="owner_phone" name="owner_phone" class="form-control" placeholder="010-1234-1234" th:value="${ownerInfo.owner_phone}">
+												        </div>
+												    </div>
+													<select class="selectpicker" data-live-search="true" title="시,도" id="sidoSelect" name="sido_seq" data-width="fit">
+														<th:block th:if="${sidoList.size()!=0}">
+															<th:block th:each="list : ${sidoList}">
+																<option th:value="${list.sido_seq}" th:text="${list.sido_name}" th:selected="${ownerInfo.sido_seq == list.sido_seq}"></option>
+															</th:block>
+														</th:block>
+													</select>									
+													<select class="selectpicker" data-live-search="true" title="군,구" id="sigunguSelect" name="sigungu_seq" data-width="fit">
+													 	<th:block th:if="${sigunguList != null}">
+													 		<th:block th:if="${sigunguList.size() != 0}">
+													 			<!-- 값이 있는경우 -->
+													 			<th:block th:each="list : ${sigunguList}">
+																	<option th:value="${list.sigungu_seq}" th:text="${list.sigungu_name}" th:selected="${ownerInfo.sigungu_seq == list.sigungu_seq}" ></option>
+																</th:block>
+													 		</th:block>
+													 	</th:block>									 		
+													</select>
+													<select class="selectpicker" data-width="fit" data-live-search="true" id="dongSelect" name="dong_seq" title="지역">
+														<th:block th:if="${dongList != null}">
+															<th:block th:if="${dongList.size() != 0}">
+																<th:block th:each="list : ${dongList}">
+																	<option th:value="${list.dong_seq}" th:text="${list.dong_name}" th:selected="${ownerInfo.dong_seq == list.dong_seq}" ></option>
+																</th:block>
+															</th:block>
+														</th:block>
+													</select>
+													<select class="selectpicker" data-width="fit" data-live-search="true" id="buildSelect" name="build_seq" title="건물">
+														<th:block th:if="${buildList != null}">
+															<th:block th:if="${buildList.size() != 0}">
+																<th:block th:each="list : ${buildList}">
+																	<option th:value="${list.build_seq}" th:text="${list.build_name}" th:selected="${ownerInfo.build_seq == list.build_seq}" ></option>
+																</th:block>
+															</th:block>
+														</th:block>										
+													</select>
+													<select class="selectpicker" data-width="fit" data-live-search="true" title="층" id="floorSelect" name="floor_seq">
+														<th:block th:if="${floorList != null}">
+															<th:block th:if="${floorList.size() != 0}">
+																<th:block th:each="list : ${floorList}">
+																	<option th:value="${list.floor_seq}" th:text="${list.floor_seq < 0? '지하 ' +  (-list.floor_seq)  + '층': '지상 ' + list.floor_seq +'층'}" th:selected="${ownerInfo.store_floor == list.floor_seq}" ></option>
+																</th:block>
+															</th:block>
+														</th:block>
+													</select>
+													 <div class="form-row">
+												        <div class="col-3">
+												            <input type="text" id="store_name" name="store_name" class="form-control" placeholder="상호명" th:value="${ownerInfo.store_name}">
+												        </div>
+												        <div class="col">
+												            <input type="text" id="store_ho" name="store_ho" class="form-control" placeholder="매장호실" th:value="${ownerInfo.store_ho}">
+												        </div>
+												        <div class="col">
+												            <input type="text" id="store_link" name="store_link" class="form-control" placeholder="유투브URL" th:value="${ownerInfo.store_link}">
+												        </div>
+												    </div>
+									               	<div class="mt-2">
+										               	<span class="mr-1 col-2">영업시간</span>
+														<select id="openDaySelect" class="selectpicker" data-width="fit" title="선택" data-live-search="true">
+														    <option value=1>주중</option>
+														    <option value=2>주말</option>
+														    <option value=3>월~토</option>
+														    <option value=4>월</option>
+														    <option value=5>화</option>
+														    <option value=6>수</option>
+														    <option value=7>목</option>
+														    <option value=8>금</option>
+														    <option value=9>토</option>
+														    <option value=10>일</option>
+														    <option value=11>해당사항없음</option>
+														</select>
+														<span class="mr-1 col-2">오픈시간</span>
+														<input type="text" id="openDayStart" class="form-control d-inline col-1" style="vertical-align: middle;" placeholder="09:00" readonly>
+														<span class="mr-1 col-2">마감시간</span>
+														<input type="text" id="openDayEnd" class="form-control d-inline col-1 mr-2" style="vertical-align: middle;" placeholder="18:00" readonly>
+														<input type="button" id="openAddBtn" class="btn btn-primary" value="추가">
+									               	</div>
+									               	<div id="openDay" class="mt-2 row ml-5">
+									               		<th:block th:each="list : ${openList}">
+									               		<div class="openDay">
+															<input type="text" class="btn btn-outline-primary mb-2 mr-1" style="text-align: left;" th:value="${list.open_day == 11? list.open_day_text : list.open_day_text + ' ' + list.open_time + ' ~ ' + list.close_time }" readonly>
+															<input type="button" class="btn btn-danger mb-2 mr-3 openDayDelBtn" value="삭제">
+															<input type="hidden" name="open_day" th:value="${list.open_day}">
+															<input type="hidden" name="open_time" th:value="${list.open_time}">
+															<input type="hidden" name="close_time" th:value="${list.close_time}">
+									               		</div>
+									               		</th:block>
+									               	</div>
+									               	
+									               	<div></div>
+									               	
+													<div class="mt-2">
+										               	<span class="mr-1 col-2">휴게 시간</span>
+														<select id="breakDaySelect" class="selectpicker" data-width="fit" title="선택" data-live-search="true">
+														    <option value=1>주중</option>
+														    <option value=2>주말</option>
+														    <option value=3>월~토</option>
+														    <option value=4>월</option>
+														    <option value=5>화</option>
+														    <option value=6>수</option>
+														    <option value=7>목</option>
+														    <option value=8>금</option>
+														    <option value=9>토</option>
+														    <option value=10>일</option>
+														    <option value=11>해당사항없음</option>
+														</select>
+														<span class="mr-1 col-2">오픈시간</span>
+														<input type="text" id="breakDayStart" class="form-control d-inline col-1" style="vertical-align: middle;" placeholder="09:00" readonly>
+														<span class="mr-1 col-2">마감시간</span>
+														<input type="text" id="breakDayEnd" class="form-control d-inline col-1 mr-2" style="vertical-align: middle;" placeholder="18:00" readonly>
+														<input type="button" id="breakAddBtn" class="btn btn-primary" value="추가">
+									               	</div>
+									               	<div id="breakDay" class="mt-2 row ml-5">
+									               		<th:block th:each="list : ${breakList}">
+									               		<div class="breakDay">
+															<input type="text" class="btn btn-outline-primary mb-2 mr-1" style="text-align: left;" th:value="${list.break_day == 11? list.break_day_text : list.break_day_text + ' ' + list.open_time + ' ~ ' + list.close_time }" readonly>
+															<input type="button" class="btn btn-danger mb-2 mr-3 breakDayDelBtn" value="삭제">
+															<input type="hidden" name="break_day" th:value="${list.break_day}">
+															<input type="hidden" name="open_time" th:value="${list.open_time}">
+															<input type="hidden" name="close_time" th:value="${list.close_time}">
+									               		</div>
+									               		</th:block>
+									               	</div>									               	
+									               										               	
+									               	<div class="mt-2 row ml-2">
+														<span class="col-1">휴무일</span>
+														<div>
+															<div class="n-chk">
+															    <label class="new-control new-checkbox new-checkbox-rounded new-checkbox-text checkbox-danger">
+															      <input type="radio" name="off_day" class="new-control-input" value=0 checked>
+															      <span class="new-control-indicator"></span>
+															      <span class="new-chk-content">일요일</span>
+															    </label>
+															    <label class="new-control new-checkbox new-checkbox-rounded new-checkbox-text checkbox-dark">
+															      <input type="radio" name="off_day" class="new-control-input" value=1>
+															      <span class="new-control-indicator"></span>
+															      <span class="new-chk-content">월요일</span>
+															    </label>
+															    <label class="new-control new-checkbox new-checkbox-rounded new-checkbox-text checkbox-dark">
+															      <input type="radio" name="off_day" class="new-control-input" value=2>
+															      <span class="new-control-indicator"></span>
+															      <span class="new-chk-content">화요일</span>
+															    </label>
+															    <label class="new-control new-checkbox new-checkbox-rounded new-checkbox-text checkbox-dark">
+															      <input type="radio" name="off_day" class="new-control-input" value=3>
+															      <span class="new-control-indicator"></span>
+															      <span class="new-chk-content">수요일</span>
+															    </label>
+															    <label class="new-control new-checkbox new-checkbox-rounded new-checkbox-text checkbox-dark">
+															      <input type="radio" name="off_day" class="new-control-input" value=4>
+															      <span class="new-control-indicator"></span>
+															      <span class="new-chk-content">목요일</span>
+															    </label>
+															    <label class="new-control new-checkbox new-checkbox-rounded new-checkbox-text checkbox-dark">
+															      <input type="radio" name="off_day" class="new-control-input" value=5>
+															      <span class="new-control-indicator"></span>
+															      <span class="new-chk-content">금요일</span>
+															    </label>
+															    <label class="new-control new-checkbox new-checkbox-rounded new-checkbox-text checkbox-primary">
+															      <input type="radio" name="off_day" class="new-control-input" value=6>
+															      <span class="new-control-indicator"></span>
+															      <span class="new-chk-content">토요일</span>
+															    </label>
+															</div>
+															<div class="n-chk d-inline col-6">
+															    <label class="new-control new-checkbox new-checkbox-rounded new-checkbox-text checkbox-danger">
+															      <input type="radio" name="off_week" class="new-control-input" value="A" checked>
+															      <span class="new-control-indicator"></span>
+															      <span class="new-chk-content">매주</span>
+															    </label>
+															    <label class="new-control new-checkbox new-checkbox-rounded new-checkbox-text checkbox-dark">
+															      <input type="radio" name="off_week" class="new-control-input" value=1>
+															      <span class="new-control-indicator"></span>
+															      <span class="new-chk-content">첫째주</span>
+															    </label>
+															    <label class="new-control new-checkbox new-checkbox-rounded new-checkbox-text checkbox-dark">
+															      <input type="radio" name="off_week" class="new-control-input" value=2>
+															      <span class="new-control-indicator"></span>
+															      <span class="new-chk-content">둘째주</span>
+															    </label>
+															    <label class="new-control new-checkbox new-checkbox-rounded new-checkbox-text checkbox-dark">
+															      <input type="radio" name="off_week" class="new-control-input" value=3>
+															      <span class="new-control-indicator"></span>
+															      <span class="new-chk-content">셋째주</span>
+															    </label>
+															    <label class="new-control new-checkbox new-checkbox-rounded new-checkbox-text checkbox-dark">
+															      <input type="radio" name="off_week" class="new-control-input"  value=4>
+															      <span class="new-control-indicator"></span>
+															      <span class="new-chk-content">넷째주</span>
+															    </label>
+															    <label class="new-control new-checkbox new-checkbox-rounded new-checkbox-text checkbox-dark">
+															      <input type="radio" name="off_week" class="new-control-input" value=5>
+															      <span class="new-control-indicator"></span>
+															      <span class="new-chk-content">마지막주</span>
+															    </label>
+															</div>
+														</div>
+														<div>
+															<input type="button" id="dayOffAddBtn" class="btn btn-primary" value="추가">
+														</div>
+									               	</div>
+													<div id="offDay" class="mt-2 row ml-5">
+									               		<th:block th:each="list : ${dayOffList}">
+									               		<div class="offDay">
+															<input type="text" class="btn btn-outline-primary mb-2 mr-1" style="text-align: left;" th:value="${list.week_text + ' ' + list.day_text}" readonly>
+															<input type="button" class="btn btn-danger mb-2 mr-3 offDayDelBtn" value="삭제">
+															<input type="hidden" name="day_off_week" th:value="${list.day_off_week}">
+															<input type="hidden" name="day_off_day" th:value="${list.day_off_day}">
+									               		</div>
+									               		</th:block>
+									               	</div>
+									               					
+												    <div class="mt-2">
+														<span class="col-2 mr-4">메인 사진</span>
+														<input type="button" id="mainDownBtn"	class="btn btn-primary" value="다운로드">
+														<div class="fileUpload btn btn-primary">
+															<span>업로드</span>
+															<input type="file" id="mainUpBtn" name="mainUpBtn" accept="image/*" class="upload" />
+														</div>								
+														
+														<input type="button" id="mainViewBtn" 	class="btn btn-primary" value="확인">
+								               		</div>
+								               		
+													<div class="mt-2">
+														<span class="col-2 mr-4">매장 프로필 사진</span>
+														<input type="button" id="proDownBtn"	class="btn btn-primary" value="다운로드">
+														<div class="fileUpload btn btn-primary">
+															<span>업로드</span>
+															<input type="file" id="proUpBtn" name="proUpBtn" accept="image/*" class="upload" />
+														</div>								
+														
+														<input type="button" id="proViewBtn" 	class="btn btn-primary" value="확인">
+								               		</div>
+								               		
+								               		<div class="mt-2">
+														<span class="col-2">사업자 등록증</span>
+														<input type="button" id="busiDownBtn"	class="btn btn-primary" value="다운로드">
+														<div class="fileUpload btn btn-primary">
+															<span>업로드</span>
+															<input type="file" id="busiUpBtn" name="busiUpBtn" accept="image/*" class="upload" />
+														</div>								
+														
+														<input type="button" id="busiViewBtn" 	class="btn btn-primary" value="확인">
+														
+								               		</div>
+								               		
+								               		<div class="mt-2">
+								               			<span class="col-2">노출 순위</span>
+								               			<input type="number" id="store_sort" name="store_sort" class="form-control d-inline col-4" placeholder="노출 순위" th:value="${ownerInfo.store_sort}" min=0>
+								               		</div>
+												</form>
+												
+								            </div>   
+								        </div>
+								  </div>
+								
+								    <div class="card">
+								        <div class="card-header" id="...">
+								            <section class="mb-0 mt-0">
+								                <div role="menu" class="collapsed" data-toggle="collapse" data-target="#iconAccordionTwo" aria-expanded="true" aria-controls="iconAccordionTwo">
+								                    <div class="accordion-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-box"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg></div>
+								                    업종 정보 <div class="icons"><svg> ... </svg></div>
+								                </div>
+								            </section>
+								        </div>
+								        <div id="iconAccordionTwo" class="collapse show" aria-labelledby="..." data-parent="#iconAccordionTwo">
+								            <div class="card-body">
+								               <form>
+								               	<div>
+													<span class="mr-5 col-2">업종</span>
+													<th:block th:each="list : ${lcateList}">
+														<input type="text" class="form-control d-inline col-2 lcate" name="lcate_seq" style="vertical-align: middle;" placeholder="대분류" th:value="${list.lcate_name}" th:data-lcate-seq="${list.lcate_seq}" th:data-build-seq="${list.build_seq}" th:classappend="${list.lcate_seq == ownerInfo.lcate_seq}? lcateSelect" readonly>	
+													</th:block>
+								               	</div>
+								               	<div>
+													<span class="mr-3 col-2">세부 업종</span>
+													<select id="mcate_seq" name="mcate_seq" class="selectpicker" data-width="fit" data-live-search="true" title="소분류"> 
+													<th:block th:each="list : ${mcateList}">
+														<option th:value="${list.mcate_seq}" th:text="${list.mcate_name}" th:selected="${ownerInfo.mcate_seq == list.mcate_seq}"></option>
+													</th:block>
+													</select>
+								               	</div>
+								               	<div class="mt-2">
+													<span class="mr-3 col-2">한줄 소개</span>
+													<input type="text" id="store_text" name="store_text" class="form-control d-inline col-4" style="vertical-align: middle;" placeholder="맛있는 식당" th:value="${ownerInfo.store_text}">
+								               	</div>
+								               	<div class="mt-2">
+													<span class="mr-1 col-2">검색 키워드</span>
+													<input type="text" id="store_keyword" name="store_keyword" class="form-control d-inline col-4" style="vertical-align: middle;" placeholder="숨김 키워드 입력" th:value="${ownerInfo.store_keyword}">
+								               	</div>
+												</form>
+								
+								            </div>
+								        </div>
+								    </div>
+								    <div class="card">
+								        <div class="card-header" id="...">
+								            <section class="mb-0 mt-0">
+								                <div role="menu" class="" data-toggle="collapse" data-target="#iconAccordionThree" aria-expanded="true" aria-controls="iconAccordionThree">
+								                    <div class="accordion-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-layout"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg></div>
+								                    메뉴 정보 <div class="icons"><svg> ... </svg></div>
+								                </div>
+								            </section>
+								        </div>
+								        <div id="iconAccordionThree" class="collapse show" aria-labelledby="..." data-parent="#iconAccordionThree">
+									        <div class="card-body">
+									           <form id="productForm">
+									           		<div>
+														<span class="mr-3 col-2">메뉴추가</span>
+														<input type="text" id="productName" class="form-control form-control-lg d-inline col-4" style="vertical-align: middle;" placeholder="상품명">
+														<input type="number" id="productPrice" class="form-control form-control-lg d-inline col-2" style="vertical-align: middle;" placeholder="가격" min=0>
+														
+														<div class="fileUpload btn btn-primary">
+															<span>사진첨부</span>
+															<input type="file" name="productUpBtn" accept="image/*" class="upload" />
+														</div>														
+														
+														<input type="button" id="productAddBtn" class="btn btn-primary" value="추가">
+														
+														<div id="productAddArea">
+															<input type="hidden" class="" name="file_seq"			>
+															<input type="hidden" class="" name="file_type" 			>
+															<input type="hidden" class="" name="file_dtl_path" 		>
+															<input type="hidden" class="" name="file_dtl_desc" 		>
+															<input type="hidden" class="" name="file_dtl_origin" 	>
+															<input type="hidden" class="" name="file_dtl_ext" 		>
+															<input type="hidden" class="" name="file_dtl_url_path" 	>														
+														</div>
+									               	</div>
+									               	<th:block th:if="${productList.size != 0}">
+									               		<th:block th:each="list : ${productList}">
+											               	<div class="mt-4">
+																<span class="mr-3 col-2">메뉴</span>
+																<input type="text"	 class="form-control form-control-sm d-inline col-4 productName" style="vertical-align: middle;" placeholder="상품명" th:value="${list.product_name}">
+																<input type="number" class="form-control form-control-sm d-inline col-2 productPrice" style="vertical-align: middle;" placeholder="가격" th:value="${list.product_price}">
+																<input type="button" class="btn btn-primary productDownBtn" value="다운로드">
+																
+																<div class="fileUpload btn btn-primary">
+																	<span>업로드</span>
+																	<input type="file" name="file" accept="image/*" class="upload" />
+																</div>
+																
+																<input type="button" class="btn btn-primary productViewBtn"	value="확인">
+																<input type="button" class="btn btn-danger productDelBtn"  	value="삭제">
+																<div class="product-file-info">
+																	<input type="hidden" class="" name="file_seq"			th:value="${list.file_seq}">
+																	<input type="hidden" class="" name="file_type" 			th:value="${list.file_type}">
+																	<input type="hidden" class="" name="file_dtl_path" 		th:value="${list.file_dtl_path}">
+																	<input type="hidden" class="" name="file_dtl_desc" 		th:value="${list.file_dtl_desc}">
+																	<input type="hidden" class="" name="file_dtl_origin"	th:value="${list.file_dtl_origin}">
+																	<input type="hidden" class="" name="file_dtl_ext" 		th:value="${list.file_dtl_ext}">
+																	<input type="hidden" class="" name="file_dtl_url_path" 	th:value="${list.file_dtl_url_path}">
+																</div>
+											               	</div>									               		
+									               		</th:block>
+									               	</th:block>
+									           </form>
+									        </div>
+									       
+								        </div>
+								    </div>
+								    
+								</div>
+								<div class="float-right mt-2">
+									<th:block th:if="${ownerInfo.owner_status == 1}">
+										<input type="button" id="acceptBtn" class="btn btn-primary" value="승인">
+										<input type="button" id="rejectBtn" class="btn btn-primary" value="거절">
+									</th:block>
+									<input type="button" id="saveBtn" class="btn btn-primary" value="저장">
+									<input type="button" id="listBtn" class="btn btn-dark" value="목록">
+									
+									<th:block th:if="${adminMemberOwnerVO.menu=='owner'}">
+										<form id="listForm" th:action="@{/admin/member/owner/list}" method="POST">
+											<input type="hidden" name="sido_seq" 	th:value="${adminMemberOwnerVO.sido_seq}">
+											<input type="hidden" name="sigungu_seq" th:value="${adminMemberOwnerVO.sigungu_seq}">
+											<input type="hidden" name="dong_seq" 	th:value="${adminMemberOwnerVO.dong_seq}">
+											<input type="hidden" name="build_seq" 	th:value="${adminMemberOwnerVO.build_seq}">
+											<input type="hidden" name="owner_type" 	th:value="${adminMemberOwnerVO.owner_type}">
+											<input type="hidden" name="type" 		th:value="${adminMemberOwnerVO.type}">
+											<input type="hidden" name="listCount" 	th:value="${adminMemberOwnerVO.listCount}">
+											<input type="hidden" name="search_text" th:value="${adminMemberOwnerVO.search_text}">
+											<input type="hidden" name="nowPage" 	th:value="${adminMemberOwnerVO.nowPage}">
+											<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />	
+										</form>
+									</th:block>
+									<th:block th:if="${adminMemberOwnerVO.menu=='store'}">
+										<form id="listForm" th:action="@{/admin/mgt/store/list}">
+											<input type="hidden" name="sido_seq" th:value="${adminMemberOwnerVO.sido_seq}">
+											<input type="hidden" name="sigungu_seq" th:value="${adminMemberOwnerVO.sigungu_seq}">
+											<input type="hidden" name="dong_seq" th:value="${adminMemberOwnerVO.dong_seq}">
+											<input type="hidden" name="build_seq" th:value="${adminMemberOwnerVO.build_seq}">
+											<input type="hidden" name="floor_seq" th:value="${adminMemberOwnerVO.floor_seq}">
+											<input type="hidden" name="listCount" th:value="${adminMemberOwnerVO.listCount}">
+											<input type="hidden" name="search_text" th:value="${adminMemberOwnerVO.search_text}">
+											<input type="hidden" name="type"  th:value="${adminMemberOwnerVO.type}">
+										</form>									
+									</th:block>
+								</div>
+							</div>
+						</div>
+					</div>
+                    
+                </div>
+
+                <!-- CONTENT AREA -->
+            </div>
+          
+            
+            <!--  footer   -->
+            <th:block th:replace="fragments/footer"></th:block>
+			
+            
+        </div>
+        <!--  END CONTENT AREA  -->
+
+    </div>
+    <!-- END MAIN CONTAINER -->
+    
+<div id="cloneDayOff" style="display: none;;">    
+	<div class="offDay">
+		<input type="text" class="btn btn-outline-primary mb-2 mr-1" style="text-align: left;" readonly>
+		<input type="button" class="btn btn-danger mb-2 mr-3 offDayDelBtn" value="삭제">
+		<input type="hidden" name="day_off_week">
+		<input type="hidden" name="day_off_day">
+	</div>
+</div>    
+
+<!--	휴게시간	-->
+<div id="cloneBreakDay" style="display: none;">
+	<div class="breakDay">
+		<input type="text" class="btn btn-outline-primary mb-2 mr-1" style="text-align: left;" readonly>
+		<input type="button" class="btn btn-danger mb-2 mr-3 breakDayDelBtn" value="삭제">
+		<input type="hidden" name="break_day">
+		<input type="hidden" name="open_time">
+		<input type="hidden" name="close_time">
+	</div>
+</div>    
+
+<!--	영업시간	-->
+<div id="cloneOpenDay" style="display: none;">
+	<div class="openDay">
+		<input type="text" class="btn btn-outline-primary mb-2 mr-1" style="text-align: left;" value="" readonly>
+		<input type="button" class="btn btn-danger mb-2 mr-3 openDayDelBtn" value="삭제">
+		<input type="hidden" name="open_day">
+		<input type="hidden" name="open_time">
+		<input type="hidden" name="close_time">
+     </div>
+</div>    
+	
+<!-- Modal 메인사진, 매장프로필, 사업자등록증-->
+<div class="modal fade" id="ImgInfo" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
+	<div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 900px;">
+		<div class="modal-content">
+			<div class="modal-header" style="max-height: 80px;">
+				<h5 class="modal-title" id="modalTitle"></h5>
+			</div>
+			<div class="modal-body">
+				<div style="width: 846px; height:400px;text-align: center;" id="modalImgOuter">
+					<img src="" style="width: 100%; height: 100%;"></img>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<input type="button" id="modalCancelBtn" class="btn btn-primary" data-dismiss="modal" value="확인">
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- 매장 프로필 이미지 -->
+<div id="proImg" style="display: none;">
+	<input type="hidden" class="" name="file_seq"			th:value="${proVO.file_seq}">
+	<input type="hidden" class="" name="file_type" 			th:value="${proVO.file_type}">
+	<input type="hidden" class="" name="file_dtl_path" 		th:value="${proVO.file_dtl_path}">
+	<input type="hidden" class="" name="file_dtl_desc" 		th:value="${proVO.file_dtl_desc}">
+	<input type="hidden" class="" name="file_dtl_origin" 	th:value="${proVO.file_dtl_origin}">
+	<input type="hidden" class="" name="file_dtl_ext" 		th:value="${proVO.file_dtl_ext}">
+	<input type="hidden" class="" name="file_dtl_url_path" 	th:value="${proVO.file_dtl_url_path}">
+</div>
+
+<!-- 매장 메인 이미지 -->
+<div id="mainImg" style="display: none;">
+	<input type="hidden" class="" name="file_seq"			th:value="${mainVO.file_seq}">
+	<input type="hidden" class="" name="file_type" 			th:value="${mainVO.file_type}">
+	<input type="hidden" class="" name="file_dtl_path" 		th:value="${mainVO.file_dtl_path}">
+	<input type="hidden" class="" name="file_dtl_desc" 		th:value="${mainVO.file_dtl_desc}">
+	<input type="hidden" class="" name="file_dtl_origin" 	th:value="${mainVO.file_dtl_origin}">
+	<input type="hidden" class="" name="file_dtl_ext" 		th:value="${mainVO.file_dtl_ext}">
+	<input type="hidden" class="" name="file_dtl_url_path" 	th:value="${mainVO.file_dtl_url_path}">
+</div>
+
+<!-- 사업자 등록증 이미지 -->
+<div id="busiImg" style="display:none;">
+	<input type="hidden" class="" name="file_seq"			th:value="${busiVO.file_seq}">
+	<input type="hidden" class="" name="file_type" 			th:value="${busiVO.file_type}">
+	<input type="hidden" class="" name="file_dtl_path" 		th:value="${busiVO.file_dtl_path}">
+	<input type="hidden" class="" name="file_dtl_desc" 		th:value="${busiVO.file_dtl_desc}">
+	<input type="hidden" class="" name="file_dtl_origin" 	th:value="${busiVO.file_dtl_origin}">
+	<input type="hidden" class="" name="file_dtl_ext" 		th:value="${busiVO.file_dtl_ext}">
+	<input type="hidden" class="" name="file_dtl_url_path" 	th:value="${busiVO.file_dtl_url_path}">
+</div>
+					
+<!--	이미지 삭제	-->					
+<div id="delFile" style="display: none;">
+
+</div>
+
+<div id="cloneProductFile" style="display: none;">
+	<div class="mt-4">
+		<span class="mr-3 col-2">메뉴</span>
+		<input type="text"		name="product_name" class="form-control form-control-sm d-inline col-4 productName" style="vertical-align: middle;" placeholder="상품명">
+		<input type="number" 	name="product_price"	class="form-control form-control-sm d-inline col-2 productPrice" style="vertical-align: middle;" placeholder="가격">
+		<input type="button" class="btn btn-primary productDownBtn" value="다운로드">
+		<div class="fileUpload btn btn-primary">
+			<span>업로드</span>
+			<input type="file" name="file" accept="image/*" class="upload productUpBtn" />
+		</div>
+		<input type="button" class="btn btn-primary productViewBtn"	value="확인">
+		<input type="button" class="btn btn-danger productDelBtn"  	value="삭제">
+		<div class="product-file-info">
+			<input type="hidden" class="" name="file_seq"			>
+			<input type="hidden" class="" name="file_type" 			>
+			<input type="hidden" class="" name="file_dtl_path" 		>
+			<input type="hidden" class="" name="file_dtl_desc" 		>
+			<input type="hidden" class="" name="file_dtl_origin"	>
+			<input type="hidden" class="" name="file_dtl_ext" 		>
+			<input type="hidden" class="" name="file_dtl_url_path" 	>
+		</div>
+	</div>	
+</div>
+
+
+	<th:block th:replace="fragments/script :: scriptFragment(useScriptCsrf='true')"></th:block>
+	<script th:src="@{/resources/cork/assets/js/scrollspyNav.js}"></script>
+	<script th:src="@{/resources/cork/assets/js/components/ui-accordions.js}"></script>
+	<script th:src="@{/resources/cork/plugins/flatpickr/flatpickr.js}"></script>
+	<script th:src="@{/resources/cork/plugins/bootstrap-select/bootstrap-select.min.js}"></script>
+	<script th:src="@{/resources/honeyArcade/admin/common/js/areaSelect.js}"></script>
+	<script th:src="@{/resources/honeyArcade/admin/common/js/regex.js}"></script>
+	<script th:src="@{/resources/honeyArcade/admin/common/js/download.js}"></script>
+	<script th:src="@{/resources/honeyArcade/admin/common/js/fileUpload.js}"></script>
+	<script th:src="@{/resources/honeyArcade/admin/member/owner/js/adminMemberOwnerView.js}"></script>
+	
+	<script th:inline="javascript">
+	/* <![CDATA[ */
+	
+	/*]] */
+	</script>
+</body>
+
+</html>

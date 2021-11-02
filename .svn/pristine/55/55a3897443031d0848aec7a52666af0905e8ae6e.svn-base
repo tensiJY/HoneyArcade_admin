@@ -1,0 +1,21 @@
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5" >
+
+<th:block th:fragment="styleFragment">   
+  	<!-- BEGIN GLOBAL MANDATORY STYLES -->
+  	  	<!-- 웹폰트 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
+    
+    
+    <link href="https://fonts.googleapis.com/css?family=Quicksand:400,500,600,700&display=swap" rel="stylesheet">
+    <link th:href="@{/resources/cork/bootstrap/css/bootstrap.css}" rel="stylesheet" type="text/css" />
+    <link th:href="@{/resources/cork/assets/css/plugins.css}" rel="stylesheet" type="text/css" />
+    <link th:href="@{/resources/cork/assets/css/custom.css}" rel="stylesheet" type="text/css" />
+    
+    <!-- END GLOBAL MANDATORY STYLES -->
+</th:block>
+
+<th:block layout:fragment="css"></th:block>
+
+</html>

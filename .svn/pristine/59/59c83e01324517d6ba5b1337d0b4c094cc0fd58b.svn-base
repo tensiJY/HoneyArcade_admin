@@ -1,0 +1,40 @@
+package honeyarcade.admin.common.file;
+
+import org.apache.ibatis.annotations.Mapper;
+
+
+
+@Mapper
+public interface CommonFileMapper {
+
+	/**
+	 * 파일 시퀀스 생성
+	 * @param commonFileVO
+	 * @return
+	 * @throws Exception
+	 */
+	public Integer insertFileSeq(CommonFileVO commonFileVO) throws Exception;
+
+	/**
+	 * 파일 디테일 저장
+	 * @param commonFileVO
+	 * @throws Exception
+	 */
+	public void insertFileDtl(CommonFileVO commonFileVO) throws Exception;
+
+	/**
+	 * 파일 시퀀스 삭제
+	 * @param commonFileVO
+	 * @throws Exception
+	 */
+	public void delFileSeq(CommonFileVO commonFileVO) throws Exception;
+
+	/**
+	 * 파일 디테일 정보 가져오기
+	 * @param commonFileVO
+	 * @return
+	 */
+	public CommonFileVO getFileDtlInfo(CommonFileVO commonFileVO);
+	
+	
+}

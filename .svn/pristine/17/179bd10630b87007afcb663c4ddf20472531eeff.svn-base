@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5" >
+<head>
+	<th:block th:replace="fragments/meta :: metaFragment(title='유료 서비스')"></th:block>
+	
+	
+	<!--  css style  -->
+	<th:block th:replace="fragments/style :: styleFragment"></th:block>
+	<link rel="stylesheet" type="text/css" th:href="@{/resources/cork/plugins/table/datatable/datatables.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/resources/cork/assets/css/elements/custom-pagination.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/resources/cork/plugins/bootstrap-select/bootstrap-select.min.css}">
+</head>
+
+
+<body class="sidebar-noneoverflow">
+    
+	<!--  header  -->
+	<th:block th:replace="fragments/header :: headerFragment"></th:block>
+	
+
+    <!--  BEGIN MAIN CONTAINER  -->
+    <div class="main-container" id="container">
+
+        <div class="overlay"></div>
+        <div class="search-overlay"></div>
+
+		<!--  sidebar  -->
+		<th:block th:replace="fragments/sidebar :: sidebarFragment(main='member', sub='member-event')"></th:block>
+		
+        <!--  BEGIN CONTENT AREA  -->
+        <div id="content" class="main-content">
+            <div class="layout-px-spacing">
+
+
+                <!-- CONTENT AREA -->
+                <div class="row layout-top-spacing">
+                    
+					<div id="tableHover" class="col-lg-12 col-12 layout-spacing">
+						<div class="statbox widget box box-shadow">
+							<div class="widget-header">
+								<div class="row">
+									<div class="col-xl-12 col-md-12 col-sm-12 col-12">
+										<h4>유료 서비스(프로모션)</h4>
+									</div>
+								</div>
+							</div>
+							<div class="widget-content widget-content-area">
+								<ul class="nav nav-tabs  mb-3 mt-3 justify-content-end" id="simpletab" role="tablist">
+								    <li class="nav-item">
+								        <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">이용관리</a>
+								    </li>
+								    <li class="nav-item">
+								        <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">서비스 추가</a>
+								    </li>
+								</ul>
+								<div class="tab-content border-tab" id="simpletabContent">
+								    <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+								        <div class="row justify-content-end mt-2 mr-2">
+											<input type="search" placeholder="상품명을 입력하세요" class="d-inline-block form-control mr-1 col-3">
+											<button class="btn btn-primary">검색</button>
+										</div>
+				          				<div class="table-responsive mb-4 mt-4 text-center">
+			                                <table id="zero-config" class="table table-hover" style="width:100%">
+			                                    <thead>
+			                                        <tr>
+			                                            <th>상품명</th>
+			                                            <th>가격</th>
+			                                            <th>노출 순위</th>
+			                                            <th>건물 광고</th>
+			                                            <th>지역 광고</th>
+			                                            <th>쿠폰</th>
+			                                            <th>생성일</th>
+			                                        </tr>
+			                                    </thead>
+			                                    <tbody>
+			                                        <tr>
+			                                            <td>패키지A</td>
+			                                            <td>20,000원</td>
+			                                            <td>3</td>
+			                                            <td>14일</td>
+			                                            <td>14일</td>
+			                                            <td>7일</td>
+			                                            <td>2021-08-24 14:24</td>
+			                                        </tr>
+			                                        <tr>
+			                                            <td>패키지A</td>
+			                                            <td>20,000원</td>
+			                                            <td>3</td>
+			                                            <td>14일</td>
+			                                            <td>14일</td>
+			                                            <td>7일</td>
+			                                            <td>2021-08-24 14:24</td>
+			                                        </tr>
+			                                        <tr>
+			                                            <td>패키지A</td>
+			                                            <td>20,000원</td>
+			                                            <td>3</td>
+			                                            <td>14일</td>
+			                                            <td>14일</td>
+			                                            <td>7일</td>
+			                                            <td>2021-08-24 14:24</td>
+			                                        </tr>
+			                                    </tbody>
+			                                </table>
+				          				</div>
+				          				<div class="row justify-content-center dataTables_paginate paging_simple_numbers" id="zero-config_paginate">
+					          				<div class="paginating-container pagination-solid">
+											    <ul class="pagination">
+											        <li  class="prev"><a href="javascript:void(0);"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg></a></li>
+											        <li><a href="javascript:void(0);">1</a></li>
+											        <li class="active"><a href="javascript:void(0);">2</a></li>
+											        <li><a href="javascript:void(0);">3</a></li>
+											        <li class="next"><a href="javascript:void(0);"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></a></li>
+											    </ul>
+											</div>
+				          				</div>
+								    </div>
+								    <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
+								        <div>
+								        	<div>
+												<span class="col-2" style="margin-right: 1.6rem;">유료 상품명</span>
+												<input type="text" class="form-control d-inline col-8" style="vertical-align: middle;" placeholder="주관식 입력(예:패키지A, 패키지B, 쿠폰 광고 1주, 지역광고(배너)3일 등)">
+								            </div>
+								            <div class="mt-2">
+												<span class="mr-2 col-2">상품 상세 설명</span>
+												<textarea type="text" class="form-control d-inline col-8" style="vertical-align: middle;" rows="5" placeholder="서술형 입력"></textarea>
+								            </div>
+								            <div class="mt-2 row" style="margin-left: 125px;">
+								            	<div>
+													<span class="col-2">가격 입력</span>
+													<input type="text" class="form-control d-inline col-6" style="vertical-align: middle;" placeholder="000원">
+								            	</div>
+								            	<div>
+								            		<span class="col-2">노출 순위</span>
+												<input type="text" class="form-control d-inline col-6" style="vertical-align: middle;" placeholder="1,2,3">
+								            	</div>
+								            </div>
+								            <div class="row mt-2 ml-3">
+								            	<div style="width: 110px;">
+													<span>상품 유형 선택</span>
+								            	</div>
+												<div class="table-responsive col-8">
+													    <table class="table table-bordered mb-4 text-center">
+													        <tbody>
+													            <tr>
+													                <td class="font-weight-bold">항목</td>
+													                <td class="font-weight-bold">건물 광고(배너)</td>
+													                <td class="font-weight-bold">지역 광고(배너)</td>
+													                <td class="font-weight-bold">쿠폰</td>
+													            </tr>
+													            <tr>
+													                <td class="font-weight-bold">유형선택</td>
+													                 <td class="checkbox-column">
+													                    <div class="custom-control custom-checkbox checkbox-primary">
+													                      <input type="checkbox" class="custom-control-input todochkbox" id="todo-1">
+													                      <label class="custom-control-label" for="todo-1"></label>
+													                    </div>
+													                </td>
+													                <td class="checkbox-column">
+													                    <div class="custom-control custom-checkbox checkbox-primary">
+													                      <input type="checkbox" class="custom-control-input todochkbox" id="todo-2">
+													                      <label class="custom-control-label" for="todo-2"></label>
+													                    </div>
+													                </td>
+													                <td class="checkbox-column">
+													                    <div class="custom-control custom-checkbox checkbox-primary">
+													                      <input type="checkbox" class="custom-control-input todochkbox" id="todo-3">
+													                      <label class="custom-control-label" for="todo-3"></label>
+													                    </div>
+													                </td>
+													            </tr>
+													            <tr>
+													                <td class="font-weight-bold">날짜 입력</td>
+													                <td>
+													                	<select class="selectpicker" data-width="fit">
+																		    <option>7일</option>
+																		    <option>14일</option>
+																		    <option>31일</option>
+																		</select>
+																	</td>
+													                <td>
+													                	<select class="selectpicker" data-width="fit">
+																		    <option>7일</option>
+																		    <option>14일</option>
+																		    <option>31일</option>
+																		</select>
+																	</td>
+													                <td>
+													                	<select class="selectpicker" data-width="fit">
+																		    <option>7일</option>
+																		    <option>14일</option>
+																		    <option>31일</option>
+																		</select>
+																	</td>
+													            </tr>
+													        </tbody>
+													    </table>
+												</div>
+											</div>
+											<div class="d-flex justify-content-end col-9">
+												<button class="btn btn-primary mr-2">저장</button>
+												<button class="btn btn-danger">취소</button>
+											</div>
+								        </div>
+								    </div>
+								</div>
+								
+							</div>
+						</div>
+					</div>
+                    
+
+                </div>
+
+
+                <!-- CONTENT AREA -->
+
+            </div>
+            
+            
+            <!--  footer   -->
+            <th:block th:replace="fragments/footer"></th:block>
+			
+            
+        </div>
+        <!--  END CONTENT AREA  -->
+
+    </div>
+    <!-- END MAIN CONTAINER -->
+	
+
+
+
+	<th:block th:replace="fragments/script :: scriptFragment"></th:block>
+	<script th:src="@{/resources/cork/plugins/bootstrap-select/bootstrap-select.min.js}"></script>
+	<script th:src="@{/resources/honeyArcade/admin/common/js/areaSelect.js}"></script>
+	<script th:src="@{/resources/cork/plugins/table/datatable/datatables.js}"></script>
+	<script th:inline="javascript">
+	/* <![CDATA[ */
+		
+	/*]] */
+	</script>
+</body>
+
+</html>

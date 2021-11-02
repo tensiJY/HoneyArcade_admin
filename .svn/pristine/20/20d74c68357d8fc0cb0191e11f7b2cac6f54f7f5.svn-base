@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="honeyarcade.admin.common.fcm.BatchFcmMapper">
+
+	<select id="getUserList" resultType="honeyarcade.admin.common.fcm.BatchFcmVO">
+	<![CDATA[
+		select
+			user_device_token 	
+			, user_device_os 
+			, user_id 
+		from 
+			tb_user
+		where
+			user_device_token != ''
+			and del_flag = 'N'
+	]]>
+	</select>
+	
+	<select id="getPushList" resultType="honeyarcade.admin.common.fcm.BatchFcmVO">
+	<![CDATA[
+		select 
+			  push_seq
+			, push_text
+			, push_title
+			, push_type
+			, build_seq
+			, store_seq
+			, push_title
+		from 
+			tb_push
+		where
+				push_status = 2
+			and concat(push_rez_dt, ' ', push_rez_time, ':', '00') between concat(substring(convert(char(25), getdate(), 25), 1, 14), '00:00') and concat(substring(convert(char(25), getdate(), 25), 1, 14), '59:59')
+			and del_flag ='N'
+	]]>
+	</select>
+	
+	<update id="updatePush" parameterType="honeyarcade.admin.common.fcm.BatchFcmVO">
+	<![CDATA[
+		update
+			tb_push
+		set
+			push_status = #{push_status}
+		where
+			push_seq = #{push_seq}
+	]]>
+	</update>
+
+</mapper>

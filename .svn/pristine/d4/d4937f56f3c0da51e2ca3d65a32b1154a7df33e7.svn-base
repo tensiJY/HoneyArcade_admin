@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5" >
+<head>
+	<th:block th:replace="fragments/meta :: metaFragment(title='일반 회원', useMetaCsrf='true')"></th:block>
+	
+	<!--  css style  -->
+	<th:block th:replace="fragments/style :: styleFragment"></th:block>
+	<link rel="stylesheet" type="text/css" th:href="@{/resources/cork/plugins/table/datatable/datatables.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/resources/cork/assets/css/elements/custom-pagination.css}">
+</head>
+
+
+<body class="sidebar-noneoverflow">
+    
+	<!--  header  -->
+	<th:block th:replace="fragments/header :: headerFragment"></th:block>
+	
+
+    <!--  BEGIN MAIN CONTAINER  -->
+    <div class="main-container" id="container">
+
+        <div class="overlay"></div>
+        <div class="search-overlay"></div>
+
+		<!--  sidebar  -->
+		<th:block th:replace="fragments/sidebar :: sidebarFragment(main='member', sub='member-user')"></th:block>
+		        
+        <!--  BEGIN CONTENT AREA  -->
+        <div id="content" class="main-content">
+            <div class="layout-px-spacing">
+
+
+                <!-- CONTENT AREA -->
+                <div class="row layout-top-spacing">
+                    
+					<div id="tableHover" class="col-lg-12 col-12 layout-spacing">
+						<div class="statbox widget box box-shadow">
+							<div class="widget-header">
+								<div class="row">
+									<div class="col-xl-12 col-md-12 col-sm-12 col-12">
+										<h4>일반 회원</h4>
+									</div>
+								</div>
+							</div>
+							<div class="widget-content widget-content-area">
+								<div>
+									<div class="col-12 d-flex justify-content-sm-end">
+										<div class="dataTables_length" id="zero-config_length">
+										<label>회원수 :  
+											<span>[[${totalCount}]]명</span>
+										</label>
+										</div>
+									</div>
+			          			</div>
+		          				<div class="table-responsive mb-4 mt-2 text-center">
+	                                <table id="zero-config" class="table table-hover" style="width:100%">
+	                                    <thead>
+	                                        <tr>
+	                                            <th>No.</th>
+	                                            <th>ID</th>
+	                                            <th>경로</th>
+	                                            <th>Mail</th>
+	                                            <th>가입일</th>
+	                                            <th>다운 쿠폰 수</th>
+	                                            <th>쿠폰 사용 수</th>
+	                                            <th>접속 횟수</th>
+	                                            <th>회원정보</th>
+	                                        </tr>
+	                                    </thead>
+	                                    <tbody>	                         
+		                                	<th:block th:if="${userList.size() == 0}">
+		                                		<tr>
+		                                			<td colspan="9">
+		                                				조회된 데이터가 없습니다
+		                                			</td>
+		                                		</tr>
+		                                	</th:block>
+											
+											<th:block th:if="${userList.size() != 0}">
+												<th:block th:each="list : ${userList}">
+			                                		<tr>
+														<td th:text="${list.row_num}"></td>
+			                                            <td th:text="${list.user_id}"></td>
+			                                            <td>
+			                                            	<th:block th:if="${list.user_provider == 1}">
+			                                            		일반가입
+			                                            	</th:block>
+			                                            	<th:block th:if="${list.user_provider == 2}">
+			                                            		카카오
+			                                            	</th:block>
+			                                            	<th:block th:if="${list.user_provider == 3}">
+			                                            		구글
+			                                            	</th:block>			                                            				                                            	
+			                                            </td>
+			                                            <td th:text="${list.user_email}"></td>
+			                                            <td th:text="${list.user_join_dt}"></td>
+			                                            <td th:text="${list.total_coupon}"></td>
+			                                            <td th:text="${list.used_coupon}"></td>
+			                                            <td th:text="${list.count_login}"></td>
+			                                            <td>
+			                                            	<input type="button" class="btn btn-primary mb-2 btn-sm myModal" value="클릭" th:data-email="${list.user_email}" th:data-name="${list.user_name}" th:data-id="${list.user_id}">
+			                                            </td>
+			                                		</tr>
+												</th:block>
+		                                	</th:block>
+	                                      
+	                                    </tbody>
+	                                </table>
+		          				</div>
+		          				<div class="row justify-content-center dataTables_paginate paging_simple_numbers" id="zero-config_paginate">
+		          					<th:block th:if="${userList.size() == 0}">
+			          					<div class="paginating-container pagination-solid">
+			          						 <ul class="pagination">
+												<li  class="prev"><a href="javascript:void(0);"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg></a></li>
+												<li  class="active"><a href="javascript:void(0);">1</a></li>
+												<li class="next"><a href="javascript:void(0);"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></a></li>		          						 
+			          						 </ul>
+			          					</div>
+		          					</th:block>
+		          					
+		          					<th:block th:if="${userList.size() != 0}">
+				          				<div class="paginating-container pagination-solid">
+										    <ul class="pagination">
+										    	<th:block th:if="${pageUtil.startPage == 1}">
+										        	<li  class="prev"><a href="javascript:void(0);"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg></a></li>
+										    	</th:block>
+										    	
+										    	<th:block th:if="${pageUtil.startPage != 1}">
+										    		<li  class="prev">
+										    			<a th:href="@{/admin/member/user/list(nowPage=${pageUtil.startPage-1}, listCount=${listCount} )}">
+										    				<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline>
+										    				</svg>
+										    			</a>
+										    		</li>
+										    	</th:block>
+										    	
+										    	<li class="paginate_button page-item" th:each="page : ${#numbers.sequence(pageUtil.startPage, pageUtil.endPage)}" th:classappend="${page == nowPage}? 'active'">
+										        	<a th:text="${page}" th:href="@{/admin/member/user/list(nowPage=${page}, listCount=${listCount}  )}" >1</a>
+										    	</li>
+										        
+										        <th:block th:if="${pageUtil.endPage == pageUtil.totalPage}">
+										        	<li class="next"><a href="javascript:void(0);"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></a></li>
+										        </th:block>
+										        
+										        <th:block th:if="${pageUtil.endPage != pageUtil.totalPage}">
+										        	<li class="next">
+										        		<a th:href="@{/admin/member/user/list(nowPage=${pageUtil.endPage+1},  listCount=${listCount} )}">
+										        			<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline>
+										        			</svg>
+										        		</a>
+										        	</li>
+										        </th:block>
+										    </ul>
+										</div>
+		          					</th:block>
+		          				</div>
+		          				
+
+							
+							</div>
+							
+						</div>
+					</div>
+                    
+
+                </div>
+
+
+                <!-- CONTENT AREA -->
+
+            </div>
+            
+            
+            <!--  footer   -->
+            <th:block th:replace="fragments/footer"></th:block>
+			
+            
+        </div>
+        <!--  END CONTENT AREA  -->
+
+    </div>
+    <!-- END MAIN CONTAINER -->
+	
+
+<!-- Modal -->
+<div class="modal fade" id="userInfo" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+	    <div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel">회원 정보</h5>
+			</div>
+			<div class="modal-body">
+				<form class="form-vertical" action="#">
+					<div class="form-group mb-4">
+						<label class="control-label">아이디</label>
+						<input type="text" name="pop_user_id" class="form-control" value=""readonly>
+					</div>
+					<div class="form-group mb-4">
+						<label class="control-label">닉네임</label>
+						<input type="text" name="pop_user_name" class="form-control" value="" readonly>
+					</div>
+					<div class="form-group mb-4">
+						<label class="control-label">Email</label>
+						<div class="input-group"> 
+							<div class="input-group-prepend">
+								<div class="input-group-text">@</div>
+							</div>
+					            <input type="text" name="pop_user_email" class="form-control" value="" readonly> 
+					    </div> 
+					</div>
+				</form>
+	            <div class="modal-footer">
+	                <button type="button" class="btn btn-primary" data-dismiss="modal">확인</button>
+	            </div>
+	        </div>
+	    </div>
+	</div>
+</div>
+
+	<th:block th:replace="fragments/script :: scriptFragment(useScriptCsrf='true')"></th:block>
+	<script th:src="@{/resources/honeyArcade/admin/member/user/js/adminMemberUserList.js}"></script>
+	<script th:src="@{/resources/cork/plugins/table/datatable/datatables.js}"></script>
+	<script th:inline="javascript">
+	/* <![CDATA[ */
+		
+	/*]] */
+	</script>
+</body>
+
+</html>

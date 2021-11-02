@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5" >
+<head>
+	<th:block th:replace="fragments/meta :: metaFragment(title='점주 웹 이미지', useMetaCsrf='true')"></th:block>
+		
+	<!--  css style  -->
+	<th:block th:replace="fragments/style :: styleFragment"></th:block>
+</head>
+
+
+<body class="sidebar-noneoverflow">
+    
+	<!--  header  -->
+	<th:block th:replace="fragments/header :: headerFragment"></th:block>
+	
+
+    <!--  BEGIN MAIN CONTAINER  -->
+    <div class="main-container" id="container">
+
+        <div class="overlay"></div>
+        <div class="search-overlay"></div>
+
+		<!--  sidebar  -->
+		<th:block th:replace="fragments/sidebar :: sidebarFragment(main='set', sub='set-web')"></th:block>
+		        
+        <!--  BEGIN CONTENT AREA  -->
+        <div id="content" class="main-content">
+            <div class="layout-px-spacing">
+
+
+                <!-- CONTENT AREA -->
+                <div class="row layout-top-spacing">
+                    
+					<div id="" class="col-lg-6 col-12 layout-spacing">
+						<div class="statbox widget box box-shadow">
+							<div class="widget-header">
+								<div class="row">
+									<div class="col-xl-12 col-md-12 col-sm-12 col-12">
+										<h4>점주용 홈페이지 - 회사소개</h4>
+									</div>
+								</div>
+							</div>
+							<div class="widget-content widget-content-area">
+							
+								
+									<label for="webImgFile">
+										<span class="btn btn-primary">이미지 첨부</span>
+									</label>
+									
+									<input type="file" accept="image/*"  id="webImgFile" style="display:none;" name="file">
+									
+									<input class="btn btn-primary" type="button" value="미리보기" id="webImgPreViewBtn" disabled>
+									<input class="btn btn-primary" type="button" value="저장" id="webImgSaveBtn" disabled>
+									<input class="btn btn-primary" type="button" value="확인" id="webImgBtn" disabled>
+																	
+							</div>
+							
+							<div id="imgArea1" class="widget-content widget-content-area" style="text-align: center;">
+								<img th:src="@{/resources/honeyArcade/img/backImg.png}" style="width:80%;">
+							</div>
+							
+						</div>
+					</div>
+					
+					<div id="" class="col-lg-6 col-12 layout-spacing">
+						<div class="statbox widget box box-shadow">
+							<div class="widget-header">
+								<div class="row">
+									<div class="col-xl-12 col-md-12 col-sm-12 col-12">
+										<h4>점주용 홈페이지 - 유료 상품 혜택 소개</h4>
+									</div>
+								</div>
+							</div>
+							<div class="widget-content widget-content-area">
+								<label for="eventImgFile">
+									<span class="btn btn-primary">이미지 첨부</span>
+								</label>
+								
+								<input type="file" accept="image/*"  id="eventImgFile" style="display:none;" name="file">
+								
+								<input class="btn btn-primary" type="button" value="미리보기" id="eventImgPreViewBtn" disabled>
+								<input class="btn btn-primary" type="button" value="저장" id="eventImgSaveBtn" disabled>
+								<input class="btn btn-primary" type="button" value="확인" id="eventImgBtn" disabled> 
+								
+							</div>
+							
+							<div id="imgArea2" class="widget-content widget-content-area" style="text-align: center;">
+								<img th:src="@{/resources/honeyArcade/img/backImg.png}" style="width:80%;">
+							</div>
+						</div>
+					</div>			
+                </div>
+
+
+                <!-- CONTENT AREA -->
+
+            </div>
+            
+            
+            <!--  footer   -->
+            <th:block th:replace="fragments/footer"></th:block>
+			
+            
+        </div>
+        <!--  END CONTENT AREA  -->
+
+    </div>
+    <!-- END MAIN CONTAINER -->
+    
+<!-- Modal -->
+<div class="modal fade" id="ImgInfo" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
+	<div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 1280px;">
+		<div class="modal-content">
+			<div class="modal-header" style="max-height: 80px;">
+				<h5 id="modal-title" class="modal-title"></h5>
+				<!--<button type="button" class="close" data-dismiss="modal" aria-label="Close">X</button>-->
+				
+			</div>
+			<div class="modal-body">
+				<div id="modal-img-box" style="width: 1280px; height:600px;text-align: center;">
+					
+				</div>
+		 	</div>
+			<div class="modal-footer">
+				<button class="btn btn-primary" data-dismiss="modal">확인</button>
+			</div>
+		</div>
+	</div>
+</div>    
+
+<div id="imgClone">
+	<img class="imgClone" th:src="@{/resources/honeyArcade/img/backImg.png}" style="width:80%;">
+</div>    
+    
+<div id="fileClone" class="display-none">
+	<div>
+		<input type="hidden" name="file_dtl_desc" value="">
+		<input type="hidden" name="file_dtl_ext" value="">
+		<input type="hidden" name="file_dtl_origin" value="">
+		<input type="hidden" name="file_dtl_path" value="">
+		<input type="hidden" name="file_dtl_url_path" value="">
+		<input type="hidden" name="file_type" value="">
+		<input type="hidden" name="file_seq" value="">
+		<img class="file_image">
+	</div>
+</div>  
+  
+<!--  파일업로드 이미지 첨부 이벤트 -회사소개 미리보기  -->
+<div id="webImgFilePrevBox" class="display-none">
+
+</div>        
+
+<!--  파일업로드 이미지 첨부 이벤트 - 유료상품혜택소개 미리보기  -->
+<div id="eventImgPrevBox" class="display-none">
+
+</div> 
+
+<!--  회사소개 미리 보기 이벤트  -->
+<div id="savedWebImg">
+	<th:block th:if="${honeyArcadeVO != null}">
+		<div>
+			<input type="hidden" name="file_seq"	th:value="${honeyArcadeVO.file_seq}">
+			<input type="hidden" name="img_seq" 	th:value="${honeyArcadeVO.honeyarcade_seq}">
+			<img class="file_image" th:src="${honeyArcadeVO.file_dtl_url_path}">
+		</div>
+	</th:block>
+</div>
+
+<!-- 유료 상품 혜택소개 이벤트  -->
+<div id="savedEventImg">
+	<th:block th:if="${benefitVO != null}">
+		<div>
+			<input type="hidden" name="file_seq"    th:value="${benefitVO.file_seq}">
+			<input type="hidden" name="img_seq"		th:value="${benefitVO.benefit_seq}">
+			<img class="file_image" th:src="${benefitVO.file_dtl_url_path}">
+		</div>
+	</th:block>
+</div>
+
+
+	<th:block th:replace="fragments/script :: scriptFragment"></th:block>
+	<th:block th:replace="fragments/script :: scriptFragment(useScriptCsrf='true')"></th:block>
+	<script th:src="@{/resources/honeyArcade/admin/common/js/regex.js}"></script>
+	<script th:src="@{/resources/honeyArcade/admin/common/js/fileUpload.js}"></script>
+	<script th:src="@{/resources/honeyArcade/admin/set/web/js/adminSetWebList.js}"></script>
+	
+	<script th:inline="javascript">
+	/* <![CDATA[ */
+	/*
+	$(function(){
+		
+		
+		//	회사소개 이미지 저장
+		$("#webImgSaveBtn").on('click', function(){
+			
+			var _v = $("#webImgFile").val();
+			
+			if(_v == ""){
+				return alert("이미지 파일을 첨부해주세요");
+			}
+			
+			var _isImg = koreasoft.modules.regex.isImgExt(_v);
+			
+			if(!_isImg){
+				$("#webImgFile").val("");
+				return alert('이미지만 업로드 할수 있습니다');
+			}
+			
+			
+			_doSaveImg("form#webImgForm");		
+
+		});
+		
+
+		
+		//	회사소개 이미지 파일 등록 시 체인지 이벤트 : 이미지 첨부
+		$("#webImgFile").on('change', function(e){
+			
+			
+			var _isImg = koreasoft.modules.regex.isImgExt($(this).val());
+			
+			if(!_isImg){
+				$(this).val("")
+				return alert('이미지만 업로드 할수 있습니다');
+			}
+			
+			$("#webImgPreViewBtn").attr('disabled', false);
+			$("#webImgSaveBtn").attr('disabled', false);
+			
+			_appendImg("div#webImgContainer");
+			
+		})
+		
+				
+		//	회사소개 미리보기
+		$("#webImgPreViewBtn").on('click', function(){
+			if($("#webImgContainer").children().length == 0 ) {return;}
+			
+			var _target = $("#webImgContainer").children().attr('src')
+			_doPop(_target);
+		});
+		
+		
+		//	회사소개 확인
+		$("#webImgBtn").on("click", function(){
+			
+			if($("#webImgPrevContainer").children().length == 0 ) {return;}
+			
+			var _target = $("#webImgPrevContainer").children().attr('src')
+			_doPop(_target);
+		});
+	
+		
+		
+		//	유료 상품 혜택 소개 이미지 저장
+		$("#eventImgSaveBtn").on('click', function(){
+			
+			var _v = $("#eventImgFile").val();
+			
+			if(_v == ""){
+				return alert("이미지 파일을 첨부해주세요");
+			}
+			
+			var _isImg = koreasoft.modules.regex.isImgExt(_v);
+			
+			if(!_isImg){
+				$("#eventImgFile").val("");
+				return alert('이미지만 업로드 할수 있습니다');
+			}
+			
+			
+			_doSaveImg("form#eventImgForm");		
+
+		});
+		
+		//	유료 상품 혜택 소개 이미지 : 이미지 첨부
+		$("#eventImgFile").on('change', function(e){
+			
+			
+			var _isImg = koreasoft.modules.regex.isImgExt($(this).val());
+			
+			if(!_isImg){
+				$(this).val("")
+				return alert('이미지만 업로드 할수 있습니다');
+			}
+			
+			$("#eventImgPreViewBtn").attr('disabled', false);
+			$("#eventImgSaveBtn").attr('disabled', false);
+			_appendImg("div#eventImgContainer");
+			
+		})
+		
+		
+		//	유료 상품 혜택 소개 미리보기
+		$("#eventImgPreViewBtn").on('click', function(){
+			
+			if($("#eventImgContainer").children().length == 0 ) {return;}
+			
+			var _target = $("#eventImgContainer").children().attr('src')
+			_doPop(_target);
+		});
+		
+		
+		//	유료 상품 혜택 확인
+		$("#eventImgBtn").on("click", function () {
+
+			if ($("#eventImgPrevContainer").children().length == 0) {return;}
+
+			var _target = $("#eventImgPrevContainer").children().attr('src')
+			_doPop(_target);
+		});
+		
+		//	미리보기 이미지 등록
+		function _appendImg(querySelector){
+			
+			if($(querySelector).children().length != 0 ){
+				$(querySelector).children().remove();
+			}
+			
+			var reader = new FileReader();
+			reader.onload = function(event){
+				
+				var img = document.createElement("img");
+				img.setAttribute("src", event.target.result); 
+				document.querySelector(querySelector).appendChild(img);
+
+			}
+			reader.readAsDataURL(event.target.files[0]);
+		};
+		
+		//	이미지 저장
+		function _doSaveImg(target){
+			
+			var _form = document.querySelector(target);
+			var _formData = new FormData(_form);
+			
+		
+			
+			$.ajax({
+				type: "POST",
+				enctype: 'multipart/form-data',
+				url: "/admin/set/web/saveImg",
+				data: _formData,
+				timeout: 600000,
+				processData: false,
+				contentType: false,
+				beforeSend: function (xhr) {
+					xhr.setRequestHeader(_csrfHeader, _csrfToken);
+				},
+				success: function (data) {
+					
+					if (data.upload_result == false || data.upload_result == 'false') {
+						alert('파일 저장에 실패하였습니다. 관리자에게 문의 바랍니다.')
+					}else{
+						alert('저장에 성공하였습니다')
+						window.location.reload();
+					}
+					
+					
+				},
+				error: function (e) {
+					//console.log(e)
+				}
+			});
+			
+			
+		};
+		
+		
+		//	미리보기 : 팝업으로 이미지 보기 
+		function _doPop(target){
+			
+			var _iframe = "<iframe width='100%;' height='100%;' src='" + target +"'</iframe>";
+			
+			var _x = window.open();
+			_x.document.open();
+			_x.document.write(_iframe);
+			_x.document.close();
+		};
+		
+	})
+	*/
+	/*]] */
+	</script>
+</body>
+
+</html>

@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+	<th:block th:replace="fragments/meta :: metaFragment(title='건물 등록', useMetaCsrf='true')"></th:block>
+
+	<!--  css style  -->
+	<th:block th:replace="fragments/style :: styleFragment"></th:block>
+
+	<!--  select  -->
+	<link rel="stylesheet" type="text/css"
+		th:href="@{/resources/cork/plugins/bootstrap-select/bootstrap-select.min.css}">
+	<!--  search  -->
+	<link th:href="@{/resources/cork/assets/css/elements/search.css}" rel="stylesheet" type="text/css" />
+	<!--  checkbox  -->
+	<link rel="stylesheet" type="text/css" th:href="@{/resources/cork/assets/css/forms/theme-checkbox-radio.css}">
+	<!--  table  -->
+	<link th:href="@{/resources/cork/assets/css/tables/table-basic.css}" rel="stylesheet" type="text/css">
+	<!--  paginating  -->
+	<link th:href="@{/resources/cork/assets/css/elements/custom-pagination.css}" rel="stylesheet" type="text/css">
+
+	<link rel="stylesheet" type="text/css" th:href="@{/resources/honeyArcade/admin/common/css/common.css}">
+</head>
+
+
+<body class="sidebar-noneoverflow">
+
+	<!--  header  -->
+	<th:block th:replace="fragments/header :: headerFragment"></th:block>
+
+
+	<!--  BEGIN MAIN CONTAINER  -->
+	<div class="main-container" id="container">
+
+		<div class="overlay"></div>
+		<div class="search-overlay"></div>
+
+		<!--  sidebar  -->
+		<th:block th:replace="fragments/sidebar :: sidebarFragment(main='mgt', sub='mgt-build')"></th:block>
+
+		<!--  BEGIN CONTENT AREA  -->
+		<div id="content" class="main-content">
+			<div class="layout-px-spacing">
+
+
+				<!-- CONTENT AREA -->
+				<div class="row layout-top-spacing">
+
+					<div id="tableHover" class="col-lg-12 col-12 layout-spacing">
+						<div class="statbox widget box box-shadow">
+							<div class="widget-header">
+								<div class="row">
+									<div class="col-xl-12 col-md-12 col-sm-12 col-12">
+										<h4>건물 등록</h4>
+									</div>
+								</div>
+							</div>
+
+							<div class="widget-content widget-content-area">
+
+								<!-- select -->
+								<div class="row">
+									<div class="col-sm-12">
+										<form id="buildSearchForm" name="buildSearchForm"
+											th:action="@{/admin/mgt/build/list}">
+											<select class="selectpicker" data-live-search="true" title="시,도"
+												id="sidoSelect" name="sido_seq" data-width="fit">
+
+												<th:block th:if="${sidoList.size()!=0}">
+													<th:block th:each="list : ${sidoList}">
+														<option th:value="${list.sido_seq}" th:text="${list.sido_name}"
+															th:selected="${adminMgtBuildVO.sido_seq == list.sido_seq}">
+														</option>
+													</th:block>
+												</th:block>
+											</select>
+
+											<select class="select-picker" data-live-search="true" title="군,구"
+												id="sigunguSelect" name="sigungu_seq" data-width="fit">
+												<!-- 검색 조건이면 -->
+												<th:block th:if="${type == 'search'}">
+													<th:block th:if="${sigunguList != null}">
+														<th:block th:if="${sigunguList.size() != 0}">
+															<!-- 값이 있는경우 -->
+															<th:block th:each="list : ${sigunguList}">
+																<option th:value="${list.sigungu_seq}"
+																	th:text="${list.sigungu_name}"
+																	th:selected="${adminMgtBuildVO.sigungu_seq == list.sigungu_seq}">
+																</option>
+															</th:block>
+														</th:block>
+													</th:block>
+												</th:block>
+
+											</select>
+
+											<select class="select-picker" data-live-search="true" title="지역"
+												id="dongSelect" name="dong_seq" data-width="fit">
+												<!--  검색 조건이면  -->
+												<th:block th:if="${type == 'search'}">
+													<th:block th:if="${dongList != null}">
+														<th:block th:if="${dongList.size() != 0}">
+															<th:block th:each="list : ${dongList}">
+																<option th:value="${list.dong_seq}"
+																	th:text="${list.dong_name}"
+																	th:selected="${adminMgtBuildVO.dong_seq == list.dong_seq}">
+																</option>
+															</th:block>
+														</th:block>
+													</th:block>
+												</th:block>
+											</select>
+
+
+
+											<select class="select-picker" data-live-search="true" title="결과"
+												id="listCount" name="listCount" data-width="fit">
+												<option th:value="20" th:text="20" th:selected="${listCount == 20}">
+												</option>
+												<option th:value="25" th:text="25" th:selected="${listCount == 25}">
+												</option>
+												<option th:value="30" th:text="30" th:selected="${listCount == 30}">
+												</option>
+												<option th:value="35" th:text="35" th:selected="${listCount == 35}">
+												</option>
+												<option th:value="40" th:text="40" th:selected="${listCount == 40}">
+												</option>
+												<option th:value="45" th:text="45" th:selected="${listCount == 45}">
+												</option>
+												<option th:value="50" th:text="50" th:selected="${listCount == 50}">
+												</option>
+											</select>
+											<input type="search" id="search_text" name="search_text"
+												placeholder="검색어를 입력하세요" class="d-inline-block form-control col-3"
+												th:value="${adminMgtBuildVO.search_text}">
+											<input type="hidden" id="type" name="type" th:value="${type}">
+											<input type="button" class="btn btn-primary mb-2" value="검색" id="searchBtn">
+										</form>
+
+
+
+									</div>
+
+								</div>
+
+								<!-- 테이블 -->
+								<div class="row mt-3">
+									<div class="col-sm-12">
+										<div class="table-responsive">
+
+											<table class="table table-bordered table-hover mb-4 text-center">
+												<thead>
+													<tr>
+														<th>선택</th>
+														<th>No.</th>
+														<th>시,도</th>
+														<th>군,구</th>
+														<th>지역</th>
+														<th>건물</th>
+														<th>상태</th>
+														<th>관리</th>
+													</tr>
+												</thead>
+												<tbody>
+													<th:block th:if="${buildList.size()==0}">
+														<td colspan="8" style='text-align: center;'>조회된 데이터가 없습니다</td>
+													</th:block>
+
+
+													<th:block th:if="${buildList.size()!=0}">
+														<th:block th:each="list : ${buildList}">
+
+															<tr class="build-list">
+																<td class="td-chk-evt">
+																	<div>
+																		<input type="checkbox" name="chk_build_seq"
+																			th:value="${list.build_seq}"
+																			data-th-build-status="${list.build_status}"
+																			data-th-build-name="${list.build_name}"
+																			data-th-list-idx="${listStat.count}">
+																	</div>
+																</td>
+																<td>
+
+																	<span th:text="${list.row_num}"></span>
+																</td>
+
+																<td>
+																	<span th:text="${list.sido_name}"></span>
+																</td>
+
+																<td>
+																	<span th:text="${list.sigungu_name}"></span>
+																</td>
+
+																<td>
+																	<span th:text="${list.dong_name}"></span>
+																</td>
+																<td>
+																	<span th:text="${list.build_name}"></span>
+																</td>
+																<td>
+																	<th:block th:if="${list.build_status == 0}">
+																		<span th:text="'비활성화'"></span>
+																	</th:block>
+
+																	<th:block th:if="${list.build_status == 1}">
+																		<span th:text="'활성화'"></span>
+																	</th:block>
+																</td>
+
+																<td>
+																	<form method="POST" name="dtlWriteForm"
+																		th:action="@{/admin/mgt/build/dtlWrite}">
+																		<input type="hidden" th:value="${type}"
+																			name="type">
+																		<input type="hidden" th:value="${nowPage}"
+																			name="nowPage">
+																		<input type="hidden"
+																			th:value="${list.build_name}"
+																			name="build_name">
+																		<input type="hidden"
+																			th:value="${list.build_seq}"
+																			name="build_seq">
+
+																		<th:block th:if="${type == 'search'}">
+																			<input type="hidden" name="listCount"
+																				th:value="${listCount}">
+																			<input type="hidden" name="sido_seq"
+																				th:value="${AdminMgtBuildVO.sido_seq}">
+																			<input type="hidden" name="sigungu_seq"
+																				th:value="${AdminMgtBuildVO.sigungu_seq}">
+																			<input type="hidden" name="dong_seq"
+																				th:value="${AdminMgtBuildVO.dong_seq}">
+																			<input type="hidden" name="search_text"
+																				th:value="${AdminMgtBuildVO.search_text}">
+																		</th:block>
+																	</form>
+
+																	<input type="button"
+																		class="btn btn-dark btn-sm dtlWriteBtn"
+																		value="이동">
+																</td>
+															</tr>
+														</th:block>
+													</th:block>
+
+
+												</tbody>
+											</table>
+										</div>
+									</div>
+								</div>
+
+
+								<!-- 페이징 네이션 -->
+								<div class="row">
+									<div class="col-sm-12">
+
+										<div class="paginating-container pagination-solid">
+											<th:block th:if="${buildList.size()==0}">
+												<ul class="pagination">
+													<li class="prev"><a href="javascript:void(0);"><svg
+																xmlns="http://www.w3.org/2000/svg" width="24"
+																height="24" viewBox="0 0 24 24" fill="none"
+																stroke="currentColor" stroke-width="2"
+																stroke-linecap="round" stroke-linejoin="round"
+																class="feather feather-chevron-left">
+																<polyline points="15 18 9 12 15 6"></polyline>
+															</svg></a></li>
+													<li>
+														<a th:text="1"
+															th:href="@{/admin/mgt/build/list(nowPage=1)}"></a>
+													</li>
+													<li class="next"><a href="javascript:void(0);"><svg
+																xmlns="http://www.w3.org/2000/svg" width="24"
+																height="24" viewBox="0 0 24 24" fill="none"
+																stroke="currentColor" stroke-width="2"
+																stroke-linecap="round" stroke-linejoin="round"
+																class="feather feather-chevron-right">
+																<polyline points="9 18 15 12 9 6"></polyline>
+															</svg></a></li>
+												</ul>
+											</th:block>
+
+
+											<th:block th:if="${buildList.size()!=0}">
+												<ul class="pagination">
+													<!--  이전 -->
+													<th:block th:if="${pageUtil.startPage == 1}">
+														<li class="prev">
+															<a href="javascript:void(0);">
+																<svg xmlns="http://www.w3.org/2000/svg" width="24"
+																	height="24" viewBox="0 0 24 24" fill="none"
+																	stroke="currentColor" stroke-width="2"
+																	stroke-linecap="round" stroke-linejoin="round"
+																	class="feather feather-chevron-left">
+																	<polyline points="15 18 9 12 15 6"></polyline>
+																</svg>
+															</a>
+														</li>
+													</th:block>
+
+													<!--  이전 -->
+													<th:block th:if="${pageUtil.startPage != 1}">
+														<li class="prev">
+															<a
+																th:href="@{/admin/mgt/build/list( nowPage=${pageUtil.startPage-1}, type=${type}, sido_seq=${adminMgtBuildVO.sido_seq}, sigungu_seq=${adminMgtBuildVO.sigungu_seq}, dong_seq=${adminMgtBuildVO.dong_seq}, search_text=${adminMgtBuildVO.search_text}, listCount=${listCount}  )}">
+
+																<svg xmlns="http://www.w3.org/2000/svg" width="24"
+																	height="24" viewBox="0 0 24 24" fill="none"
+																	stroke="currentColor" stroke-width="2"
+																	stroke-linecap="round" stroke-linejoin="round"
+																	class="feather feather-chevron-left">
+																	<polyline points="15 18 9 12 15 6"></polyline>
+																</svg>
+															</a>
+														</li>
+													</th:block>
+
+													<!--  [1][2][3]  -->
+													<li th:each="page : ${#numbers.sequence(pageUtil.startPage, pageUtil.endPage)}" th:classappend="${page == nowPage}? 'active'">
+		                                            	<a th:text="${page}" th:href="@{/admin/mgt/build/list(	nowPage=${page}, type=${type}, sido_seq=${adminMgtBuildVO.sido_seq}, sigungu_seq=${adminMgtBuildVO.sigungu_seq}, dong_seq=${adminMgtBuildVO.dong_seq}, search_text=${adminMgtBuildVO.search_text}, listCount=${listCount}  )}"></a>
+		                                            </li>
+		                                            
+		                                         
+		                                            <!--  다음 -->
+		                                            <th:block th:if="${pageUtil.endPage == pageUtil.totalPage}">
+		                                            <li class="next">
+		                                            	<a href="javascript:void(0);">
+		                                            		<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right"><polyline points="9 18 15 12 9 6"></polyline></svg>
+		                                            	</a>
+		                                            </li>
+		                                            </th:block>
+		                                            
+		                                            <!--  다음 -->
+		                                            <th:block th:if="${pageUtil.endPage != pageUtil.totalPage}">
+													<li class="next">
+		                                            	<a th:href="@{/admin/mgt/build/list( nowPage=${pageUtil.endPage+1}, type=${type}, sido_seq=${adminMgtBuildVO.sido_seq}, sigungu_seq=${adminMgtBuildVO.sigungu_seq}, dong_seq=${adminMgtBuildVO.dong_seq}, search_text=${adminMgtBuildVO.search_text} , listCount=${listCount} )}">
+		                                            		<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right"><polyline points="9 18 15 12 9 6"></polyline></svg>
+		                                            	</a>
+		                                            </li>
+		                                            </th:block>
+		                                            
+		                                        </ul>
+											</th:block>
+	                                    </div>
+											
+										</div>
+									</div>
+									
+									
+									<!-- 버튼 -->
+									<div class="row float-right">
+										<div class="col-sm-12">
+											<input type="button" class="btn btn-primary" value="추가" id="addBtn">
+											<input type="button" class="btn btn-primary" value="삭제" id="delBtn">
+											<input type="button" class="btn btn-primary" value="활성화" id="enableBtn">
+											<input type="button" class="btn btn-danger" value="비활성화" id="disableBtn">	
+										</div>
+									</div>
+							</div>
+						</div>
+					</div>
+                    
+
+                </div>
+
+
+                <!-- CONTENT AREA -->
+
+            </div>
+            
+            
+            <!--  footer   -->
+            <th:block th:replace="fragments/footer"></th:block>
+			
+            
+        </div>
+        <!--  END CONTENT AREA  -->
+
+    </div>
+    <!-- END MAIN CONTAINER -->
+	
+		
+	<th:block th:replace="fragments/script :: scriptFragment(useScriptCsrf='true')"></th:block>
+	<script th:src="@{/resources/cork/plugins/bootstrap-select/bootstrap-select.min.js}"></script>
+	<script th:src="@{/resources/honeyArcade/admin/common/js/areaSelect.js}"></script>
+	<script th:src="@{/resources/honeyArcade/admin/mgt/build/js/adminMgtBuildList.js}"></script>
+	
+	<script th:inline="javascript">
+		/* <![CDATA[ */
+
+		/*]] */
+	</script>
+</body>
+
+</html>

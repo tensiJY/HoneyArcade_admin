@@ -1,0 +1,16 @@
+package honeyarcade.admin.set.dir;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+@Controller
+@RequestMapping("/admin/set")
+public class AdminSetDirController {
+
+	@RequestMapping("/dir/list")
+	public String dirList(Model model) throws Exception{
+		System.out.println("123");
+		return "admin/set/dir/adminSetDirList";
+	}
+}

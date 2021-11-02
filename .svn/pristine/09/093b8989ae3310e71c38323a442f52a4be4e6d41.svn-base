@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="honeyarcade.admin.member.payment.AdminMemberPaymentMapper">
+	
+	<select id="getTotalCount" resultType="Integer">
+	<![CDATA[
+		select count(tb_pay.pay_seq) as total_count from tb_pay
+	]]>
+	</select>
+	
+	<select id="getPaymentList" resultType="honeyarcade.admin.member.payment.AdminMemberPaymentVO">
+	<![CDATA[
+		select
+			*
+		from
+			(select 
+				row_number () over(order by pay_dt desc) as row_num
+				, tb_pay.owner_id
+				, tb_pay.pay_money 
+				, convert (char(10), pay_dt, 23) as pay_date
+				, tb_pay.event_title
+				, substring(convert (char(10), pay_dt, 23), 9, 10) as pay_day
+				, substring(convert (char(10), pay_dt, 23), 1, 7) as pay_ym
+				, tb_owner.store_name 
+				, tb_member.member_id
+			from tb_pay
+			inner join tb_owner
+				on tb_pay.owner_id = tb_owner.owner_id
+			inner join tb_member
+				on tb_member.owner_id = tb_owner.owner_id				
+			) t
+		where
+			row_num between #{start_num} and #{end_num}
+	]]>
+	</select>
+	
+
+
+	
+</mapper>

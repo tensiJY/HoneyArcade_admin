@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+	<th:block th:replace="fragments/meta :: metaFragment(title='푸쉬알림', useMetaCsrf='true')"></th:block>
+	<th:block th:replace="fragments/style :: styleFragment"></th:block>
+	<link rel="stylesheet" type="text/css" th:href="@{/resources/cork/plugins/bootstrap-select/bootstrap-select.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/resources/cork/assets/css/elements/custom-pagination.css}">
+	<link th:href="@{/resources/cork/plugins/flatpickr/flatpickr.css}" rel="stylesheet" type="text/css">
+</head>
+<body class="sidebar-noneoverflow">
+	<th:block th:replace="fragments/header :: headerFragment"></th:block>
+	<div class="main-container" id="container">
+		<div class="overlay"></div>
+		<div class="search-overlay"></div>
+		<th:block th:replace="fragments/sidebar :: sidebarFragment(main='im', sub='im-push')"></th:block>
+		<div id="content" class="main-content">
+			<div class="layout-px-spacing">
+				<div class="row layout-top-spacing">
+					<div id="tableHover" class="col-lg-12 col-12 col-sm-12 layout-spacing">
+						<div class="statbox widget box box-shadow mb-2">
+							<div class="widget-header">
+								<div class="row">
+									<div class="col-xl-12 col-md-12 col-sm-12 col-12">
+										<h4>푸쉬 알림 등록</h4>
+									</div>
+								</div>
+							</div>
+							<div class="widget-content widget-content-area">
+								<form>
+									<div class="form-group">
+										<label class="col control-label">알림 내용</label>
+										<div class="col-sm-12">
+											<textarea class="form-control" id="pushText" placeholder="100자 이내로 작성해 주세요"></textarea>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col control-label">클릭시 이동할 페이지</label>
+									
+										<div class="form-inline col">
+											<div class="form-group mr-2">
+												<select id="pushTypeSelect" class="selectpicker" data-width="fit" data-live-search="true" title="유형선택" name="push_type">
+													<option value="0">선택 안함</option>
+													<option value="1">건물인트로 화면</option>
+													<option value="2">쿠폰함</option>
+													<option value="3">건물홍보함</option>
+													<option value="4">지역홍보함</option>
+													<option value="5">특정가게</option>
+												</select>
+											</div>
+											<div class="form-group mr-2">
+												<select class="select-picker" data-width="fit" data-live-search="true" title="시,도" id="popSidoSelect" name="sido_seq">
+													<th:block th:if="${sidoList.size()!=0}">
+														<th:block th:each="list : ${sidoList}">
+															<option th:value="${list.sido_seq}" th:text="${list.sido_name}"></option>
+														</th:block>
+													</th:block>
+												</select>
+											</div>
+											<div class="form-group mr-2">
+												<select class="select-picker" data-width="fit" data-live-search="true" title="군,구" id="popSigunguSelect" name="sigungu_seq"></select>
+											</div>
+											<div class="form-group mr-2">
+												<select class="select-picker" data-width="fit" data-live-search="true" title="지역" id="popDongSelect" name="dong_seq"></select>
+											</div>
+											<div class="form-group mr-2">	
+												<select class="select-picker" data-width="fit" data-live-search="true" title="건물" id="popBuildSelect" name="build_seq"></select>
+											</div>
+											<div class="form-group mr-2">
+												<select class="select-picker" data-width="fit" data-live-search="true" title="상호명" id="popStoreSelect" name="owner_id"></select>
+											</div>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-sm-2 control-label">알림 예약</label>
+										<div class="form-inline col">
+											<div class="form-group mr-4">
+												<label class="control-label mr-2 text-dark">날짜</label>
+												<input type="text" class="form-control" id="date-pick" placeholder="알림 날짜">
+											</div>
+											<div class="form-group mr-4">
+												<label class="control-label mr-2 text-dark">시간</label>
+												<input type="text" class="form-control" id="time-pick" placeholder="알림 시간">
+											</div>
+										</div>
+										<div class="col-sm-12 text-right">
+											<button type="button" class="btn btn-info" id="saveBtn">보내기</button>
+										</div>
+									</div>
+								</form>
+							</div>
+						</div>
+						<div class="statbox widget box box-shadow">
+							<div class="widget-header">
+								<div class="row">
+									<div class="col-xl-12 col-md-12 col-sm-12 col-12">
+										<h4>푸쉬 기록 보기</h4>
+									</div>
+								</div>
+							</div>
+							<div class="widget-content widget-content-area">
+								<div>
+									<table id="zero-config" class="table table-hover text-center">
+										<thead>
+											<tr>
+												<th>No.</th>
+												<th>작성일</th>
+												<th>알림 내용</th>
+												<th>알림 날짜</th>
+												<th>상태</th>
+												<th>상세내용</th>
+												<th>예약취소</th>
+											</tr>
+										</thead>
+									<tbody>
+										<th:block th:if="${pushList.size() == 0}">
+											<tr>
+												<td colspan=6> 조회된 데이터가 없습니다</td>
+											</tr>
+										</th:block>
+										<th:block th:if="${pushList.size() != 0}">
+											<th:block th:each="list : ${pushList}">
+												<tr class="pushList">
+													<td>[[${list.row_num}]]</td>
+													<td>[[${list.add_dt}]]</td>
+													<td>[[${list.push_text}]]</td>
+													<td>[[${list.push_rez_dt}]]</td>
+													<td>[[${list.push_status_text}]]</td>
+													<td>
+														<button type="button" class="btn btn-dark viewBtn" th:data-push-seq=${list.push_seq}>보기</button>
+													</td>
+													<td>
+														<th:block th:if="${list.push_status==2}">
+															<button type="button" class="btn btn-danger cancleBtn" th:data-push-seq=${list.push_seq}>예약취소</button>
+														</th:block>
+													</td>
+												</tr>
+											</th:block>
+										</th:block>									
+									</tbody>
+								</table>
+								</div>
+								
+								<div class="paginating-container pagination-solid">
+									<th:block th:if="${pushList.size() == 0}">
+										<ul class="pagination">
+											<li class="prev"><a href="javascript:void(0);">
+													<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+														viewBox="0 0 24 24" fill="none" stroke="currentColor"
+														stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+														class="feather feather-arrow-left">
+														<line x1="19" y1="12" x2="5" y2="12"></line>
+														<polyline points="12 19 5 12 12 5"></polyline>
+													</svg>
+												</a>
+											</li>
+											<li class="active"><a href="javascript:void(0);">1</a></li>
+											<li class="next"><a href="javascript:void(0);"><svg
+														xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+														viewBox="0 0 24 24" fill="none" stroke="currentColor"
+														stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+														class="feather feather-arrow-right">
+														<line x1="5" y1="12" x2="19" y2="12"></line>
+														<polyline points="12 5 19 12 12 19"></polyline>
+													</svg>
+												</a>
+											</li>
+										</ul>
+									</th:block>	
+									<th:block th:if="${pushList.size() != 0}">
+										<ul class="pagination">
+										<th:block th:if="${pageUtil.startPage == 1}">
+											<li class="prev"><a href="javascript:void(0);">
+														<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+															viewBox="0 0 24 24" fill="none" stroke="currentColor"
+															stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+															class="feather feather-arrow-left">
+															<line x1="19" y1="12" x2="5" y2="12"></line>
+															<polyline points="12 19 5 12 12 5"></polyline>
+														</svg>
+													</a>
+												</li>
+										</th:block>
+										<th:block th:if="${pageUtil.startPage != 1}">
+											<li class="prev">
+												<a th:href="@{/admin/im/push/list(nowPage=${pageUtil.startPage-1})}">
+														<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+															class="feather feather-arrow-left">
+															<line x1="19" y1="12" x2="5" y2="12"></line>
+															<polyline points="12 19 5 12 12 5"></polyline>
+														</svg>
+													</a>
+											</li>
+										</th:block>
+											<li th:each="page : ${#numbers.sequence(pageUtil.startPage, pageUtil.endPage)}" th:classappend="${page == nowPage}? 'active'">
+												<a th:text="${page}" th:href="@{/admin/im/push/list(nowPage=${page})}" ></a>
+											</li>										
+										<th:block th:if="${pageUtil.endPage == pageUtil.totalPage}">
+											<li class="next"><a href="javascript:void(0);"><svg
+														xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+														viewBox="0 0 24 24" fill="none" stroke="currentColor"
+														stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+														class="feather feather-arrow-right">
+														<line x1="5" y1="12" x2="19" y2="12"></line>
+														<polyline points="12 5 19 12 12 19"></polyline>
+													</svg>
+												</a>
+											</li>										
+										</th:block>	
+										<th:block th:if="${pageUtil.endPage != pageUtil.totalPage}">
+											<li class="next">
+												<a th:href="@{/admin/im/push/list(nowPage=${pageUtil.endPage+1} )}">
+													<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right"> 
+														<line x1="5" y1="12" x2="19" y2="12"></line>
+														<polyline points="12 5 19 12 12 19"></polyline>
+													</svg>
+												</a>
+											</li>
+										</th:block>		
+										</ul>																												
+									</th:block>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- Modal -->
+				<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">>
+				    <div class="modal-dialog modal-dialog-centered modal-lg " role="document">
+				        <div class="modal-content">
+				            <div class="modal-header">
+				                <h5 class="modal-title" id="exampleModalLabel">푸쉬알림 상세보기</h5>
+				            </div>
+				            <div class="modal-body">
+				               <form>
+									<div class="form-group">
+										<label class="col control-label">알림 내용</label>
+										<div class="col-sm-12">
+											<textarea id="modalPushText" class="form-control" value="" readonly></textarea>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col control-label">클릭시 이동한 페이지</label>
+										<div class="form-group col-12">
+											<label class="control-label text-dark">안드로이드</label>
+											<input type="text" id="modalAndroidLink" class="form-control" placeholder="이동할 페이지 URL" readonly>
+									
+										</div>
+										<div class="form-group col-12">
+											<label class="control-label text-dark">ios</label>
+											<input type="text" id="modalIosLink" class="form-control" placeholder="이동할 페이지 URL" readonly>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col control-label">조회수</label>
+										<div class="form-inline col">
+											<div class="form-group mr-4">
+												<label class="control-label mr-2 text-dark">안드로이드</label>
+												<input type="text" id="modalAndCnt" class="form-control" readonly>
+											</div>
+											<div class="form-group mr-4">
+												<label class="control-label mr-2 text-dark">ios</label>
+												<input type="text" id="modalIosCnt" class="form-control" readonly>
+											</div>
+										</div>
+									</div>
+				               </form>     
+				            </div>
+				            <div class="modal-footer">
+				                <button type="button" id="modalCloseBtn" class="btn btn-primary">확인</button>
+				            </div>
+				        </div>
+				    </div>
+				</div>
+			</div>
+			<th:block th:replace="fragments/footer"></th:block>
+		</div>
+	</div>
+	<th:block th:replace="fragments/script :: scriptFragment(useScriptCsrf='true')"></th:block>
+	<script th:src="@{/resources/cork/plugins/bootstrap-select/bootstrap-select.min.js}"></script>
+	<script th:src="@{/resources/cork/plugins/flatpickr/flatpickr.js}"></script>
+	<script th:src="@{/resources/cork/plugins/flatpickr/ko.js}"></script>
+	<script th:src="@{/resources/honeyArcade/admin/common/js/areaAllSelect.js}"></script>
+	<script th:src="@{/resources/honeyArcade/admin/im/push/js/adminImPushList.js}"></script>
+</body>
+</html>

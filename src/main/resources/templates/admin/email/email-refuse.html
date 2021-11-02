@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>허니아케이드</title>
+</head>
+<body style="line-height: 40px;">
+  <div style="border:1px solid #ccc; width:60%; margin: 0 auto;box-shadow: 0px 0px 4px rgba(0,0,0,.5);">
+    <div style="text-align: center; border-bottom: 1px solid #ccc; ">
+      <h1>
+        <img style="width:300px; height:auto;" src="https://koreasoft.kr/img/logo/honey_logo.png">
+      </h1>
+      <h2 style="font-weight: bolder; font-size: 30px;"><span style="color: #ac7714;">허니아케이드</span>
+        <span>가입이 반려되었습니다.</span></h2>
+    </div>
+    <div style="padding: 30px">
+      <p style="font-weight: bold;">안녕하세요. <b style="font-size: 18px; color: #ac7714;">허니아케이드</b>입니다.</p>
+      <p><span style="font-size: 20px; color:blue; font-weight: bold;" th:text="${owner_id}"></span>님이 신청하신 가입요청이</p>
+      <p style="padding: 20px; box-sizing: border-box; width: 100%; height: auto; background: #eee;white-space: pre;" th:text="${reject_text}"></p>
+      <p>사유로 반려되었습니다.</p>
+
+      <p style="margin-top: 50px;"><b>허니아케이드를 이용해 주셔서 감사합니다.</b><br>
+      더욱 편리한 서비스를 제공하기 위해 항상 최선을 다하겠습니다.
+      </p>
+    </div>
+  </div>
+</body>
+</html>

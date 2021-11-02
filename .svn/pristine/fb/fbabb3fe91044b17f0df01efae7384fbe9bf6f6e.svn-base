@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="honeyarcade.admin.common.api.CommonApiMapper">
+
+	<select id="getSido" parameterType="honeyarcade.admin.common.api.CommonApiVO" resultType="honeyarcade.admin.common.api.CommonApiVO">
+	<![CDATA[
+		select
+		 	    distinct 
+			    tb_sido.SIDO_SEQ 
+			  , tb_sido.SIDO_NAME 
+		from 
+			tb_sido 
+		left outer join tb_sigungu
+			on tb_sido.sido_seq = tb_sigungu.sido_seq 
+			and tb_sigungu.del_flag ='N'
+		left outer join tb_dong
+			on tb_sigungu.sigungu_seq  = tb_dong.sigungu_seq 
+			and tb_dong.del_flag ='N'
+		left outer join tb_build
+			on tb_build.dong_seq = tb_dong.dong_seq
+			and tb_build.del_flag = 'N'
+		where
+			tb_sido.del_flag = 'N'
+	]]>
+		<if test="admin_grade == 3">
+		<![CDATA[	
+			and tb_build.BUILD_SEQ in 
+				(
+					select build_seq from TB_ADMIN_GRADE where admin_id = #{admin_id}
+					and tb_admin_grade.DEL_FLAG = 'N'
+				)
+		]]>			
+		</if>
+	</select>
+	
+	<select id="getSigungu" resultType="honeyarcade.admin.common.api.CommonApiVO" parameterType="honeyarcade.admin.common.api.CommonApiVO">
+	<![CDATA[
+		select
+		 	  DISTINCT 
+			  tb_sido.SIDO_SEQ 
+			  , tb_sido.SIDO_NAME 
+			  , tb_sigungu.SIGUNGU_SEQ 
+			  , tb_sigungu.SIGUNGU_NAME 
+		from 
+			tb_sido 
+		left outer join tb_sigungu
+			on tb_sido.sido_seq = tb_sigungu.sido_seq 
+			and tb_sigungu.del_flag ='N'
+		left outer join tb_dong
+			on tb_sigungu.sigungu_seq  = tb_dong.sigungu_seq 
+			and tb_dong.del_flag ='N'
+		left outer join tb_build
+			on tb_build.dong_seq = tb_dong.dong_seq
+			and tb_build.del_flag = 'N'
+		where
+			tb_sido.del_flag = 'N'
+	]]>
+	
+	<if test='sido_seq != null'>
+	<![CDATA[
+		and
+			tb_sigungu.sido_seq = #{sido_seq}
+	]]>	
+	</if>
+	<if test="admin_grade == 3">
+	<![CDATA[	
+			and tb_build.BUILD_SEQ in 
+				(
+					select build_seq from TB_ADMIN_GRADE where admin_id = #{admin_id}
+					and tb_admin_grade.DEL_FLAG = 'N'
+				)
+	]]>			
+	</if>
+	</select>
+
+	<select id="getDong" resultType="honeyarcade.admin.common.api.CommonApiVO" parameterType="honeyarcade.admin.common.api.CommonApiVO">
+	<![CDATA[
+		select
+		 	  DISTINCT 
+			    tb_sigungu.SIGUNGU_SEQ 
+			  , tb_sigungu.SIGUNGU_NAME
+			  , tb_dong.dong_name
+			  , tb_dong.dong_seq 
+		from 
+			tb_sido 
+		left outer join tb_sigungu
+			on tb_sido.sido_seq = tb_sigungu.sido_seq 
+			and tb_sigungu.del_flag ='N'
+		left outer join tb_dong
+			on tb_sigungu.sigungu_seq  = tb_dong.sigungu_seq 
+			and tb_dong.del_flag ='N'
+		left outer join tb_build
+			on tb_build.dong_seq = tb_dong.dong_seq
+			and tb_build.del_flag = 'N'
+		where
+			tb_sido.del_flag = 'N'
+	]]>
+	<if test='sigungu_seq != null'>
+	<![CDATA[
+		and
+			tb_dong.sigungu_seq = #{sigungu_seq}
+	]]>
+	</if>
+	<if test="admin_grade == 3">
+	<![CDATA[	
+			and tb_build.BUILD_SEQ in 
+				(
+					select build_seq from TB_ADMIN_GRADE where admin_id = #{admin_id}
+					and tb_admin_grade.DEL_FLAG = 'N'
+				)
+	]]>			
+	</if>
+	
+	</select>
+	
+	
+	<select id="getBuild" resultType="honeyarcade.admin.common.api.CommonApiVO" parameterType="honeyarcade.admin.common.api.CommonApiVO">
+	<![CDATA[
+		select
+		 	  DISTINCT 
+			    tb_build.build_seq 
+			  , tb_build.build_name
+		from 
+			tb_sido 
+		left outer join tb_sigungu
+			on tb_sido.sido_seq = tb_sigungu.sido_seq 
+			and tb_sigungu.del_flag ='N'
+		left outer join tb_dong
+			on tb_sigungu.sigungu_seq  = tb_dong.sigungu_seq 
+			and tb_dong.del_flag ='N'
+		left outer join tb_build
+			on tb_build.dong_seq = tb_dong.dong_seq
+			and tb_build.del_flag = 'N'
+			and tb_build.build_status = 1
+		where
+			tb_sido.del_flag = 'N'
+			and tb_build.dong_seq = #{dong_seq}
+	]]>
+	
+	<if test="admin_grade == 3">
+	<![CDATA[	
+			and tb_build.BUILD_SEQ in 
+				(
+					select build_seq from TB_ADMIN_GRADE where admin_id = #{admin_id}
+					and tb_admin_grade.DEL_FLAG = 'N'
+				)
+	]]>			
+	</if>
+	</select>
+	
+	<select id="getFloor" resultType="honeyarcade.admin.common.api.CommonApiVO" parameterType="honeyarcade.admin.common.api.CommonApiVO">
+	<![CDATA[
+		select 
+			tb_floor.floor_seq 
+			, tb_floor.floor_type
+		from tb_floor 
+		inner join tb_build
+			on tb_build.build_seq  = tb_floor.build_seq 
+			and tb_build.del_flag  = 'N'
+		where
+			tb_build.build_seq = #{build_seq}
+	]]>
+	</select>
+	
+	
+	<select id="getOwnerOfBuild" resultType="honeyarcade.admin.common.api.CommonApiVO" parameterType="honeyarcade.admin.common.api.CommonApiVO">
+	<![CDATA[
+		select 
+			tb_owner.owner_id 
+			, tb_owner.store_name
+		from 
+			tb_owner
+		where
+			tb_owner.build_seq = #{build_seq}
+			and del_flag = 'N'
+		order by
+			tb_owner.store_name asc
+	]]>
+	</select>
+		
+	<select id="getLcateOfBuild" resultType="honeyarcade.admin.common.api.CommonApiVO" parameterType="honeyarcade.admin.common.api.CommonApiVO">
+	<![CDATA[
+		select
+			  lcate_seq
+			, lcate_name
+			, build_seq
+		from
+			tb_lcate
+		where
+			build_seq = #{build_seq}
+	]]>
+	</select>	
+		
+
+	<select id="getMcateOfBuild" resultType="honeyarcade.admin.common.api.CommonApiVO" parameterType="honeyarcade.admin.common.api.CommonApiVO">
+	<![CDATA[
+		select
+			  mcate_seq
+			, mcate_name
+			, build_seq
+			, lcate_seq
+		from
+			tb_mcate
+		where
+			build_seq = #{build_seq}
+			and lcate_seq = #{lcate_seq}
+	]]>
+	</select>	    
+	
+	<select id="getAllSido" resultType="honeyarcade.admin.common.api.CommonApiVO">
+	<![CDATA[
+		select
+			  sido_seq
+			, sido_name
+		from
+			tb_sido
+		where
+			tb_sido.del_flag = 'N'
+	]]>
+	</select>
+	
+	<select id="getAllSigungu" resultType="honeyarcade.admin.common.api.CommonApiVO" parameterType="honeyarcade.admin.common.api.CommonApiVO">
+	<![CDATA[
+		select
+			  tb_sido.sido_seq 
+			, tb_sido.sido_name
+			, tb_sigungu.sigungu_seq
+			, tb_sigungu.sigungu_name
+		from
+			tb_sigungu
+		inner join tb_sido 
+			on tb_sido.sido_seq = tb_sigungu.sido_seq 
+			and tb_sido.del_flag = 'N'
+		where
+			tb_sigungu.del_flag = 'N'
+	]]>
+	<if test='sido_seq != null'>
+	<![CDATA[
+		and
+			tb_sigungu.sido_seq = #{sido_seq}
+	]]>	
+	</if>
+	</select>
+	
+	<select id="getAllDong" resultType="honeyarcade.admin.common.api.CommonApiVO" parameterType="honeyarcade.admin.common.api.CommonApiVO">
+	<![CDATA[
+		select 
+			tb_sigungu.sigungu_seq 
+			, tb_sigungu.sigungu_name 
+			, tb_dong.dong_seq 
+			, tb_dong.dong_name 
+		from
+			tb_dong
+		inner join tb_sigungu  
+			on tb_sigungu.sigungu_seq = tb_dong.sigungu_seq 
+			and tb_sigungu.del_flag ='N'
+		where
+			tb_dong.del_flag ='N'
+	]]>
+	<if test='sigungu_seq != null'>
+	<![CDATA[
+		and
+			tb_dong.sigungu_seq = #{sigungu_seq}
+	]]>
+	</if>
+	</select>	
+	
+	
+	<select id="getAllBuild" resultType="honeyarcade.admin.common.api.CommonApiVO" parameterType="honeyarcade.admin.common.api.CommonApiVO">
+	<![CDATA[
+		select 
+			tb_build.build_seq 
+			, tb_build.build_name 
+		from 
+			tb_build
+		inner join tb_dong 
+			on tb_dong.dong_seq  = tb_build.dong_seq 
+		where
+			tb_build.dong_seq = #{dong_seq}
+			and tb_build.del_flag = 'N'
+			and tb_build.build_status = 1
+	]]>
+	</select>	
+	
+	<select id="getAllFloor" resultType="honeyarcade.admin.common.api.CommonApiVO" parameterType="honeyarcade.admin.common.api.CommonApiVO">
+	<![CDATA[
+		select 
+			tb_floor.floor_seq 
+			, tb_floor.floor_type
+		from tb_floor 
+		inner join tb_build
+			on tb_build.build_seq  = tb_floor.build_seq 
+			and tb_build.del_flag  = 'N'
+		where
+			tb_build.build_seq = #{build_seq}
+	]]>
+	</select>
+</mapper>

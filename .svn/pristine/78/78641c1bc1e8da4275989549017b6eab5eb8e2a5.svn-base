@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5" >
+<head>
+	<th:block th:replace="fragments/meta :: metaFragment(title='점주 회원', useMetaCsrf='true')"></th:block>
+	<link rel="stylesheet" type="text/css" th:href="@{/resources/cork/plugins/bootstrap-select/bootstrap-select.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/resources/cork/plugins/table/datatable/datatables.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/resources/cork/assets/css/elements/custom-pagination.css}">
+	<!--  css style  -->
+	<th:block th:replace="fragments/style :: styleFragment"></th:block>
+</head>
+
+
+<body class="sidebar-noneoverflow">
+    
+	<!--  header  -->
+	<th:block th:replace="fragments/header :: headerFragment"></th:block>
+	
+
+    <!--  BEGIN MAIN CONTAINER  -->
+    <div class="main-container" id="container">
+
+        <div class="overlay"></div>
+        <div class="search-overlay"></div>
+
+		<!--  sidebar  -->
+		<th:block th:replace="fragments/sidebar :: sidebarFragment(main='member', sub='member-owner')"></th:block>
+		        
+        <!--  BEGIN CONTENT AREA  -->
+        <div id="content" class="main-content">
+            <div class="layout-px-spacing">
+
+
+                <!-- CONTENT AREA --> 
+            <div class="row layout-top-spacing">
+              	<div class="col-lg-12 col-12 layout-spacing">
+	          		<div class="statbox widget box box-shadow">
+	          			<div class="widget-header">
+	          				<h4>점주 회원</h4>
+	          			</div>
+						<div class="widget-content widget-content-area">
+							<div class="row">
+								<form id="searchForm" method="GET" th:action="@{/admin/member/owner/list}" class="col-sm-12">
+									<select class="selectpicker" data-live-search="true" title="시,도" id="sidoSelect" name="sido_seq" data-width="fit">
+										<th:block th:if="${sidoList.size()!=0}">
+											<th:block th:each="list : ${sidoList}">
+												<option th:value="${list.sido_seq}" th:text="${list.sido_name}" th:selected="${adminMemberOwnerVO.sido_seq == list.sido_seq}"></option>
+											</th:block>
+										</th:block>
+									</select>									
+									<select class="selectpicker" data-live-search="true" title="군,구" id="sigunguSelect" name="sigungu_seq" data-width="fit">
+									 <!-- 검색 조건이면 -->
+									 <th:block th:if="${type == 'search'}">
+									 	<th:block th:if="${sigunguList != null}">
+									 		<th:block th:if="${sigunguList.size() != 0}">
+									 			<!-- 값이 있는경우 -->
+									 			<th:block th:each="list : ${sigunguList}">
+													<option th:value="${list.sigungu_seq}" th:text="${list.sigungu_name}" th:selected="${adminMemberOwnerVO.sigungu_seq == list.sigungu_seq}" ></option>
+												</th:block>
+									 		</th:block>
+									 	</th:block>
+									 </th:block>											 		
+									</select>
+									
+									<select class="selectpicker" data-width="fit" data-live-search="true" id="dongSelect" name="dong_seq" title="지역">
+										<th:block th:if="${dongList != null}">
+											<th:block th:if="${dongList.size() != 0}">
+												<th:block th:each="list : ${dongList}">
+													<option th:value="${list.dong_seq}" th:text="${list.dong_name}" th:selected="${adminMemberOwnerVO.dong_seq == list.dong_seq}" ></option>
+												</th:block>
+											</th:block>
+										</th:block>
+									</select>
+									<select class="selectpicker" data-width="fit" data-live-search="true" id="buildSelect" name="build_seq" title="건물">
+										<th:block th:if="${buildList != null}">
+											<th:block th:if="${buildList.size() != 0}">
+												<th:block th:each="list : ${buildList}">
+													<option th:value="${list.build_seq}" th:text="${list.build_name}" th:selected="${adminMemberOwnerVO.build_seq == list.build_seq}" ></option>
+												</th:block>
+											</th:block>
+										</th:block>										
+									</select>
+									
+									<select class="selectpicker" data-show-subtext="true" title="회원종류" id="owner_type" name="owner_type">
+		          						<option th:data-subtext="${countVO.total_owner + '명'}" th:selected="${owner_type==0}" value="0">총 등록 회원</option>
+		          						<option th:data-subtext="${countVO.free_owner + '명'}"  th:selected="${owner_type==1}" value="1">무료 회원</option>
+									    <option th:data-subtext="${countVO.pre_owner + '명'}"   th:selected="${owner_type==2}" value="2">유료 회원</option>
+									    <option th:data-subtext="${countVO.exp_owner + '명'}"   th:selected="${owner_type==3}" value="3">만료 회원</option>
+									</select>
+									<input type="hidden" name="type" value="search">
+									<input type="hidden" name="listCount" th:value="${listCount}">
+									<input type="search" id="searchText" name="search_text" placeholder="검색어를 입력하세요" class="d-inline-block form-control col-3" th:value="${search_text}">
+									<input type="button" id="searchBtn" class="btn btn-primary mb-2" value="검색">
+								</form>
+							</div>
+          				</div>
+	          		</div>
+	          		<div class="statbox widget box box-shadow mt-2">
+	          			<div class="widget-content widget-content-area br-6 text-center">
+		          			
+	          				<div class="table-responsive mb-4 mt-2">
+                                <table id="zero-config" class="table table-hover" style="width:100%">
+                                    <thead>
+                                        <tr>
+                                            <th>No.</th>
+                                            <th>ID</th>
+                                            <th>지역</th>
+                                            <th>상점명</th>
+                                            <th>회원종류</th>
+                                            <th>누적결제금액</th>
+                                            <th>지역 광고권</th>
+                                            <th>건물 광고권</th>
+                                            <th>쿠폰 사용권</th>
+                                            <th>승인여부</th>
+                                            <th>승인/정보</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+		                               	<th:block th:if="${ownerList.size() == 0}">
+		                               		<tr>
+		                               			<td colspan="11">
+		                               				조회된 데이터가 없습니다
+		                               			</td>
+		                               		</tr>
+		                               	</th:block>      
+		                               	
+		                                <th:block th:if="${ownerList.size() != 0}">
+		                                	<th:block th:each="list : ${ownerList}">
+			                               		<tr>
+			                               			<td th:text="${list.row_num}"></td>
+			                               			<td th:text="${list.owner_id}"></td>
+			                               			<td th:text="${list.dong_name}"></td>
+			                               			<td th:text="${list.store_name}"></td>
+			                               			<td th:text="${list.owner_type == 1? '무료 회원' : list.owner_type==2? '유료 회원' : '만료 회원'}"></td>
+			                               			<td th:text="${list.used_money == null? '' : #numbers.formatInteger(list.used_money, 0, 'COMMA')}"></td>
+			                               			<td th:text="${list.remain_area}"></td>
+			                               			<td th:text="${list.remain_build}"></td>
+			                               			<td th:text="${list.remain_coupon}"></td>
+			                               			<td th:text="${list.owner_status==1 ? '미승인' : list.owner_status==2? '승인' : '거절'}"></td>
+			                               			<td>
+			                               				<form name="viewForm" method="POST" th:action="@{/admin/member/owner/view}">
+			                               					<input type="hidden" name="owner_id" th:value="${list.owner_id}">
+			                               					<input type="hidden" name="nowPage" th:value="${nowPage}">
+			                               					<input type="hidden" name="listCount" th:value="${listCount}">
+			                               					<input type="hidden" name="owner_type" th:value="${owner_type}">
+			                               					<input type="hidden" name="search_text" th:value="${search_text}">
+			                               					<input type="hidden" name="sido_seq" th:value="${adminMemberOwnerVO.sido_seq}">
+			                               					<input type="hidden" name="sigungu_seq" th:value="${adminMemberOwnerVO.sigungu_seq}">
+			                               					<input type="hidden" name="dong_seq" th:value="${adminMemberOwnerVO.dong_seq}">
+			                               					<input type="hidden" name="build_seq" th:value="${adminMemberOwnerVO.build_seq}">
+			                               					<input type="hidden" name="type" th:value="${adminMemberOwnerVO.type}">
+			                               					<input type="hidden" name="menu" value="owner">
+			                               				</form>
+			                               				<input type="button" class="btn btn-primary clickBtn" value="클릭">
+			                               			</td>
+			                               		</tr>		                               		
+		                               		</th:block>
+		                               	</th:block>
+                                    </tbody>
+                                </table>
+	          				</div>
+	          				<div class="row justify-content-center dataTables_paginate paging_simple_numbers" id="zero-config_paginate">
+	          					<th:block th:if="${ownerList.size() == 0}">
+		          					<div class="paginating-container pagination-solid">
+		          						 <ul class="pagination">
+											<li  class="prev"><a href="javascript:void(0);"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg></a></li>
+											<li  class="active"><a href="javascript:void(0);">1</a></li>
+											<li class="next"><a href="javascript:void(0);"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></a></li>		          						 
+		          						 </ul>
+		          					</div>
+	          					</th:block>
+		          						          				
+		          				<th:block th:if="${ownerList.size() != 0}">
+				          			<div class="paginating-container pagination-solid">
+									    <ul class="pagination">
+									    	<th:block th:if="${pageUtil.startPage == 1}">
+									        	<li  class="prev"><a href="javascript:void(0);"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg></a></li>
+									    	</th:block>
+									    	
+									    	<th:block th:if="${pageUtil.startPage != 1}">
+									    		<li  class="prev">
+									    			<a th:href="@{/admin/member/owner/list(nowPage=${pageUtil.startPage-1}, listCount=${listCount}, type=${type}, owner_type=${owner_type}, search_text=${search_text}, sido_seq=${adminMemberOwnerVO.sido_seq}, sigungu_seq=${adminMemberOwnerVO.sigungu_seq}, dong_seq=${adminMemberOwnerVO.dong_seq}, build_seq=${adminMemberOwnerVO.build_seq}  )}">
+									    				<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline>
+									    				</svg>
+									    			</a>
+									    		</li>
+									    	</th:block>
+									    	
+									    	<li class="paginate_button page-item" th:each="page : ${#numbers.sequence(pageUtil.startPage, pageUtil.endPage)}" th:classappend="${page == nowPage}? 'active'">
+									        	<a th:text="${page}" th:href="@{/admin/member/owner/list(nowPage=${page}, listCount=${listCount}, type=${type}, owner_type=${owner_type}, search_text=${search_text}, sido_seq=${adminMemberOwnerVO.sido_seq}, sigungu_seq=${adminMemberOwnerVO.sigungu_seq}, dong_seq=${adminMemberOwnerVO.dong_seq}, build_seq=${adminMemberOwnerVO.build_seq} )}" >1</a>
+									    	</li>
+									        
+									        <th:block th:if="${pageUtil.endPage == pageUtil.totalPage}">
+									        	<li class="next"><a href="javascript:void(0);"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></a></li>
+									        </th:block>
+									        
+									        <th:block th:if="${pageUtil.endPage != pageUtil.totalPage}">
+									        	<li class="next">
+									        		<a th:href="@{/admin/member/owner/list(nowPage=${pageUtil.endPage+1},  listCount=${listCount}, type=${type}, owner_type=${owner_type}, search_text=${search_text}, sido_seq=${adminMemberOwnerVO.sido_seq}, sigungu_seq=${adminMemberOwnerVO.sigungu_seq}, dong_seq=${adminMemberOwnerVO.dong_seq}, build_seq=${adminMemberOwnerVO.build_seq} )}">
+									        			<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline>
+									        			</svg>
+									        		</a>
+									        	</li>
+									        </th:block>
+									    </ul>
+									</div>
+		          				</th:block>
+	          				</div>
+
+	          			</div>
+	          		</div>
+              	</div>
+          	</div>
+          	
+                <!-- CONTENT AREA -->
+
+            </div>
+            
+            
+            <!--  footer   -->
+            <th:block th:replace="fragments/footer"></th:block>
+			
+            
+        </div>
+        <!--  END CONTENT AREA  -->
+
+    </div>
+    <!-- END MAIN CONTAINER -->
+	
+
+
+
+	<th:block th:replace="fragments/script :: scriptFragment(useScriptCsrf='true')"></th:block>
+	<script th:src="@{/resources/cork/plugins/table/datatable/datatables.js}"></script>
+	<script th:src="@{/resources/cork/assets/js/scrollspyNav.js}"></script>
+	<script th:src="@{/resources/cork/plugins/bootstrap-select/bootstrap-select.min.js}"></script>
+	<script th:src="@{/resources/honeyArcade/admin/common/js/areaSelect.js}"></script>
+	<script th:src="@{/resources/honeyArcade/admin/member/owner/js/adminMemberOwnerList.js}"></script>
+	<script th:inline="javascript">
+	/* <![CDATA[ */
+
+	/*]] */
+	</script>
+</body>
+
+</html>

@@ -1,0 +1,46 @@
+package honeyarcade.admin.member.event;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+@Service
+public class AdminMemberEventService {
+
+	@Autowired
+	private AdminMemberEventMapper adminMemberEventMapper;
+
+	/**
+	 * 프로모션 전체 갯수 가져오기
+	 * @param adminMemberEventVO
+	 * @return
+	 * @throws Exception
+	 */
+	public Integer getTotalCount(AdminMemberEventVO adminMemberEventVO) throws Exception{
+		
+		return adminMemberEventMapper.getTotalCount(adminMemberEventVO);
+	}
+
+	/**
+	 * 프로모션 목록 가져오기
+	 * @param adminMemberEventVO
+	 * @return
+	 * @throws Exception
+	 */
+	public List<AdminMemberEventVO> getEventList(AdminMemberEventVO adminMemberEventVO) throws Exception {
+		
+		return adminMemberEventMapper.getEventList(adminMemberEventVO);
+	}
+
+	/**
+	 * 유료 서비스 : 프로모션 데이터 가져오기
+	 * @param adminMemberEventVO
+	 * @return
+	 * @throws Exception
+	 */
+	public AdminMemberEventVO getData(AdminMemberEventVO adminMemberEventVO) throws Exception {
+		// TODO Auto-generated method stub
+		return adminMemberEventMapper.getData(adminMemberEventVO);
+	}
+}

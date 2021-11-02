@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="honeyarcade.admin.member.event.AdminMemberEventMapper">
+
+	<select id="getTotalCount" parameterType="honeyarcade.admin.member.event.AdminMemberEventVO" resultType="Integer">
+	<![CDATA[
+		select
+			count(tb_event.event_seq) as total_count
+		from 
+			tb_event
+		where
+			tb_event.del_flag = 'N'
+	]]>
+		<if test="type == 'search'">
+		<![CDATA[		
+			and 
+				tb_event.event_title like '%'+ #{search_text} + '%'
+		]]>
+		</if>
+	</select>
+	
+	<select id="getEventList" parameterType="honeyarcade.admin.member.event.AdminMemberEventVO" resultType="honeyarcade.admin.member.event.AdminMemberEventVO">
+	<![CDATA[
+		select 
+			*
+		from (
+				select
+					row_number () over(order by tb_event.add_dt desc) as row_num
+					, tb_event.event_seq 
+					, tb_event.event_title 
+					, tb_event.event_price 
+					, tb_event.event_sort 
+					, (select event_dtl_day from tb_event_dtl where tb_event.event_seq = tb_event_dtl.event_seq and tb_event_dtl.event_dtl_type = 1) as build_day
+					, (select event_dtl_day from tb_event_dtl where tb_event.event_seq = tb_event_dtl.event_seq and tb_event_dtl.event_dtl_type = 2) as area_day
+					, (select event_dtl_day from tb_event_dtl where tb_event.event_seq = tb_event_dtl.event_seq and tb_event_dtl.event_dtl_type = 3) as coupon_day
+					, convert(char(10), tb_event.add_dt , 23) as add_date
+				from 
+					tb_event
+				where
+					tb_event.del_flag = 'N'
+	]]>
+					<if test="type == 'search'">
+					<![CDATA[		
+						and 
+							tb_event.event_title like '%'+ #{search_text} + '%'
+					]]>
+					</if>
+	<![CDATA[
+				) t
+		where
+			row_num between #{start_num} and #{end_num}
+	]]>
+	</select>
+	
+	<select id="getData" parameterType="honeyarcade.admin.member.event.AdminMemberEventVO" resultType="honeyarcade.admin.member.event.AdminMemberEventVO">
+	<![CDATA[
+		select				
+			tb_event.event_seq 
+			, tb_event.event_title 
+			, tb_event.event_price 
+			, tb_event.event_sort 
+			, tb_event.event_text
+			, (select event_dtl_day from tb_event_dtl where tb_event.event_seq = tb_event_dtl.event_seq and tb_event_dtl.event_dtl_type = 1) as build_day
+			, (select event_dtl_day from tb_event_dtl where tb_event.event_seq = tb_event_dtl.event_seq and tb_event_dtl.event_dtl_type = 2) as area_day
+			, (select event_dtl_day from tb_event_dtl where tb_event.event_seq = tb_event_dtl.event_seq and tb_event_dtl.event_dtl_type = 3) as coupon_day
+		from 
+			tb_event
+		where
+				tb_event.del_flag = 'N'
+			and tb_event.event_seq = #{event_seq}
+				
+	]]>
+	</select>
+	
+</mapper>

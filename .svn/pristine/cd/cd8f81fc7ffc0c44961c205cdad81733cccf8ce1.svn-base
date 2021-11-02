@@ -1,0 +1,363 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="honeyarcade.admin.ad.coupon.AdminAdCouponMapper">
+	
+	<select id="getTotalCount" parameterType="honeyarcade.admin.ad.coupon.AdminAdCouponVO" resultType="Integer">
+		select
+			count(*) as totalcount
+		from 
+			tb_sido 
+		inner join tb_sigungu
+			on tb_sido.sido_seq = tb_sigungu.sido_seq 
+			and tb_sigungu.del_flag ='N'
+		inner join tb_dong
+			on tb_sigungu.sigungu_seq  = tb_dong.sigungu_seq 
+			and tb_dong.del_flag ='N'
+		inner join tb_build
+			on tb_build.dong_seq = tb_dong.dong_seq
+		inner join tb_owner 
+			on tb_build.build_seq = tb_owner.build_seq
+		inner join tb_member
+			on tb_member.owner_id = tb_owner.owner_id			
+		inner join tb_coupon
+			on tb_owner.owner_id = tb_coupon.owner_id
+			and tb_coupon.del_flag = 'N'
+		where	
+			tb_sido.del_flag ='N'
+		<if test="type == 'search'">
+			<if test="sido_seq != null">
+			<![CDATA[
+				and tb_sido.sido_seq = #{sido_seq}
+			]]>
+			</if>
+		
+			<if test="sigungu_seq != null">
+			<![CDATA[
+				and tb_sigungu.sigungu_seq = #{sigungu_seq}
+			]]>
+			</if>
+		
+			<if test="dong_seq != null">
+			<![CDATA[
+				and tb_dong.dong_seq = #{dong_seq}
+			]]>
+			</if>
+		
+			<if test="search_text != null || search_text != ''">
+			<![CDATA[
+				and 
+					( 1 = 1
+						and
+							tb_sido.sido_name like '%'+ #{search_text} + '%'
+						or
+							tb_sigungu.sigungu_name like '%'+ #{search_text} +'%'
+						or 
+							tb_dong.dong_name like '%'+ #{search_text} + '%'
+						or
+							tb_build.build_name like '%' + #{search_text} + '%'							
+						or 
+							tb_owner.store_name like '%'+ #{search_text} + '%'
+						or	
+							tb_member.member_id like '%'+ #{search_text} + '%'
+					)
+			]]>
+			</if>
+		</if>
+		
+		<if test="search_type != null">
+			<if test="search_type == 2">
+			<![CDATA[
+				and convert(char(10), getdate(), 23) between convert(char(10), coupon_start_day , 23) and convert(char(10), coupon_end_day, 23)
+			]]>			
+			</if>
+			
+			<if test="search_type == 3">
+			<![CDATA[
+				and convert(char(10), coupon_end_day, 23) <  convert(char(10), getdate(), 23)
+			]]>						
+			</if>
+			
+			<if test="search_type == 4">
+			<![CDATA[
+				and convert(char(10), getdate(), 23) < convert(char(10), coupon_start_day ,23)
+			]]>
+			</if>
+		</if>			
+	</select>
+	
+	<select id="getAdCouponList" parameterType="honeyarcade.admin.ad.coupon.AdminAdCouponVO" resultType="honeyarcade.admin.ad.coupon.AdminAdCouponVO">
+	select
+		*
+	from
+		(	
+			select	
+				ROW_NUMBER () over(order by tb_coupon.add_dt desc) as row_num
+				, tb_sido.sido_name
+			 	, tb_sido.sido_seq
+				, tb_sigungu.sigungu_name 
+				, tb_sigungu.sigungu_seq
+				, tb_dong.dong_name 
+				, tb_dong.dong_seq
+				, tb_build.build_seq
+				, tb_build.build_name
+				, tb_owner.owner_id 
+				, tb_owner.store_name 
+				, tb_coupon.coupon_seq 
+				, convert(char(10), tb_coupon.COUPON_START_DAY , 23) as coupon_start_day
+				, convert(char(10), tb_coupon.COUPON_END_DAY , 23)   as coupon_end_day
+			from 
+				tb_sido 
+			inner join tb_sigungu
+				on tb_sido.sido_seq = tb_sigungu.sido_seq 
+				and tb_sigungu.del_flag ='N'
+			inner join tb_dong
+				on tb_sigungu.sigungu_seq  = tb_dong.sigungu_seq 
+				and tb_dong.del_flag ='N'
+			inner join tb_build
+				on tb_build.dong_seq = tb_dong.dong_seq
+			inner join tb_owner 
+				on tb_build.build_seq = tb_owner.build_seq
+			inner join tb_member
+				on tb_owner.owner_id = tb_member.owner_id	
+			inner join tb_coupon
+				on tb_owner.owner_id = tb_coupon.owner_id
+				and tb_coupon.del_flag = 'N'
+			where	
+				tb_sido.del_flag ='N'
+		<if test="type == 'search'">
+			<if test="sido_seq != null">
+			<![CDATA[
+				and tb_sido.sido_seq = #{sido_seq}
+			]]>
+			</if>
+		
+			<if test="sigungu_seq != null">
+			<![CDATA[
+				and tb_sigungu.sigungu_seq = #{sigungu_seq}
+			]]>
+			</if>
+		
+			<if test="dong_seq != null">
+			<![CDATA[
+				and tb_dong.dong_seq = #{dong_seq}
+			]]>
+			</if>
+		
+			<if test="search_text != null || search_text != ''">
+			<![CDATA[
+				and 
+					( 1 = 1
+						and
+							tb_sido.sido_name like '%'+ #{search_text} + '%'
+						or
+							tb_sigungu.sigungu_name like '%'+ #{search_text} +'%'
+						or 
+							tb_dong.dong_name like '%'+ #{search_text} + '%'
+						or
+							tb_build.build_name like '%' + #{search_text} + '%'
+						or 
+							tb_owner.store_name like '%'+ #{search_text} + '%'
+						or
+							tb_member.member_id like '%'+ #{search_text} + '%'
+					)
+			]]>
+			</if>
+		</if>
+		
+		<if test="search_type != null">
+			<if test="search_type == 2">
+			<![CDATA[
+				and convert(char(10), getdate(), 23) between convert(char(10), coupon_start_day , 23) and convert(char(10), coupon_end_day, 23)
+			]]>			
+			</if>
+			
+			<if test="search_type == 3">
+			<![CDATA[
+				and convert(char(10), coupon_end_day, 23) <  convert(char(10), getdate(), 23)
+			]]>						
+			</if>
+			
+			<if test="search_type == 4">
+			<![CDATA[
+				and convert(char(10), getdate(), 23) < convert(char(10), coupon_start_day ,23)
+			]]>
+			</if>
+		</if>		
+		) a
+		where
+			row_num between #{start_num} and #{end_num}
+			
+	</select>
+	
+	<update id="couponDelProc" parameterType="honeyarcade.admin.ad.coupon.AdminAdCouponVO">
+		update
+			tb_coupon
+		set
+			mod_dt = getDate()
+			, mod_id = #{admin_id}
+			, del_flag = 'Y'
+		where
+				coupon_seq = #{coupon_seq}
+			and owner_id = #{owner_id}		
+	
+	</update>
+	
+	<insert id="insertCoupon" parameterType="honeyarcade.admin.ad.coupon.AdminAdCouponVO">
+	<![CDATA[
+		insert into	tb_coupon
+			(
+				  coupon_seq
+				, owner_id
+				, coupon_img
+				, coupon_start_day
+				, coupon_end_day
+				, coupon_sort
+				, add_dt
+				, add_id
+				, del_flag
+			)
+		values
+			(
+				  #{coupon_seq}
+				, #{owner_id}
+				, #{coupon_img}
+				, #{coupon_start_day}
+				, #{coupon_end_day}
+				, #{coupon_sort}
+				, getDate()
+				, #{admin_id}
+				, 'N'
+			)	
+	]]>
+	</insert>
+	
+	<insert id="insertCouponDtl" parameterType="honeyarcade.admin.ad.coupon.AdminAdCouponVO">
+	<![CDATA[
+		insert into tb_coupon_dtl
+			(
+				  coupon_dtl_seq
+				, coupon_seq
+				, coupon_dtl_text
+			)
+		values
+			(
+				  #{coupon_dtl_seq	}
+				, #{coupon_seq		}
+				, #{coupon_dtl_text	}			
+			)
+	]]>	
+	</insert>
+	
+	<insert id="insertBuildCoupon" parameterType="honeyarcade.admin.ad.coupon.AdminAdCouponVO">
+		insert into tb_build_coupon
+			(
+				  owner_id
+				, build_seq
+				, coupon_seq
+			)
+		values
+			(
+				  #{owner_id    }
+				, #{build_seq   }
+				, #{coupon_seq	} 		
+			)
+	</insert>
+	
+	<select id="getAdCoupon" parameterType="honeyarcade.admin.ad.coupon.AdminAdCouponVO" resultType="honeyarcade.admin.ad.coupon.AdminAdCouponVO">
+	<![CDATA[
+		select 
+			tb_coupon.coupon_seq 
+			, tb_coupon.owner_id 
+			, tb_coupon.coupon_img 
+			, tb_coupon.coupon_sort 
+			, tb_file_dtl.file_dtl_desc	
+			, tb_file_dtl.file_dtl_ext 	
+			, tb_file_dtl.file_dtl_origin	
+			, tb_file_dtl.file_dtl_path 	
+			, tb_file_dtl.file_dtl_url_path 
+			, tb_file_dtl.file_type 		
+			, tb_file_dtl.file_dtl_seq		
+			, convert(char(10), coupon_start_day , 23) as coupon_start_day  
+			, convert(char(10), coupon_end_day , 23) as coupon_end_day
+			, tb_owner.store_name 
+			, tb_member.member_id
+		from 
+			tb_coupon 
+		inner join tb_file
+			on tb_file.file_seq  = tb_coupon.coupon_img 
+			and tb_file.del_flag ='N'
+		inner join tb_file_dtl 
+			on tb_file.file_seq = tb_file_dtl.file_seq 
+		inner join TB_OWNER
+			on tb_coupon.OWNER_ID = tb_owner.OWNER_ID 
+		inner join tb_member
+			on tb_owner.owner_id = tb_member.owner_id			
+		where 
+			coupon_seq = #{coupon_seq}
+			and tb_coupon.del_flag = 'N'		
+	]]>
+	</select>
+	
+	<select id="getCouponTextList" parameterType="honeyarcade.admin.ad.coupon.AdminAdCouponVO" resultType="honeyarcade.admin.ad.coupon.AdminAdCouponVO">
+	<![CDATA[
+		select 
+			  coupon_dtl_seq
+			, coupon_dtl_text 
+		from 
+			tb_coupon_dtl
+		where
+			coupon_seq = #{coupon_seq}
+	]]>
+	</select>
+
+	<select id="getCouponBuildList" parameterType="honeyarcade.admin.ad.coupon.AdminAdCouponVO" resultType="honeyarcade.admin.ad.coupon.AdminAdCouponVO">
+	<![CDATA[
+		select 
+		      tb_build.build_name 
+			, tb_build_coupon.build_seq 
+		from 
+			tb_build_coupon
+		inner join tb_build
+			on tb_build_coupon.build_seq = tb_build.build_seq 
+			and tb_build.del_flag = 'N'
+		where
+			tb_build_coupon.coupon_seq = #{coupon_seq}
+	]]>
+	</select>		
+	
+	<update id="updateCoupon" parameterType="honeyarcade.admin.ad.coupon.AdminAdCouponVO">
+	<![CDATA[
+		update
+			tb_coupon
+		set
+			  coupon_img 		= #{coupon_img}
+			, coupon_start_day 	= #{coupon_start_day}
+			, coupon_end_day	= #{coupon_end_day}
+			, coupon_sort		= #{coupon_sort}
+			, mod_dt			= getDate()
+			, mod_id			= #{admin_id}
+		where
+			coupon_seq	= #{coupon_seq}	 
+			
+	]]>
+	</update>
+	
+	<delete id="deleteCouponDtl" parameterType="honeyarcade.admin.ad.coupon.AdminAdCouponVO">
+	<![CDATA[
+		delete from
+			tb_coupon_dtl
+		where
+			coupon_seq = #{coupon_seq}
+	]]>
+	</delete>
+	
+	<delete id="deleteBuildCoupon" parameterType="honeyarcade.admin.ad.coupon.AdminAdCouponVO">
+	<![CDATA[
+		delete from
+			tb_build_coupon
+		where
+			coupon_seq = #{coupon_seq}
+	]]>
+	</delete>
+	
+</mapper>

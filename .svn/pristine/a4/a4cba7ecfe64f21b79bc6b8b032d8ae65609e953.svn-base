@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5" >
+<head>
+	<th:block th:replace="fragments/meta :: metaFragment(title='점주 회원')"></th:block>
+	<link rel="stylesheet" type="text/css" th:href="@{/resources/cork/plugins/bootstrap-select/bootstrap-select.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/resources/cork/plugins/table/datatable/datatables.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/resources/cork/assets/css/elements/custom-pagination.css}">
+	<!--  css style  -->
+	<th:block th:replace="fragments/style :: styleFragment"></th:block>
+</head>
+
+
+<body class="sidebar-noneoverflow">
+    
+	<!--  header  -->
+	<th:block th:replace="fragments/header :: headerFragment"></th:block>
+	
+
+    <!--  BEGIN MAIN CONTAINER  -->
+    <div class="main-container" id="container">
+
+        <div class="overlay"></div>
+        <div class="search-overlay"></div>
+
+		<!--  sidebar  -->
+		<th:block th:replace="fragments/sidebar :: sidebarFragment(main='member', sub='member-owner')"></th:block>
+		        
+        <!--  BEGIN CONTENT AREA  -->
+        <div id="content" class="main-content">
+            <div class="layout-px-spacing">
+
+
+                <!-- CONTENT AREA --> 
+            <div class="row layout-top-spacing">
+              	<div class="col-lg-12 col-12 layout-spacing">
+	          		<div class="statbox widget box box-shadow">
+	          			<div class="widget-header">
+	          				<h4>점주 회원</h4>
+	          			</div>
+						<div class="widget-content widget-content-area">
+							<div class="row">
+								<form class="col-sm-12">
+									<select class="selectpicker" data-width="fit" data-live-search="true">
+									    <option>시,도</option>
+									    <option>서울</option>
+									    <option>인천</option>
+									</select>
+									<select class="selectpicker" data-width="fit" data-live-search="true">
+									    <option>군,구</option>
+									    <option>송파</option>
+									    <option></option>
+									</select>
+									<select class="selectpicker" data-width="fit" data-live-search="true">
+									    <option>지역</option>
+									    <option>문정</option>
+									    <option></option>
+									</select>
+									<select class="selectpicker" data-width="fit" data-live-search="true">
+									    <option>테라타워</option>
+									    <option>문정</option>
+									    <option></option>
+									</select>
+									<select class="selectpicker" data-show-subtext="true">
+		          						<option data-subtext="100명">총 등록 회원</option>
+									    <option data-subtext="20명">유료 회원</option>
+									    <option data-subtext="50명">무료 회원</option>
+									    <option data-subtext="30명">만료 회원</option>
+									</select>
+									<input type="search" placeholder="검색어를 입력하세요" class="d-inline-block form-control col-3">
+									<button class="btn btn-primary mb-2">검색</button>
+								</form>
+							</div>
+          				</div>
+	          		</div>
+	          		<div class="statbox widget box box-shadow mt-2">
+	          			<div class="widget-content widget-content-area br-6 text-center">
+		          			<div>
+								<div class="col-12 d-flex justify-content-end">
+									<div class="dataTables_length" id="zero-config_length">
+									<label>회원수 :  
+										<span>20명</span>
+									</label>
+									</div>
+								</div>
+		          			</div>
+	          				<div class="table-responsive mb-4 mt-2">
+                                <table id="zero-config" class="table table-hover" style="width:100%">
+                                    <thead>
+                                        <tr>
+                                            <th>No.</th>
+                                            <th>ID</th>
+                                            <th>지역</th>
+                                            <th>점포코드</th>
+                                            <th>회원종류</th>
+                                            <th>누적결제금액</th>
+                                            <th>지역 광고권</th>
+                                            <th>건물 광고권</th>
+                                            <th>쿠폰 사용권</th>
+                                            <th>승인신청</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>1</td>
+                                            <td>honeyarcade</td>
+                                            <td>서울</td>
+                                            <td>MEB001</td>
+                                            <td>A회원</td>
+                                            <td>50,000</td>
+                                            <td>2</td>
+                                            <td>0</td>
+                                            <td>0</td>
+                                            <td><button class="btn btn-primary mb-2 btn-sm">승인</button></td>
+                                        </tr>
+                                         <tr>
+                                            <td>2</td>
+                                            <td>honeyarcade</td>
+                                            <td>서울</td>
+                                            <td>MEB001</td>
+                                            <td>A회원</td>
+                                            <td>50,000</td>
+                                            <td>2</td>
+                                            <td>0</td>
+                                            <td>0</td>
+                                            <td><button class="btn btn-primary mb-2 btn-sm">승인</button></td>
+                                        </tr>
+                                         <tr>
+                                            <td>3</td>
+                                            <td>honeyarcade</td>
+                                            <td>서울</td>
+                                            <td>MEB001</td>
+                                            <td>A회원</td>
+                                            <td>50,000</td>
+                                            <td>2</td>
+                                            <td>0</td>
+                                            <td>0</td>
+                                            <td><button class="btn btn-primary mb-2 btn-sm">승인</button></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+	          				</div>
+	          				<div class="row justify-content-center dataTables_paginate paging_simple_numbers" id="zero-config_paginate">
+		          				<div class="paginating-container pagination-solid">
+								    <ul class="pagination">
+								        <li  class="prev"><a href="javascript:void(0);"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg></a></li>
+								        <li><a href="javascript:void(0);">1</a></li>
+								        <li class="active"><a href="javascript:void(0);">2</a></li>
+								        <li><a href="javascript:void(0);">3</a></li>
+								        <li class="next"><a href="javascript:void(0);"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></a></li>
+								    </ul>
+								</div>
+	          				</div>
+	          				<div class="row justify-content-end">
+	          					<button class="btn btn-secondary mb-2 mr-2">승인</button>
+	          					<button class="btn btn-secondary mb-2 mr-2">반려</button>
+	          					<button class="btn btn-secondary mb-2 mr-5">목록</button>
+    						</div>
+	          			</div>
+	          		</div>
+              	</div>
+          	</div>
+          	
+                <!-- CONTENT AREA -->
+
+            </div>
+            
+            
+            <!--  footer   -->
+            <th:block th:replace="fragments/footer"></th:block>
+			
+            
+        </div>
+        <!--  END CONTENT AREA  -->
+
+    </div>
+    <!-- END MAIN CONTAINER -->
+	
+
+
+
+	<th:block th:replace="fragments/script :: scriptFragment"></th:block>
+	<script th:src="@{/resources/cork/plugins/table/datatable/datatables.js}"></script>
+	<script th:src="@{/resources/cork/assets/js/scrollspyNav.js}"></script>
+	<script th:src="@{/resources/cork/plugins/bootstrap-select/bootstrap-select.min.js}"></script>
+	<script th:inline="javascript">
+	/* <![CDATA[ */
+
+	/*]] */
+	</script>
+</body>
+
+</html>

@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5" >
+<head>
+	<th:block th:replace="fragments/meta :: metaFragment(title='공지 사항')"></th:block>
+	
+	
+	<!--  css style  -->
+	<th:block th:replace="fragments/style :: styleFragment"></th:block>
+	<link rel="stylesheet" type="text/css" th:href="@{/resources/cork/assets/css/components/tabs-accordian/custom-accordions.css}">
+</head>
+
+
+<body class="sidebar-noneoverflow">
+    
+	<!--  header  -->
+	<th:block th:replace="fragments/header :: headerFragment"></th:block>
+	
+
+    <!--  BEGIN MAIN CONTAINER  -->
+    <div class="main-container" id="container">
+
+        <div class="overlay"></div>
+        <div class="search-overlay"></div>
+
+		<!--  sidebar  -->
+		<th:block th:replace="fragments/sidebar :: sidebarFragment(main='set', sub='set-ntc')"></th:block>
+		        
+        <!--  BEGIN CONTENT AREA  -->
+        <div id="content" class="main-content">
+            <div class="layout-px-spacing">
+
+
+                <!-- CONTENT AREA -->
+                <div class="row layout-top-spacing">
+                    
+					<div id="tableHover" class="col-lg-12 col-12 layout-spacing">
+						<div class="statbox widget box box-shadow">
+							<div class="widget-header">
+								<div class="row">
+									<div class="col-xl-12 col-md-12 col-sm-12 col-12">
+										<h4>공지 사항</h4>
+									</div>
+								</div>
+							</div>
+							<div class="widget-content widget-content-area">
+								<div id="iconsAccordion" class="accordion-icons">
+								    <div class="card">
+								        <div class="card-header" id="...">
+								            <section class="mb-0 mt-0">
+								                <div role="menu" class="collapsed" data-toggle="collapse" data-target="#iconAccordionOne" aria-expanded="true" aria-controls="iconAccordionOne">
+								                    <div class="accordion-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-smartphone"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg></div>
+								                    APP 내 공지사항 <button class="btn btn-primary btn-sm ml-2">신규</button>
+								                </div>
+								            </section>
+								        </div>
+								
+								        <div id="iconAccordionOne" class="collapse" aria-labelledby="..." data-parent="#iconsAccordion">
+								            <div class="card-body" style="max-height: 400px; overflow-y:scroll;">
+								               <div class="table-responsive mb-4 mt-2 text-center">
+					                                <table id="zero-config" class="table table-hover" style="width:100%">
+					                                    <thead>
+					                                        <tr>
+					                                            <th class="col-8">제목</th>
+					                                            <th class="col-2">날짜</th>
+					                                            <th class="col-2">수정 및 삭제</th>
+					                                        </tr>
+					                                    </thead>
+					                                    <tbody>
+					                                        <tr>
+					                                            <td>허니아케이드 주요 공지사항 안내 및 절차</td>
+					                                            <td>2021.09.15</td>
+					                                            <td>
+					                                            	<button class="btn btn-primary btn-sm ml-2">수정</button>
+					                                            	<button class="btn btn-danger btn-sm ml-2">삭제</button>
+												                </td>
+					                                        </tr>
+					                                        <tr>
+					                                            <td>허니아케이드 주요 공지사항 안내 및 절차</td>
+					                                            <td>2021.09.15</td>
+					                                            <td>
+					                                            	<button class="btn btn-primary btn-sm ml-2">수정</button>
+					                                            	<button class="btn btn-danger btn-sm ml-2">삭제</button>
+												                </td>
+					                                        </tr>
+					                                        <tr>
+					                                            <td>허니아케이드 주요 공지사항 안내 및 절차</td>
+					                                            <td>2021.09.15</td>
+					                                            <td>
+					                                            	<button class="btn btn-primary btn-sm ml-2">수정</button>
+					                                            	<button class="btn btn-danger btn-sm ml-2">삭제</button>
+												                </td>
+					                                        </tr>
+					                                        <tr>
+					                                            <td>허니아케이드 주요 공지사항 안내 및 절차</td>
+					                                            <td>2021.09.15</td>
+					                                            <td>
+					                                            	<button class="btn btn-primary btn-sm ml-2">수정</button>
+					                                            	<button class="btn btn-danger btn-sm ml-2">삭제</button>
+												                </td>
+					                                        </tr>
+					                                        <tr>
+					                                            <td>허니아케이드 주요 공지사항 안내 및 절차</td>
+					                                            <td>2021.09.15</td>
+					                                            <td>
+					                                            	<button class="btn btn-primary btn-sm ml-2">수정</button>
+					                                            	<button class="btn btn-danger btn-sm ml-2">삭제</button>
+												                </td>
+					                                        </tr>
+					                                        <tr>
+					                                            <td>허니아케이드 주요 공지사항 안내 및 절차</td>
+					                                            <td>2021.09.15</td>
+					                                            <td>
+					                                            	<button class="btn btn-primary btn-sm ml-2">수정</button>
+					                                            	<button class="btn btn-danger btn-sm ml-2">삭제</button>
+												                </td>
+					                                        </tr>
+					                                        <tr>
+					                                            <td>허니아케이드 주요 공지사항 안내 및 절차</td>
+					                                            <td>2021.09.15</td>
+					                                            <td>
+					                                            	<button class="btn btn-primary btn-sm ml-2">수정</button>
+					                                            	<button class="btn btn-danger btn-sm ml-2">삭제</button>
+												                </td>
+					                                        </tr>
+					                                        <tr>
+					                                            <td>허니아케이드 주요 공지사항 안내 및 절차</td>
+					                                            <td>2021.09.15</td>
+					                                            <td>
+					                                            	<button class="btn btn-primary btn-sm ml-2">수정</button>
+					                                            	<button class="btn btn-danger btn-sm ml-2">삭제</button>
+												                </td>
+					                                        </tr>
+					                                        <tr>
+					                                            <td>허니아케이드 주요 공지사항 안내 및 절차</td>
+					                                            <td>2021.09.15</td>
+					                                            <td>
+					                                            	<button class="btn btn-primary btn-sm ml-2">수정</button>
+					                                            	<button class="btn btn-danger btn-sm ml-2">삭제</button>
+												                </td>
+					                                        </tr>
+					                                        <tr>
+					                                            <td>허니아케이드 주요 공지사항 안내 및 절차</td>
+					                                            <td>2021.09.15</td>
+					                                            <td>
+					                                            	<button class="btn btn-primary btn-sm ml-2">수정</button>
+					                                            	<button class="btn btn-danger btn-sm ml-2">삭제</button>
+												                </td>
+					                                        </tr>
+					                                    </tbody>
+					                                </table>
+						          				</div>
+								            </div>
+								        </div>
+								  </div>
+								
+								    <div class="card">
+								        <div class="card-header" id="...">
+								            <section class="mb-0 mt-0">
+								                <div role="menu" class="collapsed" data-toggle="collapse" data-target="#iconAccordionTwo" aria-expanded="false" aria-controls="iconAccordionTwo">
+								                    <div class="accordion-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></div>
+								                    사장님 페이지 공지사항 <button class="btn btn-primary btn-sm ml-2">신규</button>
+								                </div>
+								            </section>
+								        </div>
+								        <div id="iconAccordionTwo" class="collapse" aria-labelledby="..." data-parent="#iconsAccordion">
+								            <div class="card-body" style="max-height: 400px; overflow-y:scroll;">
+								
+								                <div class="table-responsive mb-4 mt-2 text-center">
+					                                <table id="zero-config" class="table table-hover" style="width:100%">
+					                                    <thead>
+					                                        <tr>
+					                                            <th class="col-8">제목</th>
+					                                            <th class="col-2">날짜</th>
+					                                            <th class="col-2">수정 및 삭제</th>
+					                                        </tr>
+					                                    </thead>
+					                                    <tbody>
+					                                        <tr>
+					                                            <td>허니아케이드 주요 공지사항 안내 및 절차</td>
+					                                            <td>2021.09.15</td>
+					                                            <td>
+					                                            	<button class="btn btn-primary btn-sm ml-2">수정</button>
+					                                            	<button class="btn btn-danger btn-sm ml-2">삭제</button>
+												                </td>
+					                                        </tr>
+					                                        <tr>
+					                                            <td>허니아케이드 주요 공지사항 안내 및 절차</td>
+					                                            <td>2021.09.15</td>
+					                                            <td>
+					                                            	<button class="btn btn-primary btn-sm ml-2">수정</button>
+					                                            	<button class="btn btn-danger btn-sm ml-2">삭제</button>
+												                </td>
+					                                        </tr>
+					                                        <tr>
+					                                            <td>허니아케이드 주요 공지사항 안내 및 절차</td>
+					                                            <td>2021.09.15</td>
+					                                            <td>
+					                                            	<button class="btn btn-primary btn-sm ml-2">수정</button>
+					                                            	<button class="btn btn-danger btn-sm ml-2">삭제</button>
+												                </td>
+					                                        </tr>
+					                                        <tr>
+					                                            <td>허니아케이드 주요 공지사항 안내 및 절차</td>
+					                                            <td>2021.09.15</td>
+					                                            <td>
+					                                            	<button class="btn btn-primary btn-sm ml-2">수정</button>
+					                                            	<button class="btn btn-danger btn-sm ml-2">삭제</button>
+												                </td>
+					                                        </tr>
+					                                        <tr>
+					                                            <td>허니아케이드 주요 공지사항 안내 및 절차</td>
+					                                            <td>2021.09.15</td>
+					                                            <td>
+					                                            	<button class="btn btn-primary btn-sm ml-2">수정</button>
+					                                            	<button class="btn btn-danger btn-sm ml-2">삭제</button>
+												                </td>
+					                                        </tr>
+					                                        <tr>
+					                                            <td>허니아케이드 주요 공지사항 안내 및 절차</td>
+					                                            <td>2021.09.15</td>
+					                                            <td>
+					                                            	<button class="btn btn-primary btn-sm ml-2">수정</button>
+					                                            	<button class="btn btn-danger btn-sm ml-2">삭제</button>
+												                </td>
+					                                        </tr>
+					                                        <tr>
+					                                            <td>허니아케이드 주요 공지사항 안내 및 절차</td>
+					                                            <td>2021.09.15</td>
+					                                            <td>
+					                                            	<button class="btn btn-primary btn-sm ml-2">수정</button>
+					                                            	<button class="btn btn-danger btn-sm ml-2">삭제</button>
+												                </td>
+					                                        </tr>
+					                                        <tr>
+					                                            <td>허니아케이드 주요 공지사항 안내 및 절차</td>
+					                                            <td>2021.09.15</td>
+					                                            <td>
+					                                            	<button class="btn btn-primary btn-sm ml-2">수정</button>
+					                                            	<button class="btn btn-danger btn-sm ml-2">삭제</button>
+												                </td>
+					                                        </tr>
+					                                        <tr>
+					                                            <td>허니아케이드 주요 공지사항 안내 및 절차</td>
+					                                            <td>2021.09.15</td>
+					                                            <td>
+					                                            	<button class="btn btn-primary btn-sm ml-2">수정</button>
+					                                            	<button class="btn btn-danger btn-sm ml-2">삭제</button>
+												                </td>
+					                                        </tr>
+					                                        <tr>
+					                                            <td>허니아케이드 주요 공지사항 안내 및 절차</td>
+					                                            <td>2021.09.15</td>
+					                                            <td>
+					                                            	<button class="btn btn-primary btn-sm ml-2">수정</button>
+					                                            	<button class="btn btn-danger btn-sm ml-2">삭제</button>
+												                </td>
+					                                        </tr>
+					                                    </tbody>
+					                                </table>
+						          				</div>
+								
+								            </div>
+								        </div>
+								    </div>
+								    <div class="card">
+								        <div class="card-header" id="...">
+								            <section class="mb-0 mt-0">
+								                <div role="menu" class="" data-toggle="collapse" data-target="#iconAccordionThree" aria-expanded="false" aria-controls="iconAccordionThree">
+								                    <div class="accordion-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-users"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg></div>
+								                    사장님 페이지 점포 회원 전용 공지사항<button class="btn btn-sm btn-primary ml-2">신규</button>
+								                </div>
+								            </section>
+								        </div>
+								        <div id="iconAccordionThree" class="collapse show" aria-labelledby="..." data-parent="#iconsAccordion">
+								        <div class="card-body" style="max-height: 400px; overflow-y:scroll;">
+								            
+								            <div class="table-responsive mb-4 mt-2 text-center">
+					                                <table id="zero-config" class="table table-hover" style="width:100%">
+					                                    <thead>
+					                                        <tr>
+					                                            <th class="col-8">제목</th>
+					                                            <th class="col-2">날짜</th>
+					                                            <th class="col-2">수정 및 삭제</th>
+					                                        </tr>
+					                                    </thead>
+					                                    <tbody>
+					                                        <tr>
+					                                            <td>허니아케이드 주요 공지사항 안내 및 절차</td>
+					                                            <td>2021.09.15</td>
+					                                            <td>
+					                                            	<button class="btn btn-primary btn-sm ml-2">수정</button>
+					                                            	<button class="btn btn-danger btn-sm ml-2">삭제</button>
+												                </td>
+					                                        </tr>
+					                                        <tr>
+					                                            <td>허니아케이드 주요 공지사항 안내 및 절차</td>
+					                                            <td>2021.09.15</td>
+					                                            <td>
+					                                            	<button class="btn btn-primary btn-sm ml-2">수정</button>
+					                                            	<button class="btn btn-danger btn-sm ml-2">삭제</button>
+												                </td>
+					                                        </tr>
+					                                        <tr>
+					                                            <td>허니아케이드 주요 공지사항 안내 및 절차</td>
+					                                            <td>2021.09.15</td>
+					                                            <td>
+					                                            	<button class="btn btn-primary btn-sm ml-2">수정</button>
+					                                            	<button class="btn btn-danger btn-sm ml-2">삭제</button>
+												                </td>
+					                                        </tr>
+					                                        <tr>
+					                                            <td>허니아케이드 주요 공지사항 안내 및 절차</td>
+					                                            <td>2021.09.15</td>
+					                                            <td>
+					                                            	<button class="btn btn-primary btn-sm ml-2">수정</button>
+					                                            	<button class="btn btn-danger btn-sm ml-2">삭제</button>
+												                </td>
+					                                        </tr>
+					                                        <tr>
+					                                            <td>허니아케이드 주요 공지사항 안내 및 절차</td>
+					                                            <td>2021.09.15</td>
+					                                            <td>
+					                                            	<button class="btn btn-primary btn-sm ml-2">수정</button>
+					                                            	<button class="btn btn-danger btn-sm ml-2">삭제</button>
+												                </td>
+					                                        </tr>
+					                                        <tr>
+					                                            <td>허니아케이드 주요 공지사항 안내 및 절차</td>
+					                                            <td>2021.09.15</td>
+					                                            <td>
+					                                            	<button class="btn btn-primary btn-sm ml-2">수정</button>
+					                                            	<button class="btn btn-danger btn-sm ml-2">삭제</button>
+												                </td>
+					                                        </tr>
+					                                        <tr>
+					                                            <td>허니아케이드 주요 공지사항 안내 및 절차</td>
+					                                            <td>2021.09.15</td>
+					                                            <td>
+					                                            	<button class="btn btn-primary btn-sm ml-2">수정</button>
+					                                            	<button class="btn btn-danger btn-sm ml-2">삭제</button>
+												                </td>
+					                                        </tr>
+					                                        <tr>
+					                                            <td>허니아케이드 주요 공지사항 안내 및 절차</td>
+					                                            <td>2021.09.15</td>
+					                                            <td>
+					                                            	<button class="btn btn-primary btn-sm ml-2">수정</button>
+					                                            	<button class="btn btn-danger btn-sm ml-2">삭제</button>
+												                </td>
+					                                        </tr>
+					                                        <tr>
+					                                            <td>허니아케이드 주요 공지사항 안내 및 절차</td>
+					                                            <td>2021.09.15</td>
+					                                            <td>
+					                                            	<button class="btn btn-primary btn-sm ml-2">수정</button>
+					                                            	<button class="btn btn-danger btn-sm ml-2">삭제</button>
+												                </td>
+					                                        </tr>
+					                                        <tr>
+					                                            <td>허니아케이드 주요 공지사항 안내 및 절차</td>
+					                                            <td>2021.09.15</td>
+					                                            <td>
+					                                            	<button class="btn btn-primary btn-sm ml-2">수정</button>
+					                                            	<button class="btn btn-danger btn-sm ml-2">삭제</button>
+												                </td>
+					                                        </tr>
+					                                    </tbody>
+					                                </table>
+						          				</div>
+								
+								        </div>
+								        </div>
+								    </div>
+								</div>	
+							</div>
+						</div>
+					</div>
+                    
+
+                </div>
+
+
+                <!-- CONTENT AREA -->
+
+            </div>
+            
+            
+            <!--  footer   -->
+            <th:block th:replace="fragments/footer"></th:block>
+			
+            
+        </div>
+        <!--  END CONTENT AREA  -->
+
+    </div>
+    <!-- END MAIN CONTAINER -->
+	
+
+
+
+	<th:block th:replace="fragments/script :: scriptFragment"></th:block>
+	<script th:src="@{/resources/cork/assets/js/components/ui-accordions.js}"></script>
+	<script th:src="@{/resources/cork/plugins/table/datatable/datatables.js}"></script>
+	
+	<script th:inline="javascript">
+	/* <![CDATA[ */
+		
+	/*]] */
+	</script>
+</body>
+
+</html>

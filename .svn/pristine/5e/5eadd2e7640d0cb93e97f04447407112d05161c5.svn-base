@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+	<th:block th:replace="fragments/meta :: metaFragment(title='관리자 설정', useMetaCsrf='true')"></th:block>
+	<th:block th:replace="fragments/style :: styleFragment"></th:block>
+	<link rel="stylesheet" type="text/css" th:href="@{/resources/cork/plugins/table/datatable/datatables.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/resources/cork/assets/css/elements/custom-pagination.css}">
+	<link rel="stylesheet" type="text/css"
+		th:href="@{/resources/cork/plugins/bootstrap-select/bootstrap-select.min.css}">
+</head>
+
+
+<body class="sidebar-noneoverflow">
+	<!--  header  -->
+	<th:block th:replace="fragments/header :: headerFragment"></th:block>
+
+	<!--  BEGIN MAIN CONTAINER  -->
+	<div class="main-container" id="container">
+
+		<div class="overlay"></div>
+		<div class="search-overlay"></div>
+
+		<!--  sidebar  -->
+		<th:block th:replace="fragments/sidebar :: sidebarFragment(main='set', sub='set-dir')"></th:block>
+
+		<!--  BEGIN CONTENT AREA  -->
+		<div id="content" class="main-content">
+			<div class="layout-px-spacing">
+
+				<!-- CONTENT AREA -->
+				<div class="row layout-top-spacing">
+					<div id="tableHover" class="col-lg-12 col-12">
+						<div class="statbox widget box box-shadow">
+							<div class="widget-header">
+								<div class="row">
+									<div class="col-xl-12 col-md-12 col-sm-12 col-12">
+										<h4>관리자 설정</h4>
+										<div class="col-xl-12 col-md-12 col-sm-12 col-12 text-right">
+											<button class="btn btn-primary" id="adminAddBtn">관리자 추가</button>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="widget-content widget-content-area">
+								<table id="zero-config" class="table table-hover text-center" style="width:100%">
+									<thead>
+										<tr>
+											<th>No.</th>
+											<th>ID</th>
+											<!--<th>관리자 이름</th>-->
+											<th>권한</th>
+											<th>등록일</th>
+											<th>편집</th>
+											<th>삭제</th>
+										</tr>
+									</thead>
+									<tbody>
+										<th:block th:if="${adminList.size() == 0}">
+											<tr>
+												<td colspan="6"> 조회된 데이터가 없습니다 </td>
+											</tr>
+										</th:block>
+										
+										<th:block th:if="${adminList.size() != 0}">
+											<th:block th:each="list : ${adminList}">
+												<tr>
+													<td>[[${list.row_num}]]</td>
+													<td>[[${list.admin_id}]]</td>
+													<!--<td>[[${list.admin_name}]]</td>-->
+													<td>[[${list.admin_grade_text}]]</td>
+													<td>[[${list.add_dt}]]</td>
+													<td>
+														<button type="button" class="btn btn-dark modBtn">편집</button>
+													</td>
+													<td>
+														<button type="button" class="btn btn-danger delBtn">삭제</button>
+														<form class="adminForm" th:action="@{/admin/set/dir/delProc}">
+															<input type="hidden" name="admin_id" th:value="${list.admin_id}" readonly>
+															<input type="hidden" name="admin_grade" th:value="${list.admin_grade}" readonly>
+															<input type="hidden" name="build_seq" th:value="${list.build_seq}" readonly>
+														</form>
+													</td>
+												</tr>
+											</th:block>
+										</th:block>
+																				
+									</tbody>
+								</table>
+								
+								<th:block th:if="${adminList.size()==0}">
+								<div class="paginating-container pagination-solid">
+									<ul class="pagination">
+										<li class="prev"><a href="javascript:void(0);">
+												<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+													viewBox="0 0 24 24" fill="none" stroke="currentColor"
+													stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+													class="feather feather-arrow-left">
+													<line x1="19" y1="12" x2="5" y2="12"></line>
+													<polyline points="12 19 5 12 12 5"></polyline>
+												</svg>
+											</a>
+										</li>
+										
+										<li class="active"><a href="javascript:void(0);">1</a></li>
+										
+										<li class="next"><a href="javascript:void(0);"><svg
+													xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+													viewBox="0 0 24 24" fill="none" stroke="currentColor"
+													stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+													class="feather feather-arrow-right">
+													<line x1="5" y1="12" x2="19" y2="12"></line>
+													<polyline points="12 5 19 12 12 19"></polyline>
+												</svg>
+											</a>
+										</li>
+									</ul>
+								</div>
+								</th:block>
+								
+								<th:block th:if="${adminList.size()!=0}">
+								<div class="paginating-container pagination-solid">
+									<ul class="pagination">
+									
+										<th:block th:if="${pageUtil.startPage == 1}">
+											<li class="prev"><a href="javascript:void(0);">
+													<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+														viewBox="0 0 24 24" fill="none" stroke="currentColor"
+														stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+														class="feather feather-arrow-left">
+														<line x1="19" y1="12" x2="5" y2="12"></line>
+														<polyline points="12 19 5 12 12 5"></polyline>
+													</svg>
+												</a>
+											</li>
+										</th:block>
+										
+										<th:block th:if="${pageUtil.startPage != 1}">
+											<li class="prev">
+												<a th:href="@{/admin/set/dir/list(nowPage=${pageUtil.startPage-1})}">
+													<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+														viewBox="0 0 24 24" fill="none" stroke="currentColor"
+														stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+														class="feather feather-arrow-left">
+														<line x1="19" y1="12" x2="5" y2="12"></line>
+														<polyline points="12 19 5 12 12 5"></polyline>
+													</svg>
+												</a>
+											</li>										
+										</th:block>
+										
+										
+										<li th:each="page : ${#numbers.sequence(pageUtil.startPage, pageUtil.endPage)}" th:classappend="${page == nowPage}? 'active'">
+											<a th:href="@{/admin/set/dir/list(nowPage=${page})}" th:text="${page}"></a>
+										</li>
+										
+										<th:block th:if="${pageUtil.endPage == pageUtil.totalPage}">
+											<li class="next"><a href="javascript:void(0);"><svg
+														xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+														viewBox="0 0 24 24" fill="none" stroke="currentColor"
+														stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+														class="feather feather-arrow-right">
+														<line x1="5" y1="12" x2="19" y2="12"></line>
+														<polyline points="12 5 19 12 12 19"></polyline>
+													</svg>
+												</a>
+											</li>
+										</th:block>
+										
+										<th:block th:if="${pageUtil.endPage != pageUtil.totalPage}">
+											<li class="next"><a th:href="@{/admin/set/dir/list(nowPage=${pageUtil.endPage+1})}"><svg
+														xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+														viewBox="0 0 24 24" fill="none" stroke="currentColor"
+														stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+														class="feather feather-arrow-right">
+														<line x1="5" y1="12" x2="19" y2="12"></line>
+														<polyline points="12 5 19 12 12 19"></polyline>
+													</svg>
+												</a>
+											</li>										
+										</th:block>
+										
+									</ul>
+								</div>
+								</th:block>
+							</div>
+						</div>
+
+					</div>
+				</div>
+
+				<!-- CONTENT AREA -->
+				
+				<!-- Modal -->
+				<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
+			    <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+			        <div class="modal-content">
+			            <div class="modal-header">
+			                <h5 class="modal-title">관리자 추가</h5>
+			            </div>
+			            <div class="modal-body">
+			            	<ul>
+			            		<li>
+				                 <form id="modalForm" class="form-horizontal d-flex justify-content-between align-items-center">
+				                 	<div id="modalAddArea" class="form-inline">
+					                 	<div class="form-group mr-2 mb-2">
+											<input type="text"  name="admin_id" class="form-control" placeholder="아이디">
+										</div>
+										<div class="form-group mr-2 mb-2">
+											<input type="password" name="admin_pwd" class="form-control" placeholder="비밀번호">
+										</div>
+										<div class="form-group mr-2 mb-2">
+											<input type="password" name="admin_pwd2" class="form-control" placeholder="비밀번호 확인">
+										</div>
+										<div class="form-group mr-2">
+											<select id="adminGradeSelect" class="selectpicker" data-width="fit" title="권한">
+												<option value="1">마스터</option>
+												<option value="2">직원</option>
+												<option value="3">지점</option>
+											</select>
+										</div>
+										<div class="form-group mr-2" id="dongTarget" style="display: none;"> 
+											<select id="dongSelect"  name="dong_seq" class="selectpicker" data-width="fit" title="지역" data-live-search="true">
+												<th:block th:if="${dongList.size() != 0}">
+													<th:block th:each="list : ${dongList}">
+														<option th:value="${list.dong_seq}" th:text="${list.dong_name}"></option> 
+													</th:block>
+												</th:block>
+											</select>
+										</div>
+										<div class="form-group mr-2" id="buildTarget" style="display: none;">
+											<select id="buildSelect" name="build_seq" class="selectpicker" data-width="fit" title="건물" data-live-search="true">
+												
+											</select>
+										</div> 
+				                 	</div>
+				                 	
+				                 	<input type="input" name="modal_type" value="" readonly>
+				                 					                 		
+				                 </form>
+			            		</li>
+			                 <ul>
+			            </div>
+			            <div class="modal-footer">
+			                <button type="button" id="modalCancleBtn" class="btn btn-danger">취소</button>
+			                <button type="button" id="modalSaveBtn" class="btn btn-info">저장</button>
+			            </div>
+			        </div>
+			    </div>
+			</div>
+
+			</div>
+
+			<!--  footer   -->
+			<th:block th:replace="fragments/footer"></th:block>
+
+		</div>
+		<!--  END CONTENT AREA  -->
+
+	</div>
+	<!-- END MAIN CONTAINER -->
+
+	<th:block th:replace="fragments/script :: scriptFragment(useScriptCsrf='true')"></th:block>
+	<script th:src="@{/resources/cork/plugins/bootstrap-select/bootstrap-select.min.js}"></script>
+	<script th:src="@{/resources/honeyArcade/admin/common/js/regex.js}"></script>
+	<script th:src="@{/resources/honeyArcade/admin/set/dir/js/adminSetDirList.js}"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="honeyarcade.admin.set.ntc.AdminSetNtcMapper">
+	
+	<select id="getAppList" resultType="honeyarcade.admin.set.ntc.AdminSetNtcVO">
+	<![CDATA[
+		select  
+			  ntc_seq
+			, ntc_title
+			, ntc_type
+			, case when mod_dt is null then  convert(char(10), add_dt , 23) else convert(char(10), mod_dt , 23) end as ntc_date
+		from 
+			tb_ntc
+		where
+			tb_ntc.del_flag = 'N'
+			and ntc_type = 1
+		order by
+			ntc_seq desc
+	]]>
+	</select>
+	
+	<select id="getNtcList" resultType="honeyarcade.admin.set.ntc.AdminSetNtcVO">
+	<![CDATA[
+		select  
+			  ntc_seq
+			, ntc_title
+			, ntc_type
+			, case when mod_dt is null then  convert(char(10), add_dt , 23) else convert(char(10), mod_dt , 23) end as ntc_date
+		from 
+			tb_ntc
+		where
+			tb_ntc.del_flag = 'N'
+			and ntc_type = 2
+		order by
+			ntc_seq desc
+	]]>
+	</select>
+	
+	<select id="getOwnerNtcList" resultType="honeyarcade.admin.set.ntc.AdminSetNtcVO">
+	<![CDATA[
+		select  
+			  ntc_seq
+			, ntc_title
+			, ntc_type
+			, case when mod_dt is null then  convert(char(10), add_dt , 23) else convert(char(10), mod_dt , 23) end as ntc_date
+		from 
+			tb_ntc
+		where
+			tb_ntc.del_flag = 'N'
+			and ntc_type = 3
+		order by
+			ntc_seq desc
+	]]>
+	</select>	
+	
+	<update id="ntcDelProc" parameterType="honeyarcade.admin.set.ntc.AdminSetNtcVO">
+	<![CDATA[
+		update
+			tb_ntc
+		set
+			  mod_dt = getDate()
+			, mod_id = #{mod_id}
+			, del_flag = 'Y'
+		where
+				ntc_seq  = #{ntc_seq}
+			and ntc_type = #{ntc_type}
+	]]>
+	</update>
+	
+	<select id="getNtc" parameterType="honeyarcade.admin.set.ntc.AdminSetNtcVO" resultType="honeyarcade.admin.set.ntc.AdminSetNtcVO">
+	<![CDATA[
+		select
+			  ntc_seq
+			, ntc_title
+			, ntc_text
+			, ntc_type
+		from
+			tb_ntc
+		where
+				ntc_seq  = #{ntc_seq}
+			and ntc_type = #{ntc_type}
+	]]>
+	</select>
+	
+	<update id="ntcModProc" parameterType="honeyarcade.admin.set.ntc.AdminSetNtcVO">
+	<![CDATA[
+		update
+			tb_ntc
+		set
+			  mod_dt = getDate()
+			, mod_id = #{mod_id}
+			, ntc_title = #{ntc_title}
+			, ntc_text = #{ntc_text} 
+		where
+				ntc_seq  = #{ntc_seq}
+			and ntc_type = #{ntc_type}			
+	]]>
+	</update>
+	
+	<insert id="ntcWriteProc" parameterType="honeyarcade.admin.set.ntc.AdminSetNtcVO">
+	<![CDATA[
+		insert into tb_ntc
+			(
+				  ntc_title
+				, ntc_text
+				, ntc_type
+				, add_dt
+				, add_id
+				, del_flag
+			)
+		values
+			(
+				  #{ntc_title}
+				, #{ntc_text}
+				, #{ntc_type}
+				, getDate()
+				, #{add_id}
+				, 'N'
+			)
+	]]>
+	</insert>
+	
+</mapper>

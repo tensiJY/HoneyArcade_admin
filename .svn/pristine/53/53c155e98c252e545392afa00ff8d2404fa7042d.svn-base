@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+	<th:block th:replace="fragments/meta :: metaFragment(title='수익 관리')"></th:block>
+
+
+	<!--  css style  -->
+	<th:block th:replace="fragments/style :: styleFragment"></th:block>
+	<link rel="stylesheet" type="text/css" th:href="@{/resources/cork/plugins/flatpickr/flatpickr.css}">
+	<link rel="stylesheet" type="text/css"
+		th:href="@{/resources/cork/plugins/bootstrap-select/bootstrap-select.min.css}">
+		<link rel="stylesheet" type="text/css" th:href="@{/resources/cork/plugins/table/datatable/datatables.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/resources/cork/assets/css/elements/custom-pagination.css}">
+</head>
+
+
+<body class="sidebar-noneoverflow">
+
+	<!--  header  -->
+	<th:block th:replace="fragments/header :: headerFragment"></th:block>
+
+
+	<!--  BEGIN MAIN CONTAINER  -->
+	<div class="main-container" id="container">
+
+		<div class="overlay"></div>
+		<div class="search-overlay"></div>
+
+		<!--  sidebar  -->
+		<th:block th:replace="fragments/sidebar :: sidebarFragment(main='im', sub='im-sales')"></th:block>
+
+		<!--  BEGIN CONTENT AREA  -->
+		<div id="content" class="main-content">
+			<div class="layout-px-spacing">
+
+
+				<!-- CONTENT AREA -->
+				<div class="row layout-top-spacing">
+
+					<div id="tableHover" class="col-lg-12 col-12 layout-spacing">
+						<div class="statbox widget box box-shadow">
+							<div class="widget-header">
+								<div class="row">
+									<div class="col-xl-12 col-md-12 col-sm-12 col-12">
+										<h4>수익 관리</h4>
+									</div>
+								</div>
+							</div>
+							<div class="widget-content widget-content-area">
+								<form class="">
+									<div class="form-inline">
+										<div class="form-group mr-2">
+											<select class="selectpicker" data-width="fit">
+												<option>연별 통계</option>
+												<option>월별 통계</option>
+											</select>
+										</div>
+										<div class="form-group mr-2 mb-2">
+											<input type="text" class="form-control" id="flatpickr">
+										</div>
+										<div class="form-group mr-2 mb-2">
+											<input type="text" class="form-control" id="flatpickr2">
+										</div>
+										<div class="form-group mb-2">
+										<input type="button" class="btn btn-primary" value="조회">
+									</div>
+									</div>
+								</form>
+							</div>
+							</div>
+							<div class="statbox widget box box-shadow mt-2 ">
+								<div class="widget-content widget-content-area br-6">
+									<div class="form-inline col">
+											<div class="form-group mb-4 mt-2">
+												<label class="control-label mr-2 text-dark">총 결제 금액</label>
+												<input type="input" class="form-control" readonly value="10,000원">
+											</div>
+										</div>
+									<table id="zero-config" class="table table-hover text-center" style="width:100%">
+										<thead>
+											<tr>
+												<th>번호
+												</th>
+												<th>결제일
+												</th>
+												<th>결제월
+												</th>
+												<th>결제금액
+												</th>
+												<th>점포코드
+												</th>
+												<th>지역
+												</th>
+												<th>건물
+												</th>
+												<th>점주
+												</th>
+												<th>아이디
+												</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr>
+												<td>1
+												</td>
+												<td>22일
+												</td>
+												<td>07월
+												</td>
+												<td>30,000원
+												</td>
+												<td>1234586544
+												</td>
+												<td>서울특별시 강남구
+												</td>
+												<td>000000건물
+												</td>
+												<td>홍길동
+												</td>
+												<td>HoneyArcade
+												</td>
+												
+											</tr>
+											<tr>
+												<td>1
+												</td>
+												<td>22일
+												</td>
+												<td>07월
+												</td>
+												<td>30,000원
+												</td>
+												<td>1234586544
+												</td>
+												<td>서울특별시 강남구
+												</td>
+												<td>000000건물
+												</td>
+												<td>홍길동
+												</td>
+												<td>HoneyArcade
+												</td>
+												
+											</tr>
+										</tbody>
+									</table>
+									<div class="paginating-container pagination-solid">
+									    <ul class="pagination">
+									        <li class="prev"><a href="javascript:void(0);"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+													viewBox="0 0 24 24" fill="none" stroke="currentColor"
+													stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+													class="feather feather-arrow-left">
+													<line x1="19" y1="12" x2="5" y2="12"></line>
+													<polyline points="12 19 5 12 12 5"></polyline>
+												</svg></a></li>
+									        <li><a href="javascript:void(0);">1</a></li>
+									        <li class="active"><a href="javascript:void(0);">2</a></li>
+									        <li><a href="javascript:void(0);">3</a></li>
+									        <li class="next"><a href="javascript:void(0);"><svg
+													xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+													viewBox="0 0 24 24" fill="none" stroke="currentColor"
+													stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+													class="feather feather-arrow-right">
+													<line x1="5" y1="12" x2="19" y2="12"></line>
+													<polyline points="12 5 19 12 12 19"></polyline>
+												</svg></a></li>
+									    </ul>
+									</div>
+									
+									
+								</div>
+							</div>
+						</div>
+
+
+					</div>
+
+
+					<!-- CONTENT AREA -->
+
+				</div>
+
+
+				<!--  footer   -->
+				<th:block th:replace="fragments/footer"></th:block>
+
+
+			</div>
+			<!--  END CONTENT AREA  -->
+
+		</div>
+		<!-- END MAIN CONTAINER -->
+
+
+
+
+		<th:block th:replace="fragments/script :: scriptFragment"></th:block>
+		<script th:src="@{/resources/cork/plugins/bootstrap-select/bootstrap-select.min.js}"></script>
+		<script th:src="@{/resources/cork/plugins/flatpickr/flatpickr.js}"></script>
+		<script th:src="@{/resources/cork/plugins/flatpickr/monthSelect.js}"></script>
+		<script>
+			var year = flatpickr(document.getElementById('flatpickr'), new monthSelectPlugin({
+				shorthand: true, //defaults to false
+          dateFormat: "m.y", //defaults to "F Y"
+          altFormat: "F Y", //defaults to "F Y"
+          theme: "dark" // defaults to "light"
+			}));
+			var month = flatpickr(document.getElementById('flatpickr2'));
+
+		</script>
+		<script th:inline="javascript">
+			/* <![CDATA[ */
+
+			/*]] */
+		</script>
+</body>
+
+</html>

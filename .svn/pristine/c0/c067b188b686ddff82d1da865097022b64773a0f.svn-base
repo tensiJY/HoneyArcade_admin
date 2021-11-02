@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5" >
+<head>
+	<th:block th:replace="fragments/meta :: metaFragment(title='광고요청 - 광고요청서', useMetaCsrf='true')"></th:block>
+	
+	<!--  css style  -->
+	<th:block th:replace="fragments/style :: styleFragment"></th:block>
+	<link rel="stylesheet" type="text/css" th:href="@{/resources/honeyArcade/admin/ad/req/css/adminAdReqView.css}">
+</head>
+
+
+<body class="sidebar-noneoverflow">
+    
+	<!--  header  -->
+	<th:block th:replace="fragments/header :: headerFragment"></th:block>
+	
+
+    <!--  BEGIN MAIN CONTAINER  -->
+    <div class="main-container" id="container">
+
+        <div class="overlay"></div>
+        <div class="search-overlay"></div>
+
+		<!--  sidebar  -->
+		<th:block th:replace="fragments/sidebar :: sidebarFragment(main='ad', sub='ad-req')"></th:block>
+		        
+        <!--  BEGIN CONTENT AREA  -->
+		<div id="content" class="main-content">
+			<div class="layout-px-spacing">
+				<div class="row layout-top-spacing">
+					<div id="tableHover" class="col-lg-12 col-12 layout-spacing">
+						<div class="statbox widget box box-shadow">
+							<div class="widget-header">
+								<h4>광고 요청서</h4>
+							</div>
+							<div class="widget-content widget-content-area">
+								<form class="form-horizontal">
+									<label for="inputEmail3" class="col-sm-2 control-label">상호명</label>
+								<div class="form-inline mb-4 col-sm-10">
+									<div class="form-group mr-2">
+										<input type="text" class="form-control" th:value="${viewVO.ad_req_id}" readonly>
+									</div>
+									<div class="form-group w-50">
+										<input type="text" class="form-control w-100" value="상호명" readonly>
+									</div>
+								</div>
+								  <div class="form-group">
+								    <label for="inputEmail3" class="col-sm-2 control-label">주소</label>
+								    <div class="form-inline col-sm-10">
+									    <div class="form-group mr-1">
+											<input type="text" class="form-control" th:value="${viewVO.sido_name}" readonly>
+										</div>
+										<div class="form-group mr-1">
+											<input type="text" class="form-control" th:value="${viewVO.sigungu_name}" readonly>
+										</div>
+										<div class="form-group mr-1">
+											<input type="text" class="form-control" th:value="${viewVO.dong_name}" readonly>
+										</div>
+										<div class="form-group mr-1">
+											<input type="text" class="form-control" th:value="${viewVO.build_name}" readonly>
+										</div>
+										
+									</div>
+								  </div>
+								  <div class="form-group">
+								    <label for="inputPassword3" class="col-sm-2 control-label">상품명</label>
+								    <div class="col-sm-10">
+								      <input type="text" class="form-control" th:value="${viewVO.event_title}" readonly>
+								    </div>
+								  </div>
+								  <div class="form-group">
+								    <label for="inputPassword3" class="col-sm-2 control-label">광고 유형</label>
+								    <div class="col-sm-10">
+								      <input type="text" class="form-control" th:value="${viewVO.ad_req_type_text}" readonly>
+								    </div>
+								  </div>
+								  <div class="form-group">
+								    <label for="inputPassword3" class="col-sm-2 control-label">광고 일수</label>
+								    <div class="col-sm-10">
+								      <input type="text" class="form-control" th:value="${viewVO.ad_req_day}" readonly>
+								    </div>
+								  </div>
+								  <div class="form-group">
+								    <label for="inputPassword3" class="col-sm-2 control-label">요청 메시지</label>
+								    <div class="col-sm-10">
+								      <textarea class="form-control" th:text="${viewVO.ad_req_text}" readonly></textarea>
+								    </div>
+								  </div>
+								  <div class="form-group">
+								    <label for="inputPassword3" class="col-sm-2 control-label">보낸 이미지</label>
+								    <div class="col-sm-10">
+										<th:block th:if="${file_dtl_list.size() != 0}">
+											<th:block th:each="list : ${file_dtl_list}">
+												<input type="button" class="downBtn btn btn-dark" value="다운로드"
+													th:data-file-seq="${list.file_seq}"
+													th:data-file-dtl-seq="${list.file_dtl_seq}">
+											</th:block>
+										</th:block>
+										<th:block th:if="${file_dtl_list.size() == 0}">
+										</th:block>
+									</div>
+								  </div>
+								  <!-- 조건 : 반려 인경우 -->
+									<th:block th:if="${viewVO.ad_req_status == 3}">
+									<div class="form-group">
+										<label class="col-sm-2 control-label">반려 사유</label>
+										<div class="col-sm-10">
+											<textarea class="form-control" readonly>[[${viewVO.ad_req_reject_reason}]]</textarea>
+										</div>
+									</div>
+									</th:block>
+								</form>
+								
+									<div class="col-sm-10 text-right">
+										<th:block th:if="${viewVO.ad_req_status == 1}">
+											<input type="button" id="acceptBtn" class="btn btn-info" value="승인">
+											<input type="button" id="rejectBtn" class="btn btn-danger" value="반려" data-toggle="" data-target="#location"> <!-- data-toggle="modal"  -->
+										</th:block>
+										<input type="button" id="listBtn" class="btn btn btn-primary" value="목록">
+									</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+            
+            <!--  footer   -->
+            <th:block th:replace="fragments/footer"></th:block>
+			
+            
+        </div>
+        <!--  END CONTENT AREA  -->
+
+    </div>
+    <!-- END MAIN CONTAINER -->
+
+
+<div class="modal zoomInUp" id="location" tabindex="-1" role="dialog" aria-labelledby="location" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">반려 사유</h5>
+            </div>
+            <div class="modal-body">
+                <textarea id="rejectReason" class="form-control" rows="10" placeholder="200자 이내로 작성해주세요."></textarea>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger" data-dismiss="modal" id="popCancelBtn"><i class="flaticon-cancel-12"></i>취소</button>
+                <button type="button" class="btn btn-info" id="popSaveBtn">저장</button>
+            </div>
+        </div>
+    </div>
+</div>	
+
+<form id="acceptForm">
+	<input type="hidden" name="ad_seq"			th:value="${viewVO.ad_seq}">
+	<input type="hidden" name="ad_req_type"		th:value="${viewVO.ad_req_type}">
+	<input type="hidden" name="ad_req_reject_reason">
+	
+</form>
+
+
+<form id="listForm" th:action="@{/admin/ad/req/list}" method="GET">
+	<input type="hidden" name="type" 			th:value="${adminAdReqVO.type}">
+	<input type="hidden" name="nowPage" 		th:value="${adminAdReqVO.nowPage}">
+	<input type="hidden" name="listCount" 		th:value="${adminAdReqVO.listCount}">
+	<input type="hidden" name="sido_seq" 		th:value="${adminAdReqVO.sido_seq}">
+	<input type="hidden" name="sigungu_seq"	 	th:value="${adminAdReqVO.sigungu_seq}">
+	<input type="hidden" name="dong_seq" 		th:value="${adminAdReqVO.dong_seq}">
+	<input type="hidden" name="search_text" 	th:value="${adminAdReqVO.search_text}">
+	<input type="hidden" name="search_type" 	th:value="${adminAdReqVO.search_type}">
+</form>
+
+
+
+	<th:block th:replace="fragments/script :: scriptFragment(useScriptCsrf='true')"></th:block>
+	<script th:src="@{/resources/honeyArcade/admin/common/js/fileUpload.js}"></script>
+	<script th:src="@{/resources/honeyArcade/admin/ad/req/js/adminAdReqView.js}"></script>
+	
+	<script th:inline="javascript">
+	/* <![CDATA[ */
+		
+	/*]] */
+	</script>
+</body>
+
+</html>

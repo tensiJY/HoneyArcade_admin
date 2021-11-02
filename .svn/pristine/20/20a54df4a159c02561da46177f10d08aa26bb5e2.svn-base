@@ -1,0 +1,64 @@
+package honeyarcade.admin.common.api;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+@Service
+public class CommonApiService {
+	
+	@Autowired
+	private CommonApiMapper commonApiMapper;
+	
+	public List<CommonApiVO> getSido() throws Exception{
+		// TODO Auto-generated method stub
+		return commonApiMapper.getSido();
+	}
+
+	public List<CommonApiVO> getSigungu(CommonApiVO commonApiVO) throws Exception{
+		// TODO Auto-generated method stub
+		return commonApiMapper.getSigungu(commonApiVO);
+	}
+
+	public List<CommonApiVO> getDong(CommonApiVO commonApiVO) throws Exception{
+		// TODO Auto-generated method stub
+		return commonApiMapper.getDong(commonApiVO);
+	}
+
+	public List<CommonApiVO> getBuild(CommonApiVO commonApiVO) throws Exception{
+		// TODO Auto-generated method stub
+		return commonApiMapper.getBuild(commonApiVO);
+	}
+
+	public List<CommonApiVO> getFloor(CommonApiVO commonApiVO) throws Exception{
+		// TODO Auto-generated method stub
+		return commonApiMapper.getFloor(commonApiVO);
+	}
+
+	public List<CommonApiVO> getOwnerOfBuild(CommonApiVO commonApiVO) throws Exception{
+		// TODO Auto-generated method stub
+		return commonApiMapper.getOwnerOfBuild(commonApiVO);
+	}
+	
+	/**
+	 * 대 카테고리 가져오기(build_seq) 
+	 * @param commonApiVO 
+	 * @return
+	 * @throws Exception
+	 */
+	public List<CommonApiVO> getLcateOfBuild(CommonApiVO commonApiVO) throws Exception{
+		return commonApiMapper.getLcateOfBuild(commonApiVO);
+	}
+
+	/**
+	 * 소 카테고리 가져오기(build_seq, lcate_seq)
+	 * @param commonApiVO
+	 * @return
+	 * @throws Exception
+	 */
+	public List<CommonApiVO> getMcateOfBuild(CommonApiVO commonApiVO) throws Exception{
+		return commonApiMapper.getMcateOfBuild(commonApiVO);
+	}	
+
+}

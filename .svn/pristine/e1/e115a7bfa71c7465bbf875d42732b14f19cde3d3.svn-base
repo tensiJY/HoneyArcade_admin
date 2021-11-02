@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+	<th:block th:replace="fragments/meta :: metaFragment(title='상가 점주', useMetaCsrf='true')"></th:block>
+	<th:block th:replace="fragments/style :: styleFragment"></th:block>
+	<link rel="stylesheet" type="text/css" th:href="@{/resources/cork/plugins/bootstrap-select/bootstrap-select.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/resources/cork/plugins/table/datatable/datatables.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/resources/cork/assets/css/elements/custom-pagination.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/resources/cork/assets/css/components/tabs-accordian/custom-tabs.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/resources/honeyArcade/admin/common/versatile/css/datepicker.css}">	
+</head>
+<body class="sidebar-noneoverflow">
+	<th:block th:replace="fragments/header :: headerFragment"></th:block>
+	<div class="main-container" id="container">
+		<div class="overlay"></div>
+		<div class="search-overlay"></div>
+		<th:block th:replace="fragments/sidebar :: sidebarFragment(main='im', sub='im-data')"></th:block>
+		<div id="content" class="main-content">
+			<div class="layout-px-spacing">
+				<div class="row layout-top-spacing">
+					<div id="tableHover" class="col-lg-12 col-12 layout-spacing">
+						<div class="statbox widget box box-shadow">
+							<div class="widget-header">
+								<div class="row">
+									<div class="col-xl-12 col-md-12 col-sm-12 col-12">
+										<h4>상가 점주</h4>
+									</div>
+								</div>
+							</div>
+							<div class="widget-content widget-content-area">
+								<ul class="nav nav-tabs  mb-3 mt-3" id="simpletab" role="tablist">
+									<li class="nav-item">
+										<a class="nav-link" id="build-tab" data-toggle="tab" href="#build" role="tab"
+											aria-controls="build" th:classappend="${tapType == 1}? active"
+											aria-selected="true">점포 데이터</a>
+									</li>
+									<li class="nav-item">
+										<a class="nav-link" id="coupon-tab" data-toggle="tab" href="#coupon" role="tab"
+											aria-controls="coupon" th:classappend="${tapType == 2}? active"
+											aria-selected="false">쿠폰 데이터</a>
+									</li>
+								</ul>
+								<div class="tab-content" id="simpletabContent">
+									<div class="tab-pane fade" th:classappend="${ (tapType == 1 ? 'active' : '') +' '+ (tapType==1? 'show': '')}" id="build" role="tabpanel" aria-labelledby="home-tab">
+										<form class="col" id="storeSearchForm" th:action="@{/admin/im/data/list}">
+											<label>점포 데이터 검색</label>
+											<div class="form-inline">
+												<div class="form-group mr-2 mb-2">
+													<span class="form-control" style="border: 0px;">날짜 선택</span>
+												</div>
+												<div class="form-group mr-2">
+													<select id="storeDateType" class="selectpicker" data-width="fit" name="dateType">
+														<option value="1" th:selected="${dateType == 1} ">연별 통계</option>
+														<option value="2" th:selected="${dateType == 2} ">월별 통계</option>
+													</select>
+												</div>
+												<!--연별일경우-->
+												<div class="form-group mr-2 mb-2">
+													<div class="c-datepicker-date-editor c-datepicker-single-editor" id="storeYearPicker">
+											  			<i class="c-datepicker-range__icon kxiconfont icon-clock"></i>
+												  		<input type="text" autocomplete="off" id="storeYear" name="" placeholder="Select" class="c-datepicker-data-input only-date" th:value="${year}">
+													</div>
+												</div>
+												<!--월별일 경우-->
+												<div class="form-group mr-2 mb-2">
+													<div class="c-datepicker-date-editor c-datepicker-single-editor" id="storeMonthPicker" style="display: none;">
+											  			<i class="c-datepicker-range__icon kxiconfont icon-clock"></i>
+												  		<input type="text" autocomplete="off" id="storeMonth" name="" placeholder="Select" class="c-datepicker-data-input only-date" th:value="${year + '-' + month}">
+													</div>
+												</div>
+											</div>
+											<div class="form-inline">
+												<div class="form-group mr-2 mb-2">
+													<span class="form-control" style="border: 0px;">지역 선택</span>
+												</div>
+												<!--지역별일 경우-->
+												<div class="form-group mr-2">
+													<select class="selectpicker" data-live-search="true" title="시,도" name="sido_seq" data-width="fit">
+														<th:block th:if="${sidoList.size()!=0}">
+															<th:block th:each="list : ${sidoList}">
+																<option th:value="${list.sido_seq}" th:text="${list.sido_name}"
+																	th:selected="${adminImDataVO.sido_seq == list.sido_seq}">
+																</option>
+															</th:block>
+														</th:block>
+													</select>
+												</div>
+												<div class="form-group mr-2">
+													<select class="select-picker" data-live-search="true" title="군,구" name="sigungu_seq" data-width="fit">
+														<th:block th:if="${sigunguList != null}">
+															<th:block th:if="${sigunguList.size() != 0}">
+																<!-- 값이 있는경우 -->
+																<th:block th:each="list : ${sigunguList}">
+																	<option th:value="${list.sigungu_seq}"
+																		th:text="${list.sigungu_name}"
+																		th:selected="${adminImDataVO.sigungu_seq == list.sigungu_seq}">
+																	</option>
+																</th:block>
+															</th:block>
+														</th:block>
+													</select>
+												</div>
+												<div class="form-group mr-2">
+													<select class="select-picker" data-live-search="true" title="지역" name="dong_seq" data-width="fit">
+														<th:block th:if="${dongList != null}">
+															<th:block th:if="${dongList.size() != 0}">
+																<th:block th:each="list : ${dongList}">
+																	<option th:value="${list.dong_seq}"
+																		th:text="${list.dong_name}"
+																		th:selected="${adminImDataVO.dong_seq == list.dong_seq}">
+																	</option>
+																</th:block>
+															</th:block>
+														</th:block>
+													</select>
+												</div>
+												<div class="form-group mb-2">
+													<input id="storeSearchBtn" type="button" class="btn btn-primary" value="조회">
+													<input type="hidden" id="storeYearTarget"  name="year" th:value="${year}">
+													<input type="hidden" id="storeMonthTarget" name="month" th:value="${month}">
+													<input type="hidden" id="" name="type" value="search">
+													<input type="hidden" id="" name="tapType" value="1">
+												</div>
+											</div>
+										</form>
+										<div class="statbox widget box box-shadow mt-2 ">
+											<div class="widget-content widget-content-area br-6">
+												<table id="zero-config" class="table table-hover text-center"
+													style="width:100%">
+													<thead>
+														<tr>
+															<th>번호</th>
+															<th>조회일</th>
+															<th>시,도</th>
+															<th>군,구</th>
+															<th>지역</th>
+															<th>건물</th>
+															<th>총 점포 수</th>
+															<th>가입 수</th>
+															<th>탈퇴 수</th>
+															<th>유료회원</th>
+														</tr>
+													</thead>
+													<tbody>
+														<th:block th:if="${storeList == null}">
+															<tr>
+																<td colspan="10">검색 조건 설정 후 조회해주시기 바랍니다</td>	
+															</tr>
+														</th:block>
+														<th:block th:if="${storeList != null}">
+															<th:block th:if="${storeList.size() == 0}">	
+																<tr>
+																	<td colspan="10">조회된 데이터가 없습니다</td>	
+																</tr>
+															</th:block>
+															<th:block th:if="${storeList.size() != 0}">
+																<th:block th:each="list : ${storeList}">	
+																	<tr>
+																		<td>[[${list.row_num}]]</td>
+																		<td>[[${list.dt}]]</td>
+																		<td>[[${list.sido_name}]]</td>
+																		<td>[[${list.sigungu_name}]]</td>
+																		<td>[[${list.dong_name}]]</td>
+																		<td>[[${list.build_name}]]</td>
+																		<td>[[${list.ho_cnt}]]</td>
+																		<td>[[${list.join_cnt}]]</td>
+																		<td>[[${list.leave_cnt}]]</td>
+																		<td>[[${list.pre_owner}]]</td>
+																	</tr>
+																</th:block>
+															</th:block>															
+														</th:block>														
+													</tbody>
+												</table>
+												<div class="paginating-container pagination-solid">
+													<th:block th:if="${storeList == null}">
+														<ul class="pagination">
+															<li class="prev"><a href="javascript:void(0);"><svg
+																		xmlns="http://www.w3.org/2000/svg" width="24"
+																		height="24" viewBox="0 0 24 24" fill="none"
+																		stroke="currentColor" stroke-width="2"
+																		stroke-linecap="round" stroke-linejoin="round"
+																		class="feather feather-arrow-left">
+																		<line x1="19" y1="12" x2="5" y2="12"></line>
+																		<polyline points="12 19 5 12 12 5"></polyline>
+																	</svg></a></li>
+															<li class="active"><a href="javascript:void(0);">1</a></li>
+															<li class="next"><a href="javascript:void(0);"><svg
+																		xmlns="http://www.w3.org/2000/svg" width="24"
+																		height="24" viewBox="0 0 24 24" fill="none"
+																		stroke="currentColor" stroke-width="2"
+																		stroke-linecap="round" stroke-linejoin="round"
+																		class="feather feather-arrow-right">
+																		<line x1="5" y1="12" x2="19" y2="12"></line>
+																		<polyline points="12 5 19 12 12 19"></polyline>
+																	</svg></a>
+															</li>
+														</ul>													
+													</th:block>
+													<th:block th:if="${storeList != null}">
+														<th:block th:if="${storeList.size() == 0}">
+															<ul class="pagination">
+																<li class="prev"><a href="javascript:void(0);"><svg
+																			xmlns="http://www.w3.org/2000/svg" width="24"
+																			height="24" viewBox="0 0 24 24" fill="none"
+																			stroke="currentColor" stroke-width="2"
+																			stroke-linecap="round" stroke-linejoin="round"
+																			class="feather feather-arrow-left">
+																			<line x1="19" y1="12" x2="5" y2="12"></line>
+																			<polyline points="12 19 5 12 12 5"></polyline>
+																		</svg></a></li>
+																<li class="active"><a href="javascript:void(0);">1</a></li>
+																<li class="next"><a href="javascript:void(0);"><svg
+																			xmlns="http://www.w3.org/2000/svg" width="24"
+																			height="24" viewBox="0 0 24 24" fill="none"
+																			stroke="currentColor" stroke-width="2"
+																			stroke-linecap="round" stroke-linejoin="round"
+																			class="feather feather-arrow-right">
+																			<line x1="5" y1="12" x2="19" y2="12"></line>
+																			<polyline points="12 5 19 12 12 19"></polyline>
+																		</svg></a>
+																</li>
+															</ul>										
+														</th:block>
+														<th:block th:if="${storeList.size() != 0}">
+															<ul class="pagination">
+										    					<th:block th:if="${pageUtil.startPage == 1}">															
+																	<li class="prev"><a href="javascript:void(0);"><svg
+																				xmlns="http://www.w3.org/2000/svg" width="24"
+																				height="24" viewBox="0 0 24 24" fill="none"
+																				stroke="currentColor" stroke-width="2"
+																				stroke-linecap="round" stroke-linejoin="round"
+																				class="feather feather-arrow-left">
+																				<line x1="19" y1="12" x2="5" y2="12"></line>
+																				<polyline points="12 19 5 12 12 5"></polyline>
+																			</svg></a>
+																	</li>
+										    					</th:block>
+										    					<th:block th:if="${pageUtil.startPage != 1}">															
+																	<li class="prev">
+																		<a th:href="@{/admin/im/data/list(nowPage=${pageUtil.startPage-1}, dateType=${dateType}, year=${year}, month=${month}, type=${type}, tapType=${tapType}, sido_seq=${adminImDataVO.sido_seq}, sigungu_seq=${adminImDataVO.sigungu_seq}, dong_seq=${adminImDataVO.dong_seq} )}">
+																			<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left">
+																				<line x1="19" y1="12" x2="5" y2="12"></line>
+																				<polyline points="12 19 5 12 12 5"></polyline>
+																			</svg>
+																		</a>
+																	</li>
+										    					</th:block>										    					
+																
+																<li th:each="page : ${#numbers.sequence(pageUtil.startPage, pageUtil.endPage)}" th:classappend="${page == nowPage}? 'active'">
+																	<a th:text="${page}" th:href="@{/admin/im/data/list(nowPage=${page}, dateType=${dateType}, year=${year}, month=${month}, type=${type}, tapType=${tapType}, sido_seq=${adminImDataVO.sido_seq}, sigungu_seq=${adminImDataVO.sigungu_seq}, dong_seq=${adminImDataVO.dong_seq} )}" ></a>
+																</li>
+																
+																<th:block th:if="${pageUtil.endPage == pageUtil.totalPage}">
+																	<li class="next"><a href="javascript:void(0);"><svg
+																				xmlns="http://www.w3.org/2000/svg" width="24"
+																				height="24" viewBox="0 0 24 24" fill="none"
+																				stroke="currentColor" stroke-width="2"
+																				stroke-linecap="round" stroke-linejoin="round"
+																				class="feather feather-arrow-right">
+																				<line x1="5" y1="12" x2="19" y2="12"></line>
+																				<polyline points="12 5 19 12 12 19"></polyline>
+																		</svg></a>
+																	</li>
+																</th:block>
+																<th:block th:if="${pageUtil.endPage != pageUtil.totalPage}">
+																	<li class="next">
+																		<a th:href="@{/admin/im/data/list(nowPage=${pageUtil.endPage+1}, dateType=${dateType}, year=${year}, month=${month}, type=${type}, tapType=${tapType}, sido_seq=${adminImDataVO.sido_seq}, sigungu_seq=${adminImDataVO.sigungu_seq}, dong_seq=${adminImDataVO.dong_seq} )}">
+																			<svg xmlns="http://www.w3.org/2000/svg" width="24"
+																				height="24" viewBox="0 0 24 24" fill="none"
+																				stroke="currentColor" stroke-width="2"
+																				stroke-linecap="round" stroke-linejoin="round"
+																				class="feather feather-arrow-right">
+																				<line x1="5" y1="12" x2="19" y2="12"></line>
+																				<polyline points="12 5 19 12 12 19"></polyline>
+																			</svg>
+																		</a>
+																	</li>
+																</th:block>
+															</ul>
+														</th:block>			
+													</th:block>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="tab-pane fade" id="coupon" role="tabpanel"
+										aria-labelledby="profile-tab" th:classappend="${ (tapType == 2 ? 'active' : '') +' '+ (tapType==2? 'show': '')}">
+										<form class="col" id="">
+											<label>쿠폰 데이터 검색</label>
+											<div class="form-inline">
+												<div class="form-group mr-2 mb-2">
+													<span class="form-control" style="border: 0px;">날짜 선택</span>
+												</div>
+												<div class="form-group mr-2">
+													<select id="couponDateType" class="selectpicker" data-width="fit" name="dateType">
+														<option value="1" th:selected="${dateType == 1} ">연별 통계</option>
+														<option value="2" th:selected="${dateType == 2} ">월별 통계</option>
+													</select>
+												</div>
+												<div class="form-group mr-2 mb-2">
+													<div class="c-datepicker-date-editor c-datepicker-single-editor" id="couponYearPicker">
+											  			<i class="c-datepicker-range__icon kxiconfont icon-clock"></i>
+												  		<input type="text" autocomplete="off" id="couponYear" name="" placeholder="Select" class="c-datepicker-data-input only-date" th:value="${year}">
+													</div>
+												</div>
+												<div class="form-group mr-2 mb-2">
+													<div class="c-datepicker-date-editor c-datepicker-single-editor" id="couopnMonthPicker" style="display: none;">
+											  			<i class="c-datepicker-range__icon kxiconfont icon-clock"></i>
+												  		<input type="text" autocomplete="off" id="couponMonth" name="" placeholder="Select" class="c-datepicker-data-input only-date" th:value="${year + '-' + month}">
+													</div>
+												</div>
+											</div>
+											<div class="form-inline">
+												<div class="form-group mr-2 mb-2">
+													<span class="form-control" style="border: 0px;">지역 선택</span>
+												</div>												
+												<div class="form-group mr-2">
+													<select class="selectpicker" data-live-search="true" title="시,도" name="sido_seq" data-width="fit">
+														<th:block th:if="${sidoList.size()!=0}">
+															<th:block th:each="list : ${sidoList}">
+																<option th:value="${list.sido_seq}" th:text="${list.sido_name}"
+																	th:selected="${adminImDataVO.sido_seq == list.sido_seq}">
+																</option>
+															</th:block>
+														</th:block>
+													</select>
+												</div>
+												<div class="form-group mr-2">
+													<select class="select-picker" data-live-search="true" title="군,구" name="sigungu_seq" data-width="fit">
+														<th:block th:if="${sigunguList != null}">
+															<th:block th:if="${sigunguList.size() != 0}">
+																<!-- 값이 있는경우 -->
+																<th:block th:each="list : ${sigunguList}">
+																	<option th:value="${list.sigungu_seq}"
+																		th:text="${list.sigungu_name}"
+																		th:selected="${adminImDataVO.sigungu_seq == list.sigungu_seq}">
+																	</option>
+																</th:block>
+															</th:block>
+														</th:block>
+													</select>
+												</div>
+												<div class="form-group mr-2">
+													<select class="select-picker" data-live-search="true" title="지역" name="dong_seq" data-width="fit">
+														<th:block th:if="${dongList != null}">
+															<th:block th:if="${dongList.size() != 0}">
+																<th:block th:each="list : ${dongList}">
+																	<option th:value="${list.dong_seq}"
+																		th:text="${list.dong_name}"
+																		th:selected="${adminImDataVO.dong_seq == list.dong_seq}">
+																	</option>
+																</th:block>
+															</th:block>
+														</th:block>
+													</select>
+												</div>																								
+												<div class="form-group mb-2">
+													<input type="button" id="couponSearchBtn" class="btn btn-primary" value="조회">
+													<input type="hidden" id="couponYearTarget"  name="year" th:value="${year}">
+													<input type="hidden" id="couponMonthTarget" name="month" th:value="${month}">
+													<input type="hidden" id="" name="dateType" th:value="${dateType}">
+													<input type="hidden" id="" name="type" value="search">
+												</div>
+											</div>
+										</form>
+										<div class="statbox widget box box-shadow mt-2 ">
+											<div class="widget-content widget-content-area br-6">
+												<table id="zero-config" class="table table-hover text-center"
+													style="width:100%">
+													<thead>
+														<tr>
+															<th>번호
+															</th>
+															<th>결제일
+															</th>
+															<th>결제월
+															</th>
+															<th>결제금액
+															</th>
+															<th>점포코드
+															</th>
+															<th>지역
+															</th>
+															<th>건물
+															</th>
+															<th>점주
+															</th>
+															<th>아이디
+															</th>
+														</tr>
+													</thead>
+													<tbody>
+														<th:block th:if="${couponList == null}">
+															<tr>
+																<td colspan="8">검색 조건 설정 후 조회해주시기 바랍니다</td>	
+															</tr>
+														</th:block>
+													</tbody>
+												</table>
+												<div class="paginating-container pagination-solid">
+													<th:block th:if="${couponList == null}">
+														<ul class="pagination">
+															<li class="prev"><a href="javascript:void(0);"><svg
+																		xmlns="http://www.w3.org/2000/svg" width="24"
+																		height="24" viewBox="0 0 24 24" fill="none"
+																		stroke="currentColor" stroke-width="2"
+																		stroke-linecap="round" stroke-linejoin="round"
+																		class="feather feather-arrow-left">
+																		<line x1="19" y1="12" x2="5" y2="12"></line>
+																		<polyline points="12 19 5 12 12 5"></polyline>
+																	</svg></a></li>
+															<li class="active"><a href="javascript:void(0);">1</a></li>
+															<li class="next"><a href="javascript:void(0);"><svg
+																		xmlns="http://www.w3.org/2000/svg" width="24"
+																		height="24" viewBox="0 0 24 24" fill="none"
+																		stroke="currentColor" stroke-width="2"
+																		stroke-linecap="round" stroke-linejoin="round"
+																		class="feather feather-arrow-right">
+																		<line x1="5" y1="12" x2="19" y2="12"></line>
+																		<polyline points="12 5 19 12 12 19"></polyline>
+																	</svg></a>
+															</li>
+														</ul>													
+													</th:block>
+													<th:block th:if="${couponList != null}">
+														<th:block th:if="${couponList.size() == 0}">
+															<ul class="pagination">
+																<li class="prev"><a href="javascript:void(0);"><svg
+																			xmlns="http://www.w3.org/2000/svg" width="24"
+																			height="24" viewBox="0 0 24 24" fill="none"
+																			stroke="currentColor" stroke-width="2"
+																			stroke-linecap="round" stroke-linejoin="round"
+																			class="feather feather-arrow-left">
+																			<line x1="19" y1="12" x2="5" y2="12"></line>
+																			<polyline points="12 19 5 12 12 5"></polyline>
+																		</svg></a></li>
+																<li class="active"><a href="javascript:void(0);">1</a></li>
+																<li class="next"><a href="javascript:void(0);"><svg
+																			xmlns="http://www.w3.org/2000/svg" width="24"
+																			height="24" viewBox="0 0 24 24" fill="none"
+																			stroke="currentColor" stroke-width="2"
+																			stroke-linecap="round" stroke-linejoin="round"
+																			class="feather feather-arrow-right">
+																			<line x1="5" y1="12" x2="19" y2="12"></line>
+																			<polyline points="12 5 19 12 12 19"></polyline>
+																		</svg></a>
+																</li>
+															</ul>										
+														</th:block>
+														<th:block th:if="${couponList.size() != 0}">
+															<ul class="pagination">
+										    					<th:block th:if="${pageUtil.startPage == 1}">															
+																	<li class="prev"><a href="javascript:void(0);"><svg
+																				xmlns="http://www.w3.org/2000/svg" width="24"
+																				height="24" viewBox="0 0 24 24" fill="none"
+																				stroke="currentColor" stroke-width="2"
+																				stroke-linecap="round" stroke-linejoin="round"
+																				class="feather feather-arrow-left">
+																				<line x1="19" y1="12" x2="5" y2="12"></line>
+																				<polyline points="12 19 5 12 12 5"></polyline>
+																			</svg></a>
+																	</li>
+										    					</th:block>
+										    					<th:block th:if="${pageUtil.startPage != 1}">															
+																	<li class="prev">
+																		<a th:href="@{/admin/im/data/list(nowPage=${pageUtil.startPage-1}, dateType=${dateType}, year=${year}, month=${month}, type=${type}, tapType=${tapType}, sido_seq=${adminImDataVO.sido_seq}, sigungu_seq=${adminImDataVO.sigungu_seq}, dong_seq=${adminImDataVO.dong_seq} )}">
+																			<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left">
+																				<line x1="19" y1="12" x2="5" y2="12"></line>
+																				<polyline points="12 19 5 12 12 5"></polyline>
+																			</svg>
+																		</a>
+																	</li>
+										    					</th:block>										    					
+																
+																<li th:each="page : ${#numbers.sequence(pageUtil.startPage, pageUtil.endPage)}" th:classappend="${page == nowPage}? 'active'">
+																	<a th:text="${page}" th:href="@{/admin/im/data/list(nowPage=${page}, dateType=${dateType}, year=${year}, month=${month}, type=${type}, tapType=${tapType}, sido_seq=${adminImDataVO.sido_seq}, sigungu_seq=${adminImDataVO.sigungu_seq}, dong_seq=${adminImDataVO.dong_seq} )}" ></a>
+																</li>
+																
+																<th:block th:if="${pageUtil.endPage == pageUtil.totalPage}">
+																	<li class="next"><a href="javascript:void(0);"><svg
+																				xmlns="http://www.w3.org/2000/svg" width="24"
+																				height="24" viewBox="0 0 24 24" fill="none"
+																				stroke="currentColor" stroke-width="2"
+																				stroke-linecap="round" stroke-linejoin="round"
+																				class="feather feather-arrow-right">
+																				<line x1="5" y1="12" x2="19" y2="12"></line>
+																				<polyline points="12 5 19 12 12 19"></polyline>
+																		</svg></a>
+																	</li>
+																</th:block>
+																<th:block th:if="${pageUtil.endPage != pageUtil.totalPage}">
+																	<li class="next">
+																		<a th:href="@{/admin/im/data/list(nowPage=${pageUtil.endPage+1}, dateType=${dateType}, year=${year}, month=${month}, type=${type}, tapType=${tapType}, sido_seq=${adminImDataVO.sido_seq}, sigungu_seq=${adminImDataVO.sigungu_seq}, dong_seq=${adminImDataVO.dong_seq} )}">
+																			<svg xmlns="http://www.w3.org/2000/svg" width="24"
+																				height="24" viewBox="0 0 24 24" fill="none"
+																				stroke="currentColor" stroke-width="2"
+																				stroke-linecap="round" stroke-linejoin="round"
+																				class="feather feather-arrow-right">
+																				<line x1="5" y1="12" x2="19" y2="12"></line>
+																				<polyline points="12 5 19 12 12 19"></polyline>
+																			</svg>
+																		</a>
+																	</li>
+																</th:block>
+															</ul>
+														</th:block>			
+													</th:block>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!--  footer   -->
+			<th:block th:replace="fragments/footer"></th:block>
+		</div>
+	</div>
+
+	<th:block th:replace="fragments/script :: scriptFragment(useScriptCsrf='true')"></th:block>
+	<script th:src="@{/resources/cork/plugins/bootstrap-select/bootstrap-select.min.js}"></script>
+	<script th:src="@{/resources/honeyArcade/admin/common/js/areaAdSelect.js}"></script>
+	<script th:src="@{/resources/honeyArcade/admin/common/moment/moment.js}"></script>
+	<script th:src="@{/resources/honeyArcade/admin/common/versatile/js/datepicker.all.js}"></script>
+	<script th:src="@{/resources/honeyArcade/admin/common/versatile/js/datepicker.ko.js}"></script>		
+	<script th:Src="@{/resources/honeyArcade/admin/im/data/js/adminImDataList.js}"></script>
+</body>
+</html>

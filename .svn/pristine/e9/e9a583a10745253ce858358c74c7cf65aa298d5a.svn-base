@@ -1,0 +1,63 @@
+var _adminMemberOwnerView = function(){
+	
+	var init = function(){
+		//	업종 이벤트
+		$("input[name=lcate_seq]").on("click", function(){
+			$("input[name=lcate_seq]").removeClass("lcateSelect");
+			$(this).addClass("lcateSelect");
+			
+			var _obj = {};
+			_obj.build_seq = $(this).attr("data-build-seq");
+			_obj.lcate_seq = $(this).attr("data-lcate-seq");
+			
+			var _url = "/common/api/getMcateOfBuild";
+		
+			_doAjax(_obj,_url, _setMcate)	
+			
+		});
+	}
+	
+	function _doAjax(data, url, callback){
+		$.ajax({
+			type: "POST",
+			url: url,
+			data: data == null? null : JSON.stringify(data),
+			contentType : "application/json; charset=utf-8", 
+			beforeSend: function (xhr) {
+				xhr.setRequestHeader(_csrfHeader, _csrfToken);
+			},
+			success: function (res) {
+				if(res.result == false || res.result == 'false'){
+					alert("처리하는데 문제가 생겼습니다.")
+					return;
+				}else{
+					callback(res);					
+				}
+			},
+			error: function (e) {
+				//console.log(e)
+			}
+		});
+	}
+	
+	function _setMcate(result){
+		$("#mcate_seq").children().remove();
+		for(var i=0; i<result.mcateList.length; i++){
+			var _data = result.mcateList[i];
+			var _opt = document.createElement("option");
+			$(_opt).attr("value", _data.mcate_seq);
+			$(_opt).text(_data.mcate_name);
+			$("#mcate_seq").append(_opt);
+		}	
+		
+		$("#mcate_seq").selectpicker("refresh");
+	}
+	
+	return{
+		init : init
+	}
+}
+
+$(function(){
+	new _adminMemberOwnerView().init();
+});

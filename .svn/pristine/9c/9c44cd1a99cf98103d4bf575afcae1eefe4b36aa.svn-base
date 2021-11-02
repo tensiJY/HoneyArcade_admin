@@ -1,0 +1,89 @@
+package honeyarcade.admin.set.dir;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
+import honeyarcade.admin.common.api.CommonApiVO;
+
+@Service
+public class AdminSetDirService {
+
+	@Autowired
+	private AdminSetDirMapper adminSetDirMapper;
+	
+	/**
+	 * 관리자 총 수 구하기
+	 * @return
+	 * @throws Exception
+	 */
+	public Integer getTotalCount() throws Exception{
+		return 	adminSetDirMapper.getTotalCount();
+	}
+
+	/**
+	 * 관리자 목록
+	 * @param paramVO
+	 * @return
+	 * @throws Exception
+	 */
+	public List<AdminSetDirVO> getAdminList(AdminSetDirVO paramVO) throws Exception{
+		return adminSetDirMapper.getAdminList(paramVO);
+	}
+
+	/**
+	 * 관리자 아이디 삭제
+	 * @param paramVO
+	 * @throws Exception
+	 */
+	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
+	public void deleteAdminId(AdminSetDirVO paramVO) throws Exception {
+		adminSetDirMapper.deleteAdminId(paramVO);
+	}
+
+	/**
+	 * 전체 동목록 가져오기 type: 1 가나다 순, 2 다나가 순
+	 * @param type
+	 * @return
+	 * @throws Exception
+	 */
+	public List<AdminSetDirVO> getDongList(Integer type) throws Exception {
+		return adminSetDirMapper.getDongList(type);
+	}
+
+	/**
+	 * 건물 목록 가져오기 가나다 순
+	 * @param dong_seq
+	 * @return
+	 * @throws Exception
+	 */
+	public List<AdminSetDirVO> getBuildList(Integer dong_seq) throws Exception {
+		return adminSetDirMapper.getBuildList(dong_seq);
+	}
+
+	public void saveProc(HashMap paramMap) throws Exception {
+		String 	type		= String.valueOf(paramMap.get("type"));
+		String	admin_grade = String.valueOf(paramMap.get("admin_grade"));
+		String	admin_pwd 	= String.valueOf(paramMap.get("admin_pwd"));
+		String	build_seq 	= String.valueOf(paramMap.get("build_seq"));
+		String	admin_id	= String.valueOf(paramMap.get("admin_id"));
+		
+		if("".equals(admin_id)) {
+			throw new Exception("관리자 아이디를 입력해주세요");
+		}
+		
+		
+		
+		/*
+		if("".equals(build_seq)) {
+			throw new Exception("건물 데이터가 없습니다");
+		}
+		*/
+	}	
+	
+}

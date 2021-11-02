@@ -1,0 +1,85 @@
+####################### 포트 설정 ###################
+# server 포트 설정 
+server.port=10001
+
+# context-path 설정
+#server.servlet.context-path=/
+
+
+####################### db 정보 ###################
+# DB 접속 정보
+spring.datasource.url=jdbc:sqlserver://112.216.180.155:1433;DatabaseName=HoneyArcade
+spring.datasource.username=sa
+spring.datasource.password=!Zhfldk123
+spring.datasource.driver-class-name=com.microsoft.sqlserver.jdbc.SQLServerDriver
+
+# MyBatis
+# mapper.xml 위치 지정
+mybatis.mapper-locations: mapper/**/*.xml
+
+####################### 로그 파일 ###################
+#### systemlog
+#logging.file.path=/log/local 이게 필요없다. 
+#아래와 같이 logging.file.name를 경로와 파일명까지 해주면 그 파일명으로 로그파일이 생성이 된다.  
+#만약 logging.file.name=/log/local/ 이렇게 경로 앞에 .을 붙여주지 않으면 최상위 디렉토리 아래에 생긴다.
+##
+#logging.file.name=./log/local/Systemlog
+logging.file.name=c:/web_logs/HoneyArcade_admin/local/system.log
+logging.level.honeyarcade=debug
+logging.level.org.hibernate=debug
+#spring.profiles.active=test
+
+#아래는 전체
+#logging.level.root=info
+
+#### access log 톰캣 접근 로그
+server.tomcat.basedir=.
+server.tomcat.accesslog.enabled=true
+#server.tomcat.accesslog.directory=./log/access/
+server.tomcat.accesslog.directory=c:/web_logs/HoneyArcade_admin/access
+#사용자 IP와 브라우저도 출력
+server.tomcat.accesslog.pattern=%{yyyy-MM-dd HH:mm:ss}t\t%s\t%r\t%{User-Agent}i\t%{Referer}i\t%a\t%b
+#아래에서 level 이후의 경로가 패키지 경로. 패키지별로 로그 레벨을 설정 가능
+#logging.level.iamFreelancer=debug
+#logging.level.com.god.bo.test=info 이건 예시
+#logging.level.com.god.bo.test.controller=debug 예시
+
+###### 정적 요소 추가시 서버 재시작 ##########
+# 자동재시작 사용여부
+spring.devtools.livereload.enabled=true
+# classpath 감지 주기 설정(선택사항)
+# poll-interval 값은 항상 quiet-period 보다 커야한다.
+spring.devtools.restart.poll-interval=2s
+spring.devtools.restart.quiet-period=1s
+
+
+####################### 에러 관련 설정 ###################
+#오류 응답에 exception의 내용을 포함할지 여부 
+server.error.include-exception=TRUE 
+#오류 응답에 stacktrace 내용을 포함할지 여부 (ALWAYS, NEVER, ON_TRACE_PARAM) 
+server.error.include-stacktrace=ALWAYS 
+#브라우저 요청에 대해 서버 오류시 기본으로 노출할 페이지를 사용할지 여부 
+server.error.whitelabel.enabled=FALSE
+
+
+####################### 파일 설정 ###################
+#### 파일업로드
+# 임시 디렉토리로 저장
+##file.temp.path=c:/web_logs/HoneyArcade_admin/temp/
+file.temp.path=c:/HA_Img/
+# 리얼 패스로 저장
+##file.real.path=c:/web_logs/HoneyArcade_admin/file/
+##file.real.path=c:/HA_Img/
+file.url.path=/HA_Img/
+
+####
+file.resource.path=file:///c:/HA_Img/
+file.upload.path=/HA_Img/**
+
+
+##	server.servlet.session.timeout=1m
+
+#excel download
+spring.mvc.contentnegotiation.favor-parameter=true
+spring.mvc.contentnegotiation.favor-path-extension=true
+spring.mvc.contentnegotiation.media-types.xls=application/vnd.ms-excel

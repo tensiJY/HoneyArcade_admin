@@ -1,0 +1,34 @@
+package honeyarcade.admin.member.owner;
+
+import java.util.List;
+
+import org.apache.ibatis.annotations.Mapper;
+
+@Mapper
+public interface AdminMemberOwnerMapper {
+
+	/**
+	 * 회원 관리 : 점주 회원 - 분류별 회원 수 조회
+	 * @param adminMemberOwnerVO 
+	 * @return
+	 * @throws Exception
+	 */
+	public AdminMemberOwnerVO getOwnerTypeCount(AdminMemberOwnerVO adminMemberOwnerVO) throws Exception;
+
+	/**
+	 * 회원 관리 : 점주 회원 - 전체 수 조회
+	 * @param adminMemberOwnerVO
+	 * @return
+	 * @throws Exception
+	 */
+	public int getTotalCount(AdminMemberOwnerVO adminMemberOwnerVO) throws Exception;
+
+	/**
+	 * 회원 관리 : 점주 회목 - 목록 조회
+	 * @param adminMemberOwnerVO
+	 * @return
+	 * @throws Exception
+	 */
+	public List<AdminMemberOwnerVO> getOwnerList(AdminMemberOwnerVO adminMemberOwnerVO) throws Exception;
+
+}

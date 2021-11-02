@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="honeyarcade.admin.mgt.store.AdminMgtStoreMapper">
+	
+	<select id="getTotalCount" parameterType="honeyarcade.admin.mgt.store.AdminMgtStoreVO" resultType="Integer">
+	select 
+		count(*) as cnt
+	from 
+		tb_owner
+	left outer join tb_member 
+		on tb_owner.owner_id = tb_member.owner_id
+	where
+			tb_owner.build_seq = #{build_seq}
+		and tb_owner.store_floor = #{floor_seq}
+		and tb_owner.owner_status != 4
+			<!-- <if test="admin_grade == 3">
+				<![CDATA[
+					and tb_floor.build_seq in (select tb_admin_grade.build_seq from tb_admin_grade where tb_admin_grade.admin_id = #{admin_id} and tb_admin_grade.del_flag = 'N')
+				]]>
+			</if>	 -->	
+			<if test="type == 'search'">
+			<![CDATA[
+			and
+				isnull(tb_owner.store_name, '') like '%'+ #{search_text} + '%'
+			]]>
+			</if>
+	</select> 
+	
+	<select id="getStoreList" resultType="honeyarcade.admin.mgt.store.AdminMgtStoreVO" parameterType="honeyarcade.admin.mgt.store.AdminMgtStoreVO">
+		select 
+			*
+		from
+			(	
+				select 
+					row_number() over (order by tb_owner.owner_id desc) as row_num
+					, tb_owner.STORE_NAME 
+					, tb_owner.STORE_TEXT 
+					, tb_owner.STORE_KEYWORD 
+					, tb_owner.STORE_TEL 
+					, tb_owner.STORE_SORT 
+					, tb_owner.OWNER_ID 
+					, tb_owner.STORE_HO
+					, tb_owner.store_floor as 'floor_seq'
+					, (select lcate_name from tb_lcate where tb_owner.build_seq = tb_lcate.build_seq and tb_owner.lcate_seq = tb_lcate.lcate_seq) as 'lcate_name'
+					, (select mcate_name from tb_mcate where tb_owner.build_seq = tb_mcate.build_seq and tb_owner.lcate_seq = tb_mcate.lcate_seq and tb_owner.mcate_seq = tb_mcate.mcate_seq) as 'mcate_name'
+					, (select floor_name from tb_floor where tb_owner.build_seq = tb_floor.build_seq and tb_owner.store_floor = tb_floor.floor_seq) as 'floor_name'
+					, case when tb_member.member_id is null then 1 else 2 end as 'member_flag'
+					, case when tb_owner.del_flag = 'N' then '노출' else '숨김' end as 'store_status_text'
+ 				from 
+					tb_owner
+				left outer join tb_member 
+					on tb_owner.owner_id = tb_member.owner_id 
+				where
+					tb_owner.build_seq   = #{build_seq}
+				and tb_owner.store_floor = #{floor_seq}
+				and tb_owner.owner_status != 4
+				<!-- <if test="admin_grade == 3">
+				<![CDATA[
+					and .build_seq in (select tb_admin_grade.build_seq from tb_admin_grade where tb_admin_grade.admin_id = #{admin_id} and tb_admin_grade.del_flag = 'N')
+				]]>
+				</if> -->		
+				<if test="type == 'search'">
+				and
+					isnull(tb_owner.store_name, '') like '%'+ #{search_text} + '%'
+				</if>
+			) t
+		where 
+			row_num between #{start_num} and #{end_num}
+	</select>	
+
+	<update id="viewProc" parameterType="list">
+		<foreach item="item" index="index" collection="list" separator=";">
+		<![CDATA[
+			update
+				tb_owner
+			set
+				  mod_dt  = getDate()
+				, mod_id  = #{item.mod_id}
+				, del_flag = #{item.del_flag}
+			where
+				owner_id = #{item.owner_id}
+		]]>
+		</foreach>
+	</update>
+	
+	<update id="updateMember" parameterType="list">
+		<foreach item="item" index="index" collection="list" separator=";">
+		<![CDATA[
+			update
+				tb_member
+			set
+				del_flag = #{item.del_flag}
+			where
+				owner_id = #{item.owner_id}
+		]]>
+		</foreach>
+	</update>	
+	
+	<select id="getStoreExcelList" resultType="honeyarcade.admin.mgt.store.AdminMgtStoreVO" parameterType="honeyarcade.admin.mgt.store.AdminMgtStoreVO">
+		select 
+			*
+		from
+			(		
+				select
+					row_number() over (order by tb_owner.owner_id desc) as row_num
+					, tb_owner.STORE_NAME 
+					, tb_owner.STORE_TEXT 
+					, tb_owner.STORE_KEYWORD 
+					, tb_owner.STORE_TEL 
+					, tb_owner.STORE_SORT 
+					, tb_owner.OWNER_ID 
+					, tb_owner.STORE_HO
+					, tb_owner.store_floor as 'floor_seq'
+					, (select lcate_name from tb_lcate where tb_owner.build_seq = tb_lcate.build_seq and tb_owner.lcate_seq = tb_lcate.lcate_seq) as 'lcate_name'
+					, (select mcate_name from tb_mcate where tb_owner.build_seq = tb_mcate.build_seq and tb_owner.lcate_seq = tb_mcate.lcate_seq and tb_owner.mcate_seq = tb_mcate.mcate_seq) as 'mcate_name'
+					, (select floor_name from tb_floor where tb_owner.build_seq = tb_floor.build_seq and tb_owner.store_floor = tb_floor.floor_seq) as 'floor_name'
+					, case when tb_owner.del_flag = 'N' then '노출' else '숨김' end as 'store_status_text'
+				from 
+					tb_owner
+				left outer join tb_member 
+					on tb_owner.owner_id = tb_member.owner_id
+				where
+						tb_owner.build_seq = #{build_seq}
+					and tb_owner.store_floor = #{floor_seq}
+					and tb_owner.owner_status != 4
+					and
+						isnull(tb_owner.store_name, '') like '%'+ #{search_text} + '%'
+				
+			) t
+	</select>
+	
+	<update id="delProc" parameterType="list">
+		<foreach item="item" index="index" collection="list" separator=";">
+		<![CDATA[
+			update
+				tb_owner
+			set
+				  mod_dt = getDate()
+				, mod_id = #{item.mod_id}
+				, owner_status = 4
+				, del_flag = 'Y'
+			where
+				owner_id = #{item.owner_id}
+			
+		]]>
+		</foreach>
+	</update>
+	
+	<update id="delMember" parameterType="list">
+		<foreach item="item" index="index" collection="list" separator=";">
+		<![CDATA[
+			update
+				tb_member
+			set
+				del_flag = 'Y'				
+			where
+				owner_id = #{item.owner_id}
+		
+		]]>
+		</foreach>
+	</update>
+	
+</mapper>

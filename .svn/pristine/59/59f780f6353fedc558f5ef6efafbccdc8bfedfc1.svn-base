@@ -1,0 +1,137 @@
+package honeyarcade.admin.common.fcm;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Scanner;
+import java.util.Set;
+
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.stereotype.Service;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.google.api.client.json.JsonObjectParser;
+import com.google.auth.oauth2.GoogleCredentials;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+@Service
+public class CommonFcmService {
+
+	private String firebaseSdkPath =  "static/resources/google/fcm-test-e528a-firebase-adminsdk-f3i9e-546dfe384c.json";
+	private String PROJECT_ID = "fcm-test-e528a";
+	private String BASE_URL = "https://fcm.googleapis.com";
+	private final String FCM_SEND_ENDPOINT = "/v1/projects/" + PROJECT_ID + "/messages:send";
+	private final String MESSAGING_SCOPE = "https://www.googleapis.com/auth/firebase.messaging";
+	private final String[] SCOPES = { MESSAGING_SCOPE };
+	public  final String MESSAGE_KEY = "message";
+	
+	
+	public void sendCommonMessage(String title, String body, HashMap dataMap) throws Exception {
+		JsonObject notificationMessage = buildNotificationMessage(title, body, dataMap);
+		prettyPrint(notificationMessage);
+		sendMessage(notificationMessage);
+	}
+	
+	private JsonObject buildNotificationMessage(String title, String body, HashMap dataMap) {
+		
+		JsonObject data = new JsonObject();
+		Iterator<String> iter = dataMap.keySet().iterator();
+		while(iter.hasNext()) {
+            String key = iter.next();
+            String value = String.valueOf(dataMap.get(key));
+            data.addProperty(key, value);
+        }
+		
+		JsonObject jNotification = new JsonObject();
+		jNotification.addProperty("title", title);
+		jNotification.addProperty("body", body);
+
+		JsonObject jMessage = new JsonObject();
+		jMessage.add("notification", jNotification);
+		jMessage.add("data", data);
+		jMessage.addProperty("topic", "/topics/ALL");
+
+		JsonObject jFcm = new JsonObject();
+		jFcm.add(MESSAGE_KEY, jMessage);
+
+		return jFcm;
+	}
+	    
+	private void prettyPrint(JsonObject jsonObject) {
+		Gson gson = new GsonBuilder().setPrettyPrinting().create();
+		System.out.println(gson.toJson(jsonObject) + "\n");
+	}
+
+	
+	public void sendMessage(JsonObject fcmMessage) throws Exception {
+		HttpURLConnection connection = getConnection();
+		connection.setDoOutput(true);
+		OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream(), "UTF-8");
+		System.out.println(fcmMessage.toString());
+		writer.write(fcmMessage.toString());
+		writer.flush();
+		writer.close();
+
+		int responseCode = connection.getResponseCode();
+		if (responseCode == 200) {
+			String response = inputstreamToString(connection.getInputStream());
+			System.out.println("Message sent to Firebase for delivery, response:");
+			System.out.println(response);
+		} else {
+			System.out.println("Unable to send message to Firebase:");
+			String response = inputstreamToString(connection.getErrorStream());
+			System.out.println(response);
+		}
+	}
+
+	/**
+	 * Read contents of InputStream into String.
+	 *
+	 * @param inputStream InputStream to read.
+	 * @return String containing contents of InputStream.
+	 * @throws IOException
+	 */
+	private String inputstreamToString(InputStream inputStream) throws Exception {
+		StringBuilder stringBuilder = new StringBuilder();
+		Scanner scanner = new Scanner(inputStream);
+		while (scanner.hasNext()) {
+			stringBuilder.append(scanner.nextLine());
+		}
+		return stringBuilder.toString();
+	}
+
+	private HttpURLConnection getConnection() throws Exception {
+		// [START use_access_token]
+		URL url = new URL(BASE_URL + FCM_SEND_ENDPOINT);
+		HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+		httpURLConnection.setRequestProperty("Authorization", "Bearer " + getAccessToken());
+		httpURLConnection.setRequestProperty("Content-Type", "application/json; UTF-8");
+		return httpURLConnection;
+		// [END use_access_token]
+	}
+
+	private String getAccessToken() throws Exception {
+
+		ClassPathResource resource = new ClassPathResource(firebaseSdkPath);
+		// accessToken 생성
+		GoogleCredentials googleCredentials = GoogleCredentials.fromStream(resource.getInputStream())
+				.createScoped(List.of("https://www.googleapis.com/auth/cloud-platform"));
+
+		// GoogleCredential의 getAccessToken으로 토큰 받아온 뒤, getTokenValue로 최종적으로 받음
+		// REST API로 FCM에 push 요청 보낼 때 Header에 설정하여 인증을 위해 사용
+		// googleCredentials.refreshAccessToken();
+		googleCredentials.refreshIfExpired();
+		return googleCredentials.getAccessToken().getTokenValue();
+	}
+
+}

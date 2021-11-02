@@ -1,0 +1,631 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="honeyarcade.admin.mgt.build.AdminMgtBuildMapper">
+
+	<select id="getBuildList"
+		resultType="honeyarcade.admin.mgt.build.AdminMgtBuildVO"
+		parameterType="honeyarcade.admin.mgt.build.AdminMgtBuildVO">
+	<![CDATA[
+		select 
+			*
+		from (
+				select
+					  row_number () over(order by tb_build.build_seq) as row_num
+					, tb_build.build_seq 
+					, tb_build.build_name 
+					, tb_build.build_status 
+					, tb_sido.sido_name 
+					, tb_sigungu.sigungu_name 
+					, tb_dong.dong_name 
+					, tb_dong.dong_seq
+				from
+					tb_build
+				inner join tb_dong
+				on
+					tb_dong.dong_seq = tb_build.dong_seq
+					and tb_dong.del_flag = 'N'
+				inner join tb_sigungu
+				on
+					tb_sigungu.sigungu_seq = tb_dong.sigungu_seq
+					and tb_sigungu.del_flag = 'N'
+				inner join tb_sido
+				on
+					tb_sido.sido_seq = tb_sigungu.sido_seq
+					and tb_sido.del_flag = 'N'
+				where
+					tb_build.del_flag = 'N'
+				
+	]]>
+		<if test="type == 'search'">
+			<if test="sido_seq != null">
+			<![CDATA[
+				and tb_sido.sido_seq = #{sido_seq}
+			]]>
+			</if>
+	
+			<if test="sigungu_seq != null">
+			<![CDATA[
+				and tb_sigungu.sigungu_seq = #{sigungu_seq}
+			]]>
+			</if>
+	
+			<if test="dong_seq != null">
+			<![CDATA[
+				and tb_dong.dong_seq = #{dong_seq}
+			]]>
+			</if>
+	
+			<if test="search_text != null">
+			<![CDATA[
+				and 
+					( 1 = 1
+						and
+							tb_sido.sido_name like '%'+ #{search_text} + '%'
+						or
+							tb_sigungu.sigungu_name like '%'+ #{search_text} +'%'
+						or 
+							tb_dong.dong_name like '%'+ #{search_text} + '%'
+						or 
+							tb_build.build_name like '%'+ #{search_text} + '%'
+					)
+			]]>
+			</if>
+		</if>
+	
+	<![CDATA[
+		) t
+		where
+			t.row_num between #{start_num} and #{end_num}
+	]]>
+	</select>
+
+	<insert id="buildInsert"
+		parameterType="honeyarcade.admin.mgt.build.AdminMgtBuildVO">
+    <![CDATA[
+    	insert into tb_build
+			(
+				  dong_seq
+				, build_status
+				, build_x
+				, build_y
+				, build_name
+				, add_dt
+				, add_id
+				, del_flag
+			)
+		values
+			( 
+				  #{dong_seq}
+				, 0
+				, #{build_x}
+				, #{build_y}
+				, #{build_name}
+				, getDate()
+				, #{admin_id}
+				, 'N'
+				
+			)
+    ]]>
+	</insert>
+
+	<select id="getBuildTotalCount" resultType="int" parameterType="honeyarcade.admin.mgt.build.AdminMgtBuildVO">
+    <![CDATA[
+    	select
+			count(tb_build.BUILD_SEQ)
+		from
+			tb_build
+		inner join tb_dong
+		on
+			tb_dong.dong_seq = tb_build.dong_seq
+			and tb_dong.del_flag = 'N'
+		inner join tb_sigungu
+		on
+			tb_sigungu.sigungu_seq = tb_dong.sigungu_seq
+			and tb_sigungu.del_flag = 'N'
+		inner join tb_sido
+		on
+			tb_sido.sido_seq = tb_sigungu.sido_seq
+			and tb_sido.del_flag = 'N'
+		where
+			tb_build.del_flag = 'N'
+    ]]>
+   
+   	<if test="type == 'search'">
+   		
+		<if test="sido_seq != null">
+		<![CDATA[
+			and tb_sido.sido_seq = #{sido_seq}
+			
+		]]>
+		</if>
+		
+		<if test="sigungu_seq != null">
+		<![CDATA[
+			and tb_sigungu.sigungu_seq = #{sigungu_seq}
+		]]>
+		</if>
+		
+		<if test="dong_seq != null">
+		<![CDATA[
+			and tb_dong.dong_seq = #{dong_seq}
+		]]>
+		</if>
+		
+		<if test="search_text != null">
+		<![CDATA[
+			and 
+				( 1 = 1
+					and
+						tb_sido.sido_name like '%'+ #{search_text} + '%'
+					or
+						tb_sigungu.sigungu_name like '%'+ #{search_text} +'%'
+					or 
+						tb_dong.dong_name like '%'+ #{search_text} + '%'
+					or 
+						tb_build.build_name like '%'+ #{search_text} + '%'
+				)
+		]]>
+		</if>
+
+   	</if> 
+	</select>
+	
+	
+	<update id="enableProc" parameterType="list">
+		<foreach item="item" index="index" collection="list" separator=";">
+		<![CDATA[
+			update
+				tb_build
+			set
+				build_status = 1
+				, mod_dt = getDate()
+				, mod_id = #{item.admin_id}
+			where
+				build_seq = #{item.build_seq}
+			and
+				del_flag = 'N'
+		]]>
+		</foreach>
+	</update>
+	
+	<update id="disableProc" parameterType="list">
+		<foreach item="item" index="index" collection="list" separator=";">
+		<![CDATA[
+			update
+				tb_build
+			set
+				build_status = 0
+				, mod_dt = getDate()
+				, mod_id = #{item.admin_id}
+			where
+				build_seq = #{item.build_seq}
+			and
+				del_flag = 'N'
+		]]>
+		</foreach>
+	</update>
+	
+	<update id="buildDelProc" parameterType="list">
+		<foreach item="item" index="index" collection="list" separator=";">
+		<![CDATA[
+			update
+				tb_build
+			set
+				  mod_dt = getDate()
+				, mod_id = #{item.admin_id}
+				, del_flag = 'Y'
+			where
+				build_seq = #{item.build_seq}
+			and
+				del_flag = 'N'
+		]]>
+		</foreach>
+	</update>
+	
+	<update id="dongDelProcSidoSeq" parameterType="honeyarcade.admin.common.api.CommonApiVO">
+	<![CDATA[
+		update
+			tb_dong
+		set
+			tb_dong.del_flag = 'Y'
+			, tb_dong.mod_dt = getdate()
+			, tb_dong.mod_id = #{admin_id}
+		where 
+			 del_flag = 'N'
+		and
+			tb_dong.sigungu_seq in(
+									select 
+										tb_sigungu.sigungu_seq 
+									from 
+										tb_sigungu  
+									where tb_sigungu.sido_seq = #{sido_seq} and tb_sigungu.del_flag ='N'
+									)
+	]]>
+	</update>
+	
+	<update id="sigunguDelProcSidoSeq" parameterType="honeyarcade.admin.common.api.CommonApiVO">
+	<![CDATA[
+		update
+			tb_sigungu
+		set
+			tb_sigungu.del_flag = 'Y'
+			, tb_sigungu.mod_dt = getdate()
+			, tb_sigungu.mod_id = #{admin_id}
+		where 
+			tb_sigungu.del_flag = 'N'
+		and
+			tb_sigungu.sido_seq = #{sido_seq}
+	]]>
+	</update>
+
+	<update id="sidoDelProcSidoSeq" parameterType="honeyarcade.admin.common.api.CommonApiVO">
+	<![CDATA[
+		update
+			tb_sido
+		set
+			tb_sido.del_flag = 'Y'
+			, tb_sido.mod_dt = getdate()
+			, tb_sido.mod_id = #{admin_id}
+		where
+			tb_sido.del_flag = 'N'
+		and
+			tb_sido.sido_seq = #{sido_seq}
+	]]>
+	</update>
+	
+	<update id="sidoModProc" parameterType="list">
+		<foreach item="item" index="index" collection="list" separator=";">
+		<![CDATA[
+			update
+				tb_sido
+			set
+				 sido_name = #{item.sido_name}
+				, mod_dt = getDate()
+				, mod_id = #{item.admin_id}
+			where
+				sido_seq = #{item.sido_seq}
+			and
+				del_flag = 'N'
+		]]>
+		</foreach>
+	</update>
+	
+	<update id="dongDelProcSigunguSeq" parameterType="honeyarcade.admin.common.api.CommonApiVO">
+	<![CDATA[
+		update
+			tb_dong
+		set
+			tb_dong.del_flag = 'Y'
+			, tb_dong.mod_dt = getdate()
+			, tb_dong.mod_id = #{admin_id}
+		where
+			tb_dong.del_flag = 'N'
+		and
+			tb_dong.sigungu_seq = #{sigungu_seq}
+	]]>
+	</update>
+	
+	<update id="sigunguDelProcSigunguSeq" parameterType="honeyarcade.admin.common.api.CommonApiVO">
+	<![CDATA[
+		update
+			tb_sigungu
+		set
+			tb_sigungu.del_flag = 'Y'
+			, tb_sigungu.mod_dt = getdate()
+			, tb_sigungu.mod_id = #{admin_id}
+		where
+			tb_sigungu.del_flag = 'N'
+		and
+			tb_sigungu.sigungu_seq = #{sigungu_seq}
+	]]>
+	</update>
+	
+	<update id="sigunguModProc" parameterType="list">
+		<foreach item="item" index="index" collection="list" separator=";">
+		<![CDATA[
+			update
+				tb_sigungu
+			set
+				 sigungu_name = #{item.sigungu_name}
+				, mod_dt = getDate()
+				, mod_id = #{item.admin_id}
+			where
+				sigungu_seq = #{item.sigungu_seq}
+			and
+				del_flag = 'N'
+		]]>
+		</foreach>
+	</update>
+	
+	<update id="dongDelProcDongSeq" parameterType="honeyarcade.admin.common.api.CommonApiVO">
+	<![CDATA[
+		update
+			tb_dong
+		set
+			tb_dong.del_flag = 'Y'
+			, tb_dong.mod_dt = getdate()
+			, tb_dong.mod_id = #{admin_id}
+		where
+			tb_dong.del_flag = 'N'
+		and
+			tb_dong.dong_seq = #{dong_seq}
+	]]>
+	</update>
+	
+	<update id="dongModProc" parameterType="list">
+		<foreach item="item" index="index" collection="list" separator=";">
+		<![CDATA[
+			update
+				tb_dong
+			set
+				 dong_name = #{item.dong_name}
+				, mod_dt = getDate()
+				, mod_id = #{item.admin_id}
+			where
+				dong_seq = #{item.dong_seq}
+			and
+				del_flag = 'N'
+		]]>
+		</foreach>
+	</update>
+	
+	<select id="sidoWriteProc" parameterType="honeyarcade.admin.common.api.CommonApiVO" resultType="honeyarcade.admin.common.api.CommonApiVO">
+	<![CDATA[
+		insert into tb_sido
+			(
+				sido_name
+				, add_dt
+				, add_id
+				, del_flag
+			)
+		values
+			(
+				#{sido_name}
+				, getDate()
+				, #{admin_id}
+				, 'N'
+			)
+			
+    	
+    	SELECT @@IDENTITY AS sido_seq
+	]]>
+	</select>
+	
+	<select id="sigunguWriteProc" parameterType="honeyarcade.admin.common.api.CommonApiVO" resultType="honeyarcade.admin.common.api.CommonApiVO">
+	<![CDATA[
+		insert into tb_sigungu
+			(
+				sido_seq
+				, sigungu_name
+				, add_dt
+				, add_id
+				, del_flag
+			)
+		values
+			(
+				#{sido_seq}
+				, #{sigungu_name}
+				, getDate()
+				, #{admin_id}
+				, 'N'
+			)
+			
+    	SELECT @@IDENTITY AS sigungu_seq
+	]]>
+	</select>
+	
+	<select id="dongWriteProc" parameterType="honeyarcade.admin.common.api.CommonApiVO" resultType="honeyarcade.admin.common.api.CommonApiVO">
+	<![CDATA[
+		insert into tb_dong
+			(
+				sigungu_seq
+				, dong_name
+				, add_dt
+				, add_id
+				, del_flag
+			)
+		values
+			(
+				#{sigungu_seq}
+				, #{dong_name}
+				, getDate()
+				, #{admin_id}
+				, 'N'
+			)
+    	SELECT @@IDENTITY AS dong_seq
+	]]>
+	</select>
+	
+	
+	<select id="getLcateList" 	parameterType="honeyarcade.admin.mgt.build.AdminMgtBuildVO" 
+								resultType="honeyarcade.admin.mgt.build.AdminMgtBuildVO">
+	<![CDATA[
+		select
+			  tb_lcate.lcate_seq
+			, tb_lcate.build_seq 
+			, tb_lcate.lcate_name 
+			, tb_lcate.file_seq 
+			, tb_file_dtl.file_dtl_url_path
+		from tb_lcate
+		left outer join tb_file 
+			on tb_lcate.file_seq = tb_file.file_seq 
+			and tb_file.del_flag = 'N'
+		left outer join tb_file_dtl 
+			on tb_file.file_seq = tb_file_dtl.file_seq
+			and tb_file_dtl.file_type = '3' 
+		where
+			tb_lcate.build_seq = #{build_seq}
+	]]>
+	</select>
+	
+	<select id="getMcateList" 	parameterType="honeyarcade.admin.mgt.build.AdminMgtBuildVO" 
+								resultType="honeyarcade.admin.mgt.build.AdminMgtBuildVO">
+	<![CDATA[
+		select 
+			tb_mcate.lcate_seq
+		    , tb_mcate.mcate_seq
+			, tb_mcate.mcate_name  
+		from 
+			tb_mcate
+		inner join tb_lcate
+			on tb_lcate.lcate_seq = tb_mcate.lcate_seq
+			and tb_lcate.build_seq = tb_mcate.build_seq
+		inner join tb_build 
+			on tb_lcate.build_seq = tb_build.build_seq
+			and tb_build.del_flag = 'N'
+		where
+			tb_build.build_seq = #{build_seq}
+	]]>
+	</select>
+	
+	<select id="getLcateCountOfMcate" 	parameterType="honeyarcade.admin.mgt.build.AdminMgtBuildVO" 
+								resultType="honeyarcade.admin.mgt.build.AdminMgtBuildVO">
+	<![CDATA[
+		select lcate_seq , count(lcate_seq) as lcate_count from tb_mcate where build_seq =  #{build_seq} group by lcate_seq 
+	]]>
+	</select>
+	
+
+	
+	<select id="getFloorList" 	parameterType="honeyarcade.admin.mgt.build.AdminMgtBuildVO" 
+								resultType="honeyarcade.admin.mgt.build.AdminMgtBuildVO">
+	<![CDATA[
+		select
+			  tb_floor.floor_seq
+			, tb_floor.floor_type
+			, tb_floor.file_seq 
+			, tb_file_dtl.file_dtl_url_path
+		from tb_floor
+		left outer join tb_file 
+			on tb_floor.file_seq = tb_file.file_seq 
+			and tb_file.del_flag = 'N'
+		left outer join tb_file_dtl 
+			on tb_file.file_seq = tb_file_dtl.file_seq
+			and tb_file_dtl.file_type = '4'
+		where
+			tb_floor.build_seq = #{build_seq}
+	]]>
+	</select>
+	
+
+	<select id="insertLcate" parameterType="honeyarcade.admin.mgt.build.AdminMgtBuildVO">
+	<![CDATA[
+		insert into tb_lcate
+			(
+				build_seq
+				, lcate_seq
+				, file_seq
+				, lcate_name
+			)
+		values
+			(
+				  #{build_seq}
+				, #{lcate_seq}
+				, #{file_seq}
+				, #{lcate_name}
+			)
+    	
+	]]>
+	</select>	
+	
+	<insert id="insertMcate" parameterType="honeyarcade.admin.mgt.build.AdminMgtBuildVO">
+	<![CDATA[
+		insert into tb_mcate
+			(
+				lcate_seq
+				, mcate_seq
+				, build_seq
+				, mcate_name
+				 
+			)
+		values
+			(
+				
+				  #{lcate_seq}
+				, #{mcate_seq}
+				, #{build_seq}
+				, #{mcate_name}
+			)
+    	
+	]]>
+	</insert>
+	
+	<insert id="insertFloor" parameterType="honeyarcade.admin.mgt.build.AdminMgtBuildVO">
+	<![CDATA[
+		insert into tb_floor
+			(
+				build_seq
+				, floor_seq
+				, floor_type
+				, file_seq
+				, floor_name
+				, imgX
+				, imgY
+			)
+		values
+			(
+				#{build_seq}
+				, #{floor_seq}
+				, #{floor_type}
+				, #{file_seq}
+				, #{floor_name}
+				, #{imgX}
+				, #{imgY} 
+			)
+    	
+	]]>
+	</insert>
+	
+	<update id="buildModDate" parameterType="honeyarcade.admin.mgt.build.AdminMgtBuildVO">
+	<![CDATA[
+		update
+			tb_build
+		set
+			mod_dt = getDate()
+			, mod_id = #{admin_id}
+		where
+			build_seq = #{build_seq}
+    	
+	]]>
+	</update>
+	
+	<select id="getBuildLstModDt"  parameterType="honeyarcade.admin.mgt.build.AdminMgtBuildVO" resultType="String">
+	<![CDATA[
+		select 
+			case when mod_dt is not null then convert(char(19), mod_dt, 20) else convert(char(19), add_dt, 20) end as 'mod_dt' 
+		from 
+			tb_build
+		where build_seq = #{build_seq}
+	]]>
+	</select>
+	
+	
+	<delete id="delMcate"  parameterType="Integer">
+	<![CDATA[
+		delete from
+			tb_mcate
+		where
+			build_seq = #{build_seq}	
+	]]>
+	</delete>
+	
+	<delete id="delLcate"  parameterType="Integer">
+	<![CDATA[
+		delete from
+			tb_lcate
+		where
+			build_seq = #{build_seq}	
+	]]>
+	</delete>
+	
+	<delete id="delFloor"  parameterType="Integer">
+	<![CDATA[
+		delete from
+			tb_floor
+		where
+			build_seq = #{build_seq}	
+	]]>
+	</delete>
+	
+</mapper>

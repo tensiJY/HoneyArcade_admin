@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+	<th:block th:replace="fragments/meta :: metaFragment(title='건물 정보 관리', useMetaCsrf='true')"></th:block>
+	<!--  table  -->
+	<link th:href="@{/resources/cork/assets/css/tables/table-basic.css}" rel="stylesheet" type="text/css">
+	<!--  css style  -->
+	<link rel="stylesheet" type="text/css"
+		th:href="@{/resources/honeyArcade/admin/mgt/build/css/adminMgtBuildDtlWrite.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/resources/honeyArcade/admin/common/css/common.css}">
+	<link th:href="@{/resources/cork/assets/css/components/cards/card.css}" rel="stylesheet" type="text/css">
+	<link rel="stylesheet" type="text/css" th:href="@{/resources/honeyArcade/admin/common/viewerjs/css/viewer.css}">
+	
+	<th:block th:replace="fragments/style :: styleFragment"></th:block>
+</head>
+
+<body class="sidebar-noneoverflow">
+	<!--  header  -->
+	<th:block th:replace="fragments/header :: headerFragment"></th:block>
+
+	<!--  BEGIN MAIN CONTAINER  -->
+	<div class="main-container" id="container">
+		<div class="overlay"></div>
+		<div class="search-overlay"></div>
+
+		<!--  sidebar  -->
+		<th:block th:replace="fragments/sidebar :: sidebarFragment(main='mgt', sub='mgt-build')"></th:block>
+
+
+		<!--  BEGIN CONTENT AREA  -->
+		<div id="content" class="main-content">
+			<div class="layout-px-spacing">
+
+
+				<!-- CONTENT AREA -->
+				<div class="row layout-top-spacing">
+					<div id="tableHover" class="col-lg-12 col-12 mb-3">
+						<div class="statbox widget box box-shadow">
+							<div class="widget-header">
+								<div class="row">
+									<div class="col-xl-12 col-md-12 col-sm-12 col-12">
+										<h4><span th:text="${AdminMgtBuildVO.build_name}"></span></h4>
+									</div>
+									<div class="col-xl-12 col-md-12 col-sm-12 col-12">
+
+									</div>
+								</div>
+							</div>
+							<div class="widget-content-area">
+								<div class="last-mod-dt">
+									<span style="color:#ccc; font-weight:bold;">
+										최종 수정 :
+									</span>
+									<th:span style="color:#ccc; font-weight:bold;" id="modifyDate" th:text="${mod_dt}">
+									</th:span>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="d-flex justfy-content-between col-12">
+						<div class="card component-card_9">
+							<div class="card-body">
+								<div>
+									<h5 class="card-title">업종 대분류</h5>
+									<div class="padding-bottom-10">
+										<th:block th:if="${dtlType == 1}">
+											<input type="text" name="lcate_name" class="form-control"
+												placeholder="대분류1 입력">
+										</th:block>
+										<th:block th:if="${dtlType == 2}">
+											<th:block th:if="${lcateList.size() > 0}">
+												<input type="text" name="lcate_name" class="form-control"
+													placeholder="대분류1 입력" th:value="${lcateList[0].lcate_name}">
+											</th:block>
+										</th:block>
+									</div>
+									<div class="targetDiv d-flex justify-content-end">
+										<div class="div-lcate-1 mr-2">
+											<label for="lcateFileA" class="img-upload-label">
+												<span class="btn btn-sm btn-dark">이미지 업로드</span>
+											</label>
+											<input type="file" accept="image/*" id="lcateFileA" name="lcate_file"
+												class="lcate-file display-none">
+										</div>
+										<div class="div-lcate-3">
+											<label class="img-confirm-label">
+												<input type="button" id="imgViewBtnA"
+													class="btn btn-sm btn-info lcate-file-prev" disabled value="확인">
+											</label>
+											<div class="lcateImgDiv">
+												<th:block th:if="${lcateList.size() > 0}">
+													<th:block th:if="${lcateList[0].file_dtl_url_path} != null">
+														<div>
+															<input type="hidden" name="file_dtl_url_path"
+																th:value="${lcateList[0].file_dtl_url_path}">
+															<input type="hidden" name="file_seq"
+																th:value="${lcateList[0].file_seq}">
+															<img class="file_image"
+																th:src="${lcateList[0].file_dtl_url_path}">
+														</div>
+													</th:block>
+												</th:block>
+											</div>
+										</div>
+									</div>
+								</div>
+								<span class="center-line"></span>
+								<h5 class="card-title">세부분류</h5>
+								<div class="cardBody">
+									<th:block th:if="${mcateList.size() == 0}">
+										<div class="mcateEvt">
+											<div class="">
+												<div class="mcate-left padding-bottom-10">
+													<input type="text"
+														class="form-control border-color-ed7d31 mcate_text"
+														name="mcate_a" placeholder="소분류1-1 입력">
+												</div>
+												<div class="mcate-right padding-bottom-10">
+													<div class="mcate-btn mCateAddBtn display-show" data-cate='1'>
+														<!-- plus -->
+														<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+															viewBox="0 0 24 24" fill="none" stroke="currentColor"
+															stroke-width="2" stroke-linecap="round"
+															stroke-linejoin="round" class="feather feather-plus-circle">
+															<circle cx="12" cy="12" r="10"></circle>
+															<line x1="12" y1="8" x2="12" y2="16"></line>
+															<line x1="8" y1="12" x2="16" y2="12"></line>
+														</svg>
+													</div>
+													<div class="mcate-btn mCateDelBtn display-none">
+														<!-- minus -->
+														<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+															viewBox="0 0 24 24" fill="none" stroke="currentColor"
+															stroke-width="2" stroke-linecap="round"
+															stroke-linejoin="round"
+															class="feather feather-minus-circle">
+															<circle cx="12" cy="12" r="10"></circle>
+															<line x1="8" y1="12" x2="16" y2="12"></line>
+														</svg>
+													</div>
+												</div>
+											</div>
+										</div>
+									</th:block>
+									<th:block th:if="${mcateList.size() != 0}">
+										<th:block th:each="list : ${mcateList}">
+											<th:block th:if="${list.lcate_seq == 0}">
+												<div class="mcateEvt">
+													<div class="">
+														<div class="mcate-left padding-bottom-10">
+															<input type="text"
+																class="form-control border-color-ed7d31 mcate_text"
+																name="mcate_a"
+																th:placeholder="소분류+${ (list.lcate_seq+1) + '-' + (list.mcate_seq+1) }+ '입력'"
+																th:value="${list.mcate_name}">
+														</div>
+														<div class="mcate-right padding-bottom-10">
+															<th:block th:if="${list.mcate_seq == 0}">
+																<div class="mcate-btn mCateAddBtn" data-cate='1'>
+																	<!-- plus -->
+																	<svg xmlns="http://www.w3.org/2000/svg" width="24"
+																		height="24" viewBox="0 0 24 24" fill="none"
+																		stroke="currentColor" stroke-width="2"
+																		stroke-linecap="round" stroke-linejoin="round"
+																		class="feather feather-plus-circle">
+																		<circle cx="12" cy="12" r="10"></circle>
+																		<line x1="12" y1="8" x2="12" y2="16"></line>
+																		<line x1="8" y1="12" x2="16" y2="12"></line>
+																	</svg>
+																</div>
+															</th:block>
+															<th:block th:if="${list.mcate_seq != 0}">
+																<div class="mcate-btn mCateDelBtn">
+																	<!-- minus -->
+																	<svg xmlns="http://www.w3.org/2000/svg" width="24"
+																		height="24" viewBox="0 0 24 24" fill="none"
+																		stroke="currentColor" stroke-width="2"
+																		stroke-linecap="round" stroke-linejoin="round"
+																		class="feather feather-minus-circle">
+																		<circle cx="12" cy="12" r="10"></circle>
+																		<line x1="8" y1="12" x2="16" y2="12"></line>
+																	</svg>
+																</div>
+															</th:block>
+														</div>
+													</div>
+												</div>
+											</th:block>
+										</th:block>
+									</th:block>
+								</div>
+							</div>
+						</div>
+						<div class="card component-card_9">
+							<div class="card-body">
+								<div>
+									<h5 class="card-title">업종 대분류</h5>
+									<div class="padding-bottom-10">
+										<th:block th:if="${dtlType == 1}">
+											<input type="text" name="lcate_name" class="form-control"
+												placeholder="대분류2 입력">
+										</th:block>
+										<th:block th:if="${dtlType == 2}">
+											<th:block th:if="${lcateList.size() > 1}">
+												<input type="text" name="lcate_name" class="form-control"
+													placeholder="대분류2 입력" th:value="${lcateList[1].lcate_name}">
+											</th:block>
+											<th:block th:if="${lcateList.size() < 2}">
+												<input type="text" name="lcate_name" class="form-control"
+													placeholder="대분류2 입력">
+											</th:block>
+										</th:block>
+									</div>
+									<div class="targetDiv d-flex justify-content-end">
+										<div class="div-lcate-1 mr-2">
+											<label for="lcateFileB" class="img-upload-label">
+												<span class="btn btn-sm btn-dark">이미지 업로드</span>
+											</label>
+											<input type="file" accept="image/*" id="lcateFileB" name="lcate_file"
+												class="lcate-file display-none">
+											<input type="hidden" name="lcate_file_seq">
+										</div>
+										<div class="div-lcate-3">
+											<label class="img-confirm-label">
+												<input type="button" id="imgViewBtnB"
+													class="btn btn-sm btn-info lcate-file-prev" disabled value="확인">
+											</label>
+											<div class="lcateImgDiv">
+												<th:block th:if="${lcateList.size() > 1}">
+													<th:block th:if="${lcateList[1].file_dtl_url_path} != null">
+														<div>
+															<input type="hidden" name="file_dtl_url_path"
+																th:value="${lcateList[1].file_dtl_url_path}">
+															<input type="hidden" name="file_seq"
+																th:value="${lcateList[1].file_seq}">
+															<img class="file_image"
+																th:src="${lcateList[1].file_dtl_url_path}">
+														</div>
+													</th:block>
+												</th:block>
+											</div>
+										</div>
+									</div>
+								</div>
+								<span class="center-line"></span>
+								<h5 class="card-title">세부분류</h5>
+								<div class="cardBody">
+									<th:block th:if="${mcateList.size() == 0}">
+										<div class="mcateEvt">
+											<div class="">
+												<div class="mcate-left padding-bottom-10">
+													<input type="text"
+														class="form-control border-color-ed7d31 mcate_text"
+														name="mcate_b" placeholder="소분류2-1 입력">
+												</div>
+												<div class="mcate-right padding-bottom-10">
+													<div class="mcate-btn mCateAddBtn" data-cate='2'>
+														<!-- plus -->
+														<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+															viewBox="0 0 24 24" fill="none" stroke="currentColor"
+															stroke-width="2" stroke-linecap="round"
+															stroke-linejoin="round" class="feather feather-plus-circle">
+															<circle cx="12" cy="12" r="10"></circle>
+															<line x1="12" y1="8" x2="12" y2="16"></line>
+															<line x1="8" y1="12" x2="16" y2="12"></line>
+														</svg>
+													</div>
+													<div class="mcate-btn mCateDelBtn" style="display: none;">
+														<!-- minus -->
+														<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+															viewBox="0 0 24 24" fill="none" stroke="currentColor"
+															stroke-width="2" stroke-linecap="round"
+															stroke-linejoin="round"
+															class="feather feather-minus-circle">
+															<circle cx="12" cy="12" r="10"></circle>
+															<line x1="8" y1="12" x2="16" y2="12"></line>
+														</svg>
+													</div>
+												</div>
+											</div>
+										</div>
+									</th:block>
+									<th:block th:if="${mcateList.size() != 0}">
+										<!-- 데이터 없는 경우 -->
+										<th:block th:if="${mcateCount.size() < 2}">
+											<div class="mcateEvt">
+												<div class="">
+													<div class="mcate-left padding-bottom-10">
+														<input type="text"
+															class="form-control border-color-ed7d31 mcate_text"
+															name="mcate_b" placeholder="소분류2-1 입력">
+													</div>
+													<div class="mcate-right padding-bottom-10">
+														<div class="mcate-btn mCateAddBtn" data-cate='2'>
+															<!-- plus -->
+															<svg xmlns="http://www.w3.org/2000/svg" width="24"
+																height="24" viewBox="0 0 24 24" fill="none"
+																stroke="currentColor" stroke-width="2"
+																stroke-linecap="round" stroke-linejoin="round"
+																class="feather feather-plus-circle">
+																<circle cx="12" cy="12" r="10"></circle>
+																<line x1="12" y1="8" x2="12" y2="16"></line>
+																<line x1="8" y1="12" x2="16" y2="12"></line>
+															</svg>
+														</div>
+														<div class="mcate-btn mCateDelBtn" style="display: none;">
+															<!-- minus -->
+															<svg xmlns="http://www.w3.org/2000/svg" width="24"
+																height="24" viewBox="0 0 24 24" fill="none"
+																stroke="currentColor" stroke-width="2"
+																stroke-linecap="round" stroke-linejoin="round"
+																class="feather feather-minus-circle">
+																<circle cx="12" cy="12" r="10"></circle>
+																<line x1="8" y1="12" x2="16" y2="12"></line>
+															</svg>
+														</div>
+													</div>
+												</div>
+											</div>
+										</th:block>
+									</th:block>
+									<th:block th:if="${mcateList.size() != 0}">
+										<!-- 데이터 있는 경우 -->
+										<th:block th:if="${mcateCount.size() > 1}">
+											<th:block th:each="list : ${mcateList}">
+												<th:block th:if="${list.lcate_seq == 1}">
+													<div class="mcateEvt">
+														<div class="">
+															<div class="mcate-left padding-bottom-10">
+																<input type="text"
+																	class="form-control border-color-ed7d31 mcate_text"
+																	name="mcate_b"
+																	th:placeholder="소분류+${ (list.lcate_seq+1) + '-' + (list.mcate_seq+1) }+ '입력'"
+																	th:value="${list.mcate_name}">
+															</div>
+															<div class="mcate-right padding-bottom-10">
+																<th:block th:if="${list.mcate_seq == 0}">
+																	<div class="mcate-btn mCateAddBtn" data-cate='2'>
+																		<!-- plus -->
+																		<svg xmlns="http://www.w3.org/2000/svg"
+																			width="24" height="24" viewBox="0 0 24 24"
+																			fill="none" stroke="currentColor"
+																			stroke-width="2" stroke-linecap="round"
+																			stroke-linejoin="round"
+																			class="feather feather-plus-circle">
+																			<circle cx="12" cy="12" r="10"></circle>
+																			<line x1="12" y1="8" x2="12" y2="16"></line>
+																			<line x1="8" y1="12" x2="16" y2="12"></line>
+																		</svg>
+																	</div>
+																</th:block>
+																<th:block th:if="${list.mcate_seq != 0}">
+																	<div class="mcate-btn mCateDelBtn">
+																		<!-- minus -->
+																		<svg xmlns="http://www.w3.org/2000/svg"
+																			width="24" height="24" viewBox="0 0 24 24"
+																			fill="none" stroke="currentColor"
+																			stroke-width="2" stroke-linecap="round"
+																			stroke-linejoin="round"
+																			class="feather feather-minus-circle">
+																			<circle cx="12" cy="12" r="10"></circle>
+																			<line x1="8" y1="12" x2="16" y2="12"></line>
+																		</svg>
+																	</div>
+																</th:block>
+															</div>
+														</div>
+													</div>
+												</th:block>
+											</th:block>
+										</th:block>
+									</th:block>
+								</div>
+							</div>
+						</div>
+						<div class="card component-card_9">
+							<div class="card-body">
+								<div>
+									<h5 class="card-title">업종 대분류</h5>
+									<div class="padding-bottom-10">
+										<th:block th:if="${dtlType == 1}">
+											<input type="text" name="lcate_name" class="form-control"
+												placeholder="대분류3 입력">
+										</th:block>
+										<th:block th:if="${dtlType == 2}">
+											<th:block th:if="${lcateList.size() > 2}">
+												<input type="text" name="lcate_name" class="form-control"
+													placeholder="대분류3 입력" th:value="${lcateList[2].lcate_name}">
+											</th:block>
+											<th:block th:if="${lcateList.size() < 3 }">
+												<input type="text" name="lcate_name" class="form-control"
+													placeholder="대분류3 입력">
+											</th:block>
+										</th:block>
+									</div>
+									<div class="targetDiv d-flex justify-content-end">
+										<div class="div-lcate-1 mr-2">
+											<label for="lcateFileC" class="img-upload-label">
+												<span class="btn btn-sm btn-dark">이미지 업로드</span>
+											</label>
+											<input type="file" accept="image/*" id="lcateFileC" name="lcate_file"
+												class="lcate-file display-none">
+											<input type="hidden" name="lcate_file_type" value="3">
+											<input type="hidden" name="lcate_file_seq">
+										</div>
+										<div class="div-lcate-3">
+											<label class="img-confirm-label">
+												<input type="button" id="imgViewBtnC"
+													class="btn btn-sm btn-info lcate-file-prev" disabled value="확인">
+											</label>
+											<div class="lcateImgDiv">
+												<th:block th:if="${lcateList.size() > 2}">
+													<th:block th:if="${lcateList[2].file_dtl_url_path} != null">
+														<div>
+															<input type="hidden" name="file_dtl_url_path"
+																th:value="${lcateList[2].file_dtl_url_path}">
+															<input type="hidden" name="file_seq"
+																th:value="${lcateList[2].file_seq}">
+															<img class="file_image"
+																th:src="${lcateList[2].file_dtl_url_path}">
+														</div>
+													</th:block>
+												</th:block>
+											</div>
+										</div>
+									</div>
+								</div>
+								<span class="center-line"></span>
+								<h5 class="card-title">세부분류</h5>
+								<div class="cardBody">
+									<th:block th:if="${mcateList.size() == 0}">
+										<div class="mcateEvt">
+											<div class="">
+												<div class="mcate-left padding-bottom-10">
+													<input type="text"
+														class="form-control border-color-ed7d31 mcate_text"
+														name="mcate_c" placeholder="소분류3-1 입력">
+												</div>
+												<div class="mcate-right padding-bottom-10">
+													<div class="mcate-btn mCateAddBtn" data-cate='3'>
+														<!-- plus -->
+														<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+															viewBox="0 0 24 24" fill="none" stroke="currentColor"
+															stroke-width="2" stroke-linecap="round"
+															stroke-linejoin="round" class="feather feather-plus-circle">
+															<circle cx="12" cy="12" r="10"></circle>
+															<line x1="12" y1="8" x2="12" y2="16"></line>
+															<line x1="8" y1="12" x2="16" y2="12"></line>
+														</svg>
+													</div>
+													<div class="mcate-btn mCateDelBtn" style="display: none;">
+														<!-- minus -->
+														<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+															viewBox="0 0 24 24" fill="none" stroke="currentColor"
+															stroke-width="2" stroke-linecap="round"
+															stroke-linejoin="round"
+															class="feather feather-minus-circle">
+															<circle cx="12" cy="12" r="10"></circle>
+															<line x1="8" y1="12" x2="16" y2="12"></line>
+														</svg>
+													</div>
+												</div>
+											</div>
+										</div>
+									</th:block>
+									<th:block th:if="${mcateList.size() != 0}">
+										<!-- 데이터 없는 경우 -->
+										<th:block th:if="${mcateCount.size() < 3}">
+											<div class="mcateEvt">
+												<div class="">
+													<div class="mcate-left padding-bottom-10">
+														<input type="text"
+															class="form-control border-color-ed7d31 mcate_text"
+															name="mcate_c" placeholder="소분류3-1 입력">
+													</div>
+													<div class="mcate-right padding-bottom-10">
+														<div class="mcate-btn mCateAddBtn" data-cate='3'>
+															<!-- plus -->
+															<svg xmlns="http://www.w3.org/2000/svg" width="24"
+																height="24" viewBox="0 0 24 24" fill="none"
+																stroke="currentColor" stroke-width="2"
+																stroke-linecap="round" stroke-linejoin="round"
+																class="feather feather-plus-circle">
+																<circle cx="12" cy="12" r="10"></circle>
+																<line x1="12" y1="8" x2="12" y2="16"></line>
+																<line x1="8" y1="12" x2="16" y2="12"></line>
+															</svg>
+														</div>
+														<div class="mcate-btn mCateDelBtn" style="display: none;">
+															<!-- minus -->
+															<svg xmlns="http://www.w3.org/2000/svg" width="24"
+																height="24" viewBox="0 0 24 24" fill="none"
+																stroke="currentColor" stroke-width="2"
+																stroke-linecap="round" stroke-linejoin="round"
+																class="feather feather-minus-circle">
+																<circle cx="12" cy="12" r="10"></circle>
+																<line x1="8" y1="12" x2="16" y2="12"></line>
+															</svg>
+														</div>
+													</div>
+												</div>
+											</div>
+										</th:block>
+									</th:block>
+									<th:block th:if="${mcateList.size() != 0}">
+										<!-- 데이터 있는 경우 -->
+										<th:block th:if="${mcateCount.size() > 2}">
+											<th:block th:each="list : ${mcateList}">
+												<th:block th:if="${list.lcate_seq == 2}">
+													<div class="mcateEvt">
+														<div class="">
+															<div class="mcate-left padding-bottom-10">
+																<input type="text"
+																	class="form-control border-color-ed7d31 mcate_text"
+																	name="mcate_c"
+																	th:placeholder="소분류+${ (list.lcate_seq+1) + '-' + (list.mcate_seq+1) }+ '입력'"
+																	th:value="${list.mcate_name}">
+															</div>
+															<div class="mcate-right padding-bottom-10">
+																<th:block th:if="${list.mcate_seq == 0}">
+																	<div class="mcate-btn mCateAddBtn" data-cate='3'>
+																		<!-- plus -->
+																		<svg xmlns="http://www.w3.org/2000/svg"
+																			width="24" height="24" viewBox="0 0 24 24"
+																			fill="none" stroke="currentColor"
+																			stroke-width="2" stroke-linecap="round"
+																			stroke-linejoin="round"
+																			class="feather feather-plus-circle">
+																			<circle cx="12" cy="12" r="10"></circle>
+																			<line x1="12" y1="8" x2="12" y2="16"></line>
+																			<line x1="8" y1="12" x2="16" y2="12"></line>
+																		</svg>
+																	</div>
+																</th:block>
+																<th:block th:if="${list.mcate_seq != 0}">
+																	<div class="mcate-btn mCateDelBtn">
+																		<!-- minus -->
+																		<svg xmlns="http://www.w3.org/2000/svg"
+																			width="24" height="24" viewBox="0 0 24 24"
+																			fill="none" stroke="currentColor"
+																			stroke-width="2" stroke-linecap="round"
+																			stroke-linejoin="round"
+																			class="feather feather-minus-circle">
+																			<circle cx="12" cy="12" r="10"></circle>
+																			<line x1="8" y1="12" x2="16" y2="12"></line>
+																		</svg>
+																	</div>
+																</th:block>
+															</div>
+														</div>
+													</div>
+												</th:block>
+											</th:block>
+										</th:block>
+									</th:block>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-12 mt-3">
+						<div class="card component-card_1 col-12">
+							<div class="card-body">
+								<h5 class="card-title">층수 정보</h5>
+								<div class="text-center">
+									<div class="table-responsive">
+										<table class="table table-bordered table-hover mb-2" id="floorTable">
+											<tr>
+												<th>선택</th>
+												<th>층</th>
+												<th>도면 업로드</th>
+											</tr>
+											<th:block th:if="${floorList.size != 0}">
+												<th:block th:each="list : ${floorList}">
+													<tr class="floorEvt">
+														<td>
+															<input type="checkbox" style="vertical-align: middle;"
+																name="floor_check">
+														</td>
+														<td>
+															<input type="checkbox" style="vertical-align: middle;"
+																name="floor_type" th:checked="${list.floor_type == 1}">
+															<span class="floor_text"
+																th:text="${list.floor_type == 1? '지상' : '지하'}"></span>
+															<input type="number" class="form-control d-inline"
+																style="width: 60px; height:30px; vertical-align: middle;"
+																name="floor_seq" th:value="${list.floor_seq}">
+															<span style="vertical-align: middle;">층</span>
+														</td>
+														<td>
+															<div class="fileUpload btn-sm btn btn-dark">
+																<span>업로드</span>
+																<input type="file" name="floor_file" class="upload" />
+															</div>
+															<input type="button" class="btn btn-sm btn-info prevBtn"
+																value="확인" disabled>
+															<div class="imgViewBox" style="display:none;;">
+																<th:block th:if="${list.file_dtl_url_path} != null">
+																	<div>
+																		<input type="hidden" name="file_dtl_url_path"
+																			th:value="${list.file_dtl_url_path}">
+																		<input type="hidden" name="file_seq"
+																			th:value="${list.file_seq}">
+																		<img class="file_image"
+																			th:src="${list.file_dtl_url_path}">
+																	</div>
+																</th:block>
+															</div>
+														</td>
+													</tr>
+												</th:block>
+											</th:block>
+										</table>
+									</div>
+								</div>
+								<div>
+									<div class="btn-add-table">
+										<input type="button" id="floorAddBtn" class="btn btn-sm btn-info" value="추가">
+										<input type="button" id="flooarDelBtn" class="btn btn-sm btn-danger" value="삭제">
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-12 d-flex justify-content-center">
+						<div class="btn-save-outer">
+							<input type="button" id="saveBtn" class="btn btn-primary mr-3" value="저장">
+							<input type="button" id="listBtn" class="btn btn-secondary" value="목록">
+							<input type="hidden" id="dtlType" name="dtlType" th:value="${dtlType}">
+							<form id="buildListForm" th:action="@{/admin/mgt/build/list}" method="GET">
+								<input type="hidden" name="type" th:value="${type}">
+								<input type="hidden" name="nowPage" th:value="${nowPage}">
+								<input type="hidden" name="build_seq" th:value="${adminMgtBuildVO.build_seq}">
+								<input type="hidden" name="listCount" th:value="${listCount}">
+								<th:block th:if="${type == 'search'}">
+									<input type="hidden" name="sido_seq" th:value="${AdminMgtBuildVO.sido_seq}">
+									<input type="hidden" name="sigungu_seq" th:value="${AdminMgtBuildVO.sigungu_seq}">
+									<input type="hidden" name="dong_seq" th:value="${AdminMgtBuildVO.dong_seq}">
+									<input type="hidden" name="search_text" th:value="${AdminMgtBuildVO.search_text}">
+								</th:block>
+								<th:block th:if="${dtlType == 2}"></th:block>
+							</form>
+							<div id="delFileSeq">
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- CONTENT AREA -->
+			</div>
+			<!--  footer   -->
+			<th:block th:replace="fragments/footer"></th:block>
+		</div>
+		<!--  END CONTENT AREA  -->
+	</div>
+	<!-- END MAIN CONTAINER -->
+
+
+
+
+	<!--content check Modal -->
+	<div class="modal fade" id="ImgInfo" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+		aria-hidden="true" data-backdrop="static">
+		<div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 1280px;">
+			<div class="modal-content">
+				<div class="modal-header" style="max-height: 80px;">
+					<h5 id="modal-title" class="modal-title"></h5>
+					<!--<button type="button" class="close" data-dismiss="modal" aria-label="Close">X</button>-->
+
+				</div>
+				<div class="modal-body">
+					<div id="modal-img-box" style="width: 1280px; height:600px;text-align: center;">
+
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button class="btn btn-primary" data-dismiss="modal">확인</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<div id="fileClone" class="display-none">
+		<div>
+			<input type="hidden" name="file_dtl_desc" value="">
+			<input type="hidden" name="file_dtl_ext" value="">
+			<input type="hidden" name="file_dtl_origin" value="">
+			<input type="hidden" name="file_dtl_path" value="">
+			<input type="hidden" name="file_dtl_url_path" value="">
+			<input type="hidden" name="file_type" value="">
+			<input type="hidden" name="file_seq" value="">
+			<img class="file_image">
+		</div>
+	</div>
+
+
+
+
+	<div id="mcateClone" class="display-none">
+		<div class="mcateEvt">
+			<div class="">
+				<div class="mcate-left padding-bottom-10">
+					<input type="text" class="form-control border-color-ed7d31 mcate_text" name="" placeholder=""
+						value="">
+				</div>
+				<div class="mcate-right padding-bottom-10">
+					<div class="mcate-btn mCateAddBtn" style="display: none;">
+						<!-- plus -->
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+							stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+							class="feather feather-plus-circle">
+							<circle cx="12" cy="12" r="10"></circle>
+							<line x1="12" y1="8" x2="12" y2="16"></line>
+							<line x1="8" y1="12" x2="16" y2="12"></line>
+						</svg>
+					</div>
+					<div class="mcate-btn mCateDelBtn" style="display: show;">
+						<!-- minus -->
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+							stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+							class="feather feather-minus-circle">
+							<circle cx="12" cy="12" r="10"></circle>
+							<line x1="8" y1="12" x2="16" y2="12"></line>
+						</svg>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div id="floorClone" class="display-none">
+		<table>
+			<tr class="floorEvt">
+				<td>
+					<input type="checkbox" name="floor_check">
+				</td>
+
+				<td>
+					<input type="checkbox" style="vertical-align: middle;" name="floor_type" checked>
+					<span class="floor_text" style="vertical-align: middle;">지상</span>
+					<input type="number" class="form-control d-inline"
+						style="width: 60px; height:30px; vertical-align: middle;" name="floor_seq" value="">
+					<span> 층</span>
+				</td>
+
+				<td>
+					<div class="fileUpload btn btn-dark btn-sm">
+						<span>업로드</span>
+						<input type="file" name="floor_file" class="upload" />
+					</div>
+					<input type="button" class="btn btn-sm btn-info prevBtn" value="확인" disabled>
+					<div class="imgViewBox" style="display:none;;">
+					</div>
+				</td>
+			</tr>
+		</table>
+	</div>
+
+	<th:block th:replace="fragments/script :: scriptFragment(useScriptCsrf='true')"></th:block>
+	<script th:src="@{/resources/honeyArcade/admin/common/js/regex.js}"></script>
+	<script th:src="@{/resources/honeyArcade/admin/common/js/fileUpload.js}"></script>
+	<script th:src="@{/resources/honeyArcade/admin/common/viewerjs/js/viewer.js}"></script>
+	<script th:src="@{/resources/honeyArcade/admin/mgt/build/js/adminMgtBuildDtlWrite.js}"></script>
+	<script th:inline="javascript">
+		/* <![CDATA[ */
+		$(function () {
+
+
+		})
+	/*]] */
+	</script>
+</body>
+
+</html>

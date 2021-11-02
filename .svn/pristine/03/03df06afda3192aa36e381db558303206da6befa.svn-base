@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="honeyarcade.admin.im.push.AdminImPushMapper">
+	<select id="getTotalCount" resultType="Integer">
+	<![CDATA[
+		select
+			count(push_seq) as cnt
+		from
+			tb_push
+		where
+			del_flag = 'N'
+	]]>
+	</select>
+	
+	<select id="getPushList" parameterType="honeyarcade.admin.im.push.AdminImPushVO" resultType="honeyarcade.admin.im.push.AdminImPushVO">
+	<![CDATA[
+		select
+			*
+		from
+			(
+				select 
+					row_number() over(order by add_dt desc) as row_num
+					, push_seq 
+					, case when len(push_text) > 10 then concat(SUBSTRING(push_text, 1, 10), '...') else push_text end as 'push_text'
+					, concat(push_rez_dt, ' ', push_rez_time ) as push_rez_dt
+					, convert(char(10), add_dt, 23) as add_dt
+					, case when push_status = 1 then '완료'
+						   when push_status = 2 then '예약대기'
+						   when push_status = 3 then '예약취소'
+						   when push_status = 4 then '삭제'
+					  end as 'push_status_text'
+					, push_status  
+					, case when len(push_title) > 10 then concat(SUBSTRING(push_title, 1, 10), '...') else push_title end as 'push_title'
+				from 
+					tb_push
+				where
+					del_flag = 'N'
+			)a
+		where
+			row_num between #{start_num} and #{end_num}		
+	]]>
+	</select>
+	
+	<update id="cancelProc" parameterType="honeyarcade.admin.im.push.AdminImPushVO">
+	<![CDATA[
+		update
+			tb_push
+		set
+			push_status = 3
+			, mod_id = #{mod_id}
+			, mod_dt = getDate()
+		where
+			push_seq = #{push_seq}
+	]]>
+	</update>
+	
+	<select id="getData" parameterType="Integer" resultType="honeyarcade.admin.im.push.AdminImPushVO">
+	<![CDATA[
+		SELECT
+			  push_seq
+			, push_text
+			, push_ios_link
+			, push_android_link 
+			, push_title
+			, (select
+				   	 count(tb_user_received_push.push_seq) as push_cnt
+				from 
+					tb_user
+				inner join tb_user_received_push
+					on tb_user.user_id = tb_user_received_push.user_id
+				where 
+					tb_user_received_push.push_seq = tb_push.PUSH_SEQ 
+					and tb_user.USER_DEVICE_OS = 1) as and_cnt
+			, (select
+				   	 count(tb_user_received_push.push_seq) as push_cnt
+				from 
+					tb_user
+				inner join tb_user_received_push
+					on tb_user.user_id = tb_user_received_push.user_id
+				where 
+					tb_user_received_push.push_seq = tb_push.PUSH_SEQ 
+					and tb_user.USER_DEVICE_OS = 2) as ios_cnt
+		from 
+			tb_push
+		where
+			push_seq = #{push_seq}
+	]]>
+	</select>
+	
+	<select id="saveProc" parameterType="honeyarcade.admin.im.push.AdminImPushVO" resultType="Integer">
+	<![CDATA[
+		insert into	tb_push
+			(
+				  push_text
+				, push_ios_link
+				, push_android_link
+				, push_rez_dt
+				, push_rez_time
+				, add_dt
+				, add_id
+				, del_flag
+				, push_type
+				, push_status
+				, build_seq
+				, store_seq
+				, push_title
+			)
+		values
+			(
+				  #{push_text}
+				, #{push_ios_link}
+				, #{push_android_link}
+				, #{push_rez_dt}
+				, #{push_rez_time}
+				, getDate()
+				, #{add_id}
+				, 'N'
+				, #{push_type}
+				, #{push_status}
+				, #{build_seq}
+				, #{store_seq}
+				, #{push_title}
+			)
+			
+	SELECT SCOPE_IDENTITY()  		
+	]]>
+	
+	</select>
+</mapper>

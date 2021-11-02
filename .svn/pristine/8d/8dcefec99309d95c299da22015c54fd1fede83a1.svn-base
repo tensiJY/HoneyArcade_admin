@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="honeyarcade.admin.mgt.store.AdminMgtStoreMapper">
+	
+	<select id="getTotalCount" parameterType="honeyarcade.admin.mgt.store.AdminMgtStoreVO" resultType="Integer">
+	
+		select
+			count(tb_floor.floor_seq) as cnt
+		from tb_floor
+		inner join tb_owner 
+		 	on tb_floor.floor_seq = tb_owner.store_floor
+			and tb_floor.build_seq  = tb_owner.build_seq
+		inner join tb_lcate 
+			on tb_floor.build_seq = tb_lcate.build_seq
+			and tb_owner.build_seq = tb_lcate.build_seq 
+		inner join tb_mcate
+			on tb_floor.build_seq = tb_mcate.build_seq 
+			and tb_lcate.lcate_seq = tb_mcate.lcate_seq
+			and tb_mcate.lcate_seq = tb_owner.lcate_seq 
+			and tb_owner.mcate_seq = tb_mcate.mcate_seq 
+		where
+			tb_floor.build_seq = #{build_seq}
+			and tb_floor.floor_seq = #{floor_seq}
+			<if test="admin_grade == 3">
+				<![CDATA[
+					and tb_floor.build_seq in (select tb_admin_grade.build_seq from tb_admin_grade where tb_admin_grade.admin_id = #{admin_id} and tb_admin_grade.del_flag = 'N')
+				]]>
+			</if>		
+			<if test="type == 'search'">
+			<![CDATA[
+			and
+				tb_owner.store_name like '%'+ #{search_text} + '%'
+			]]>
+			</if>
+	</select>
+
+	<select id="getStoreList" resultType="honeyarcade.admin.mgt.store.AdminMgtStoreVO" parameterType="honeyarcade.admin.mgt.store.AdminMgtStoreVO">
+		select 
+			*
+		from
+			(select
+				row_number() over (order by tb_floor.build_seq) as row_num
+				,tb_floor.floor_seq 
+				, tb_floor.floor_type 
+				, tb_owner.store_name 
+				, tb_lcate.lcate_name 
+				, tb_mcate.mcate_name 
+				, tb_owner.store_text 
+				, tb_owner.store_keyword
+				, tb_owner.store_sort 
+				, tb_owner.store_tel 
+				, tb_owner.store_status
+				, case when tb_owner.store_status = 1 then '숨김' else '노출' end store_status_text
+				, tb_owner.owner_id 
+			from tb_floor
+			inner join tb_owner 
+			 	on tb_floor.floor_seq = tb_owner.store_floor
+				and tb_floor.build_seq  = tb_owner.build_seq
+			inner join tb_lcate 
+				on tb_floor.build_seq = tb_lcate.build_seq
+				and tb_owner.build_seq = tb_lcate.build_seq 
+			inner join tb_mcate
+				on tb_floor.build_seq = tb_mcate.build_seq 
+				and tb_lcate.lcate_seq = tb_mcate.lcate_seq
+				and tb_mcate.lcate_seq = tb_owner.lcate_seq 
+				and tb_owner.mcate_seq = tb_mcate.mcate_seq 
+			where
+					tb_floor.build_seq = #{build_seq}
+				and tb_floor.floor_seq = #{floor_seq}
+				<if test="admin_grade == 3">
+				<![CDATA[
+					and tb_floor.build_seq in (select tb_admin_grade.build_seq from tb_admin_grade where tb_admin_grade.admin_id = #{admin_id} and tb_admin_grade.del_flag = 'N')
+				]]>
+				</if>		
+				<if test="type == 'search'">
+				and
+					tb_owner.store_name like '%'+ #{search_text} + '%'
+				</if>
+			) t
+		where 
+			row_num between #{start_num} and #{end_num}
+	</select>
+
+	<update id="viewProc" parameterType="list">
+		<foreach item="item" index="index" collection="list" separator=";">
+		<![CDATA[
+			update
+				tb_owner
+			set
+				store_status = #{item.store_status}
+				, mod_dt = getDate()
+				, mod_id = #{item.admin_id}
+			where
+				owner_id = #{item.owner_id}
+			and
+				del_flag = 'N'
+		]]>
+		</foreach>
+		
+	</update>
+	
+	<select id="getStoreExcelList" resultType="honeyarcade.admin.mgt.store.AdminMgtStoreVO" parameterType="honeyarcade.admin.mgt.store.AdminMgtStoreVO">
+		select 
+			*
+		from
+			(select
+				row_number() over (order by tb_floor.build_seq) as row_num
+				,tb_floor.floor_seq 
+				, tb_floor.floor_type 
+				, tb_owner.store_name 
+				, tb_lcate.lcate_name 
+				, tb_mcate.mcate_name 
+				, tb_owner.store_text 
+				, tb_owner.store_keyword
+				, tb_owner.store_sort 
+				, tb_owner.store_tel
+				, case when tb_owner.store_status = 1 then '숨김' else '노출' end store_status_text
+				, tb_owner.owner_id 
+			from tb_floor
+			inner join tb_owner 
+			 	on tb_floor.floor_seq = tb_owner.store_floor
+				and tb_floor.build_seq  = tb_owner.build_seq 
+				and tb_owner.del_flag ='N'
+			inner join tb_lcate 
+				on tb_floor.build_seq = tb_lcate.build_seq
+				and tb_owner.build_seq = tb_lcate.build_seq 
+			inner join tb_mcate
+				on tb_floor.build_seq = tb_mcate.build_seq 
+				and tb_lcate.lcate_seq = tb_mcate.lcate_seq
+				and tb_mcate.lcate_seq = tb_owner.lcate_seq 
+				and tb_owner.mcate_seq = tb_mcate.mcate_seq 
+			where
+					tb_floor.build_seq = #{build_seq}
+				and tb_floor.floor_seq = #{floor_seq}
+				and
+					tb_owner.store_name like '%'+ #{search_text} + '%'
+				
+			) t
+	</select>
+	
+	
+</mapper>

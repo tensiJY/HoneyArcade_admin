@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5" >
+
+<th:block th:fragment="footerFragment"> 
+	<!--  BEGIN FOOTER  -->
+			<div class="footer-wrapper">
+                <div class="footer-section f-section-1">
+                    <p class="">Copyright © 2021 HoneyArcade All rights reserved.</p>
+                </div>
+                <div class="footer-section f-section-2">
+                    <p class="fw-normal fs-6"> 주소:서울특별시 송파구 법원로128, A동 611호 허니아케이드(주) 대표:김민균 사업자번호:423-88-01893 대표번호:02-6423-3902</p>
+                </div>
+            </div>
+    <!--  END FOOTER  -->
+
+</th:block>
+  
+</html>

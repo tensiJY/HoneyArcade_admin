@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5" >
+<head>
+	<th:block th:replace="fragments/meta :: metaFragment(title='점포 관리', useMetaCsrf='true')"></th:block>
+	
+	<!--  css style  -->
+	<th:block th:replace="fragments/style :: styleFragment"></th:block>
+	
+	<!--  select  -->
+	<link rel="stylesheet" type="text/css" th:href="@{/resources/cork/plugins/bootstrap-select/bootstrap-select.min.css}">
+	<!--  search  -->
+	<link th:href="@{/resources/cork/assets/css/elements/search.css}" rel="stylesheet" type="text/css" />
+	<!--  checkbox  -->
+	<link rel="stylesheet" type="text/css" th:href="@{/resources/cork/assets/css/forms/theme-checkbox-radio.css}">
+	<!--  table  -->
+	<link th:href="@{/resources/cork/assets/css/tables/table-basic.css}" rel="stylesheet" type="text/css">
+	<!--  paginating  -->
+	<link th:href="@{/resources/cork/assets/css/elements/custom-pagination.css}" rel="stylesheet" type="text/css">
+	<link rel="stylesheet" type="text/css" th:href="@{/resources/honeyArcade/admin/common/css/common.css}">
+	
+</head>
+
+
+<body class="sidebar-noneoverflow">
+    
+	<!--  header  -->
+	<th:block th:replace="fragments/header :: headerFragment"></th:block>
+	
+
+    <!--  BEGIN MAIN CONTAINER  -->
+    <div class="main-container" id="container">
+
+        <div class="overlay"></div>
+        <div class="search-overlay"></div>
+
+		<!--  sidebar  -->
+		<th:block th:replace="fragments/sidebar :: sidebarFragment(main='mgt', sub='mgt-store')"></th:block>
+		        
+        <!--  BEGIN CONTENT AREA  -->
+        <div id="content" class="main-content">
+            <div class="layout-px-spacing">
+
+
+                <!-- CONTENT AREA -->
+                <div class="row layout-top-spacing">
+                    
+					<div id="tableHover" class="col-lg-12 col-12 layout-spacing">
+						<div class="statbox widget box box-shadow">
+							<div class="widget-header">
+								<div class="row">
+									<div class="col-xl-12 col-md-12 col-sm-12 col-12">
+										<h4>점포 관리</h4>
+									</div>
+								</div>
+							</div>
+							
+							<div class="widget-content widget-content-area">
+								
+									<!-- select -->
+									<div class="row">
+										<div class="col-sm-12">
+											<form id="seearchForm" name="seearchForm" th:action="@{/admin/mgt/store/list}" method="GET">
+												<select class="select-box" data-live-search="true" title="시,도" id="sidoSelect" name="sido_seq">
+													
+													<th:block th:if="${sidoList.size()!=0}">
+														<th:block th:each="list : ${sidoList}">
+															<option th:value="${list.sido_seq}" th:text="${list.sido_name}" th:selected="${adminMgtStoreVO.sido_seq == list.sido_seq}"></option>
+														</th:block>
+													</th:block>
+												</select>
+												
+												<select class="select-box" data-live-search="true" title="군,구" id="sigunguSelect" name="sigungu_seq">
+													 <!-- 검색 조건이면 -->
+													 <th:block th:if="${type == 'search'}">
+													 	<th:block th:if="${sigunguList != null}">
+													 		<th:block th:if="${sigunguList.size() != 0}">
+													 			<!-- 값이 있는경우 -->
+													 			<th:block th:each="list : ${sigunguList}">
+																	<option th:value="${list.sigungu_seq}" th:text="${list.sigungu_name}" th:selected="${adminMgtStoreVO.sigungu_seq == list.sigungu_seq}" ></option>
+																</th:block>
+													 		</th:block>
+													 	</th:block>
+													 </th:block>
+													 
+												</select>
+												
+												<select class="select-box" data-live-search="true" title="지역" id="dongSelect" name="dong_seq">
+													<!--  검색 조건이면  -->
+													<th:block th:if="${type == 'search'}">
+														<th:block th:if="${dongList != null}">
+															<th:block th:if="${dongList.size() != 0}">
+																<th:block th:each="list : ${dongList}">
+																	<option th:value="${list.dong_seq}" th:text="${list.dong_name}" th:selected="${adminMgtStoreVO.dong_seq == list.dong_seq}" ></option>
+																</th:block>
+															</th:block>
+														</th:block>
+													</th:block>
+												</select>
+												
+												<select class="select-box" data-live-search="true" title="건물" id="buildSelect" name="build_seq">
+													<!--  검색 조건이면  -->
+													<th:block th:if="${type == 'search'}">
+														<th:block th:if="${buildList != null}">
+															<th:block th:if="${buildList.size() != 0}">
+																<th:block th:each="list : ${buildList}">
+																	<option th:value="${list.build_seq}" th:text="${list.build_name}" th:selected="${adminMgtStoreVO.build_seq == list.build_seq}" ></option>
+																</th:block>
+															</th:block>
+														</th:block>
+													</th:block>
+												</select>
+												
+												<select class="select-box" data-live-search="true" title="층" id="floorSelect" name="floor_seq">
+													<!--  검색 조건이면  -->
+													<th:block th:if="${type == 'search'}">
+														<th:block th:if="${floorList != null}">
+															<th:block th:if="${floorList.size() != 0}">
+																<th:block th:each="list : ${floorList}">
+																	<option th:value="${list.floor_seq}" th:text="${list.floor_seq < 0? '지하 ' +  (-list.floor_seq)  + '층': '지상 ' + list.floor_seq +'층'}" th:selected="${adminMgtStoreVO.floor_seq == list.floor_seq}" ></option>
+																</th:block>
+															</th:block>
+														</th:block>
+													</th:block>
+												</select>
+
+												<select class="select-box" data-live-search="true" title="결과" id="listCount" name="listCount">
+													<option th:value="50" th:text="50" th:selected="${listCount == 50}" ></option>
+													<option th:value="100" th:text="100" th:selected="${listCount == 100}" ></option>
+													<option th:value="150" th:text="105" th:selected="${listCount == 150}" ></option>
+													<option th:value="200" th:text="200" th:selected="${listCount == 200}" ></option>
+													<option th:value="250" th:text="250" th:selected="${listCount == 250}" ></option>
+													<option th:value="300" th:text="300" th:selected="${listCount == 300}" ></option>
+												</select>																									
+											
+												
+												<div class="search-input-group-style input-group mb-3">
+													<div class="input-group-prepend">
+														<span class="input-group-text" id="basic-addon1"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+																viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+																stroke-linejoin="round" class="feather feather-search">
+																<circle cx="11" cy="11" r="8"></circle>
+																<line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+															</svg></span>
+													</div>
+													<input type="text" class="form-control" placeholder="검색어 입력" name="search_text" id="search_text" th:value="${adminMgtStoreVO.search_text}">
+												</div>
+												
+												
+												<input type="hidden" id="type" name="type" th:value="${type}">
+												<input type="button" class="btn btn-primary" value="검색" id="searchBtn">
+												<input type="button" class="btn btn-primary" value="시트추출" id="execelDownBtn">
+											</form>
+											
+											
+											
+										</div>
+										
+									</div>
+									
+									<!-- 테이블 -->
+									<div class="row">
+										<div class="col-sm-12">
+											<div class="table-responsive">
+												
+												<table class="table table-bordered table-hover mb-4">
+													<tr>
+														<th>선택</th>
+														<th>No.</th>
+														<th>층</th>
+														<th>상호명</th>
+														<th>대분류</th>
+														<th>소분류</th>
+														<th>소개글</th>
+														<th>숨김키워드</th>
+														<th>노출순위</th>
+														<th>전화번호</th>
+														<th>상세정보</th>
+														<th>상태</th>
+													</tr>
+													<th:block th:if="${type== 'list'}">
+													<tr>
+														<td colspan='12'>
+															검색 조건을 선택 해주시기 바랍니다
+														</td>
+													</tr>
+													</th:block>
+													
+													<th:block th:if="${type=='search'}">
+														<th:block th:if="${storeList.size() == 0}">
+														<tr>
+															<td colspan='12'>
+																조회된 데이터가 없습니다
+															</td>
+														</tr>														
+														</th:block>
+													</th:block>
+
+													<th:block th:if="${type=='search'}">
+														<th:block th:if="${storeList.size() != 0}">
+															<th:block th:each="list : ${storeList}">
+															<tr>
+																<td><input type="checkbox" name="ckh_owner_id" class="store-check" th:data-owner-id="${list.owner_id}" ></td>
+																<td th:text="${list.row_num}"></td>
+																<td th:text="${list.floor_seq < 0? '지하 ' +  (-list.floor_seq)  + '층': '지상 ' + list.floor_seq +'층'}"></td>
+																<td th:text="${list.store_name}"></td>
+																<td th:text="${list.lcate_name}"></td>
+																<td th:text="${list.mcate_name}"></td>
+																<td th:text="${list.store_text}"></td>
+																<td th:text="${list.store_keyword}"></td>
+																<td th:text="${list.store_sort}"></td>
+																<td th:text="${list.store_tel}"></td>
+																<td>
+																	<form name="modForm" method="POST" th:action="@{/admin/member/owner/view}">
+																		<input type="hidden" name="owner_id" th:value="${list.owner_id}">
+																		<input type="hidden" name="sido_seq" th:value="${adminMgtStoreVO.sido_seq}">
+																		<input type="hidden" name="sigungu_seq" th:value="${adminMgtStoreVO.sigungu_seq}">
+																		<input type="hidden" name="dong_seq" th:value="${adminMgtStoreVO.dong_seq}">
+																		<input type="hidden" name="build_seq" th:value="${adminMgtStoreVO.build_seq}">
+																		<input type="hidden" name="floor_seq" th:value="${adminMgtStoreVO.floor_seq}">
+																		<input type="hidden" name="listCount" th:value="${listCount}">
+																		<input type="hidden" name="search_text" th:value="${adminMgtStoreVO.search_text}">
+																		<input type="hidden" name="type" th:value="${type}">
+																		<input type="hidden" name="menu" value="store">
+																	</form>
+																	<input type="button" class="btn btn-primary modBtn" value="수정">
+																</td>
+																<td th:text="${list.store_status_text}"></td>
+															</tr>							
+															</th:block>					
+														</th:block>
+													</th:block>			
+																							
+												</table>
+											</div>
+										</div>
+									</div>
+									
+									
+									<!-- 페이징 네이션 -->
+									<th:block th:if="${storeList == null}">
+									<div class="row">
+										<div class="col-sm-12">
+											<div class="paginating-container pagination-solid">
+												<ul class="pagination">
+	                                    			<li  class="prev"><a href="javascript:void(0);"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-left"><polyline points="15 18 9 12 15 6"></polyline></svg></a></li>
+	                                    				<li class="active"> 
+	                                    					<a th:text="1" th:href="@{/admin/mgt/store/list(nowPage=1)}"></a>
+	                                    				</li>
+	                                    			<li class="next"><a href="javascript:void(0);"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right"><polyline points="9 18 15 12 9 6"></polyline></svg></a></li>
+	                                    		</ul>
+											</div>
+										</div>
+									</div>
+									</th:block>
+									
+									
+									<th:blcok th:if="${storeList != null}">
+									<div class="row">
+										<div class="col-sm-12">
+										
+										
+											
+	                                    <div class="paginating-container pagination-solid">
+	                                    	<th:block th:if="${storeList.size()==0}">
+	                                    		<ul class="pagination">
+	                                    			<li  class="prev"><a href="javascript:void(0);"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-left"><polyline points="15 18 9 12 15 6"></polyline></svg></a></li>
+	                                    			<li>
+	                                    				<a th:text="1" th:href="@{/admin/mgt/store/list(nowPage=1)}"></a>
+	                                    			</li>
+	                                    			<li class="next"><a href="javascript:void(0);"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right"><polyline points="9 18 15 12 9 6"></polyline></svg></a></li>
+	                                    		</ul>
+	                                    	</th:block>
+	                                    	
+	                                    	
+											<th:block th:if="${storeList.size()!=0}">
+		                                        <ul class="pagination">
+		                                        	<!--  이전 -->
+		                                        	<th:block th:if="${pageUtil.startPage == 1}">
+		                                        		<li  class="prev">
+		                                        			<a href="javascript:void(0);">
+		                                        				<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-left"><polyline points="15 18 9 12 15 6"></polyline></svg>
+		                                        			</a>
+		                                        		</li>
+		                                        	</th:block>
+		                                        	
+		                                        	<!--  이전 -->
+		                                        	<th:block th:if="${pageUtil.startPage != 1}">
+		                                        		<li class="prev">
+			                                        		<a th:href="@{/admin/mgt/store/list( nowPage=${pageUtil.startPage-1}, type=${type}, sido_seq=${adminMgtStoreVO.sido_seq}, sigungu_seq=${adminMgtStoreVO.sigungu_seq}, dong_seq=${adminMgtStoreVO.dong_seq}, build_seq=${adminMgtStoreVO.build_seq}, floor_seq=${adminMgtStoreVO.floor_seq}, search_text=${adminMgtStoreVO.search_text}, listCount=${listCount}  )}">
+			                                        				    
+			                                        			<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-left"><polyline points="15 18 9 12 15 6"></polyline></svg>
+			                                        		</a>
+		                                        		</li>
+		                                        	</th:block>
+		                                        	
+		                                            <!--  [1][2][3]  -->
+		                                            <li th:each="page : ${#numbers.sequence(pageUtil.startPage, pageUtil.endPage)}" th:classappend="${page == nowPage}? 'active'">
+		                                            	<a th:text="${page}" th:href="@{/admin/mgt/store/list(	nowPage=${page}, type=${type}, sido_seq=${adminMgtStoreVO.sido_seq}, sigungu_seq=${adminMgtStoreVO.sigungu_seq}, dong_seq=${adminMgtStoreVO.dong_seq}, build_seq=${adminMgtStoreVO.build_seq}, floor_seq=${adminMgtStoreVO.floor_seq} ,search_text=${adminMgtStoreVO.search_text}, listCount=${listCount}  )}"></a>
+		                                            </li>
+		                                            
+		                                         
+		                                            <!--  다음 -->
+		                                            <th:block th:if="${pageUtil.endPage == pageUtil.totalPage}">
+		                                            <li class="next">
+		                                            	<a href="javascript:void(0);">
+		                                            		<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right"><polyline points="9 18 15 12 9 6"></polyline></svg>
+		                                            	</a>
+		                                            </li>
+		                                            </th:block>
+		                                            
+		                                            <!--  다음 -->
+		                                            <th:block th:if="${pageUtil.endPage != pageUtil.totalPage}">
+													<li class="next">
+		                                            	<a th:href="@{/admin/mgt/store/list( nowPage=${pageUtil.endPage+1}, type=${type}, sido_seq=${adminMgtStoreVO.sido_seq}, sigungu_seq=${adminMgtStoreVO.sigungu_seq}, dong_seq=${adminMgtStoreVO.dong_seq},build_seq=${adminMgtStoreVO.build_seq}, floor_seq=${adminMgtStoreVO.floor_seq}, search_text=${adminMgtStoreVO.search_text} , listCount=${listCount} )}">
+		                                            		<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right"><polyline points="9 18 15 12 9 6"></polyline></svg>
+		                                            	</a>
+		                                            </li>
+		                                            </th:block>
+		                                            
+		                                        </ul>
+												</th:block>
+	                                    	</div>
+										
+											
+										</div>
+									</div>
+									</th:blcok>
+									
+									<!-- 버튼 -->
+									<div class="row">
+										<div class="col-sm-12">
+											<input type="button" class="btn btn-primary" value="노출" id="viewBtn">
+											<input type="button" class="btn btn-primary" value="삭제" id="delBtn">		
+										</div>
+									</div>
+							</div>
+						</div>
+					</div>
+                    
+
+                </div>
+
+
+                <!-- CONTENT AREA -->
+
+            </div>
+            
+            
+            <!--  footer   -->
+            <th:block th:replace="fragments/footer"></th:block>
+			
+            
+        </div>
+        <!--  END CONTENT AREA  -->
+
+    </div>
+    <!-- END MAIN CONTAINER -->
+	
+		
+	<th:block th:replace="fragments/script :: scriptFragment(useScriptCsrf='true')"></th:block>
+	<script th:src="@{/resources/cork/plugins/bootstrap-select/bootstrap-select.min.js}"></script>
+	<script th:src="@{/resources/honeyArcade/admin/common/js/areaSelect.js}"></script>
+	<script th:src="@{/resources/honeyArcade/admin/common/js/regex.js}"></script>
+	<script th:src="@{/resources/honeyArcade/admin/mgt/store/js/adminMgtStoreList.js}"></script>
+	
+	<script th:inline="javascript">
+	/* <![CDATA[ */
+
+	/*]] */
+	</script>
+</body>
+
+</html>

@@ -1,0 +1,695 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="honeyarcade.admin.ad.build.AdminAdBuildMapper">
+	
+	<select id="getTotalCount" parameterType="honeyarcade.admin.ad.build.AdminAdBuildVO" resultType="int">
+		select 
+			sum(cnt) as total_count
+		from 
+			(	
+				select
+					count(*) as cnt
+				from 
+					tb_sido 
+				inner join tb_sigungu
+					on tb_sido.sido_seq = tb_sigungu.sido_seq 
+					and tb_sigungu.del_flag ='N'
+				inner join tb_dong
+					on tb_sigungu.sigungu_seq  = tb_dong.sigungu_seq 
+					and tb_dong.del_flag ='N'
+				inner join tb_build
+					on tb_build.dong_seq = tb_dong.dong_seq
+				inner join tb_owner 
+					on tb_build.build_seq = tb_owner.build_seq 
+				inner join tb_banner
+					on tb_banner.owner_id = tb_owner.owner_id 
+					and tb_banner.del_flag ='N'
+					and tb_banner.banner_type  = '1'
+				where
+					tb_sido.del_flag = 'N'
+				<if test="type == 'search'">
+					<if test="sido_seq != null">
+					<![CDATA[
+						and tb_sido.sido_seq = #{sido_seq}
+					]]>
+					</if>
+			
+					<if test="sigungu_seq != null">
+					<![CDATA[
+						and tb_sigungu.sigungu_seq = #{sigungu_seq}
+					]]>
+					</if>
+			
+					<if test="dong_seq != null">
+					<![CDATA[
+						and tb_dong.dong_seq = #{dong_seq}
+					]]>
+					</if>
+			
+					<if test="search_text != null || search_text != ''">
+					<![CDATA[
+						and 
+							( 1 = 1
+								and
+									tb_sido.sido_name like '%'+ #{search_text} + '%'
+								or
+									tb_sigungu.sigungu_name like '%'+ #{search_text} +'%'
+								or 
+									tb_dong.dong_name like '%'+ #{search_text} + '%'
+								or
+									tb_build.build_name like '%'+ #{search_text} + '%'
+								or 
+									tb_owner.store_name like '%'+ #{search_text} + '%'
+							)
+					]]>
+					</if>
+				</if>
+				
+				<if test="build_type != null">
+					<if test="build_type == 2">
+					<![CDATA[
+						and convert(char(10), getdate(), 23) between convert(char(10), banner_start_day , 23) and convert(char(10), banner_end_day, 23)
+					]]>			
+					</if>
+					
+					<if test="build_type == 3">
+					<![CDATA[
+						and convert(char(10), banner_end_day, 23) <  convert(char(10), getdate(), 23)
+					]]>						
+					</if>
+					
+					<if test="build_type == 4">
+					<![CDATA[
+						and convert(char(10), getdate(), 23) < convert(char(10), banner_start_day ,23)
+					]]>
+					</if>
+				</if>				
+				union  all
+				select
+					count(*) as cnt
+				from 
+					tb_sido 
+				inner join tb_sigungu
+					on tb_sido.sido_seq = tb_sigungu.sido_seq 
+					and tb_sigungu.del_flag ='N'
+				inner join tb_dong
+					on tb_sigungu.sigungu_seq  = tb_dong.sigungu_seq 
+					and tb_dong.del_flag ='N'
+				inner join tb_ext_banner
+					on tb_dong.dong_seq = tb_ext_banner.dong_seq 
+					and tb_ext_banner.del_flag ='N'
+					and tb_ext_banner.banner_type  = 1
+				where
+					tb_sido.del_flag ='N'				
+				<if test="type == 'search'">
+					<if test="sido_seq != null">
+					<![CDATA[
+						and tb_sido.sido_seq = #{sido_seq}
+					]]>
+					</if>
+			
+					<if test="sigungu_seq != null">
+					<![CDATA[
+						and tb_sigungu.sigungu_seq = #{sigungu_seq}
+					]]>
+					</if>
+			
+					<if test="dong_seq != null">
+					<![CDATA[
+						and tb_dong.dong_seq = #{dong_seq}
+					]]>
+					</if>
+			
+					<if test="search_text != null || search_text != ''">
+					<![CDATA[
+						and 
+							( 1 = 1
+								and
+									tb_sido.sido_name like '%'+ #{search_text} + '%'
+								or
+									tb_sigungu.sigungu_name like '%'+ #{search_text} +'%'
+								or 
+									tb_dong.dong_name like '%'+ #{search_text} + '%'
+								or 
+									tb_ext_banner.owner_name like '%'+ #{search_text} + '%'
+							)
+					]]>
+					</if>
+				</if>
+					
+				<if test="build_type != null">
+					<if test="build_type == 2">
+					<![CDATA[
+						and convert(char(10), getdate(), 23) between convert(char(10), banner_start_day , 23) and convert(char(10), banner_end_day, 23)
+					]]>			
+					</if>
+					
+					<if test="build_type == 3">
+					<![CDATA[
+						and convert(char(10), banner_end_day, 23) <  convert(char(10), getdate(), 23)
+					]]>						
+					</if>
+					
+					<if test="build_type == 4">
+					<![CDATA[
+						and convert(char(10), getdate(), 23) < convert(char(10), banner_start_day ,23)
+					]]>
+					</if>
+				</if>
+			)t	
+	</select>
+	
+	
+	<select id="getBuildAdList" parameterType="honeyarcade.admin.ad.build.AdminAdBuildVO" resultType="honeyarcade.admin.ad.build.AdminAdBuildVO">
+	select
+		*
+	from
+		(	
+			select row_number() over (order by sido_seq) as row_num
+			, case when owner_id != '' then '제휴 점포' else '외부 점포' end as 'ad_owner_type_text'
+			, case when owner_id ! = '' then 1 else 2 end as 'ad_owner_type'
+			, *
+			from
+				(
+					select
+						  tb_sido.sido_name
+					 	, tb_sido.sido_seq
+						, tb_sigungu.sigungu_name 
+						, tb_sigungu.sigungu_seq
+						, tb_dong.dong_name 
+						, tb_dong.dong_seq
+						, tb_build.build_seq
+						, tb_build.build_name 
+						, tb_banner.banner_seq 
+						, tb_banner.banner_type
+						, tb_owner.owner_id 
+						, tb_owner.store_name 
+						, '' as owner_name
+						, convert(char(10), tb_banner.banner_start_day, 23) as banner_start_day
+						, convert(char(10), tb_banner.banner_end_day, 23) as banner_end_day
+					from 
+						tb_sido 
+					inner join tb_sigungu
+						on tb_sido.sido_seq = tb_sigungu.sido_seq 
+						and tb_sigungu.del_flag ='N'
+					inner join tb_dong
+						on tb_sigungu.sigungu_seq  = tb_dong.sigungu_seq 
+						and tb_dong.del_flag ='N'
+					inner join tb_build
+						on tb_build.dong_seq = tb_dong.dong_seq
+					inner join tb_owner 
+						on tb_build.build_seq = tb_owner.build_seq 
+					inner join tb_banner
+						on tb_banner.owner_id = tb_owner.owner_id 
+						and tb_banner.del_flag ='N'
+						and tb_banner.banner_type  = '1'
+					where 
+						tb_sido.DEL_FLAG = 'N'
+					<if test="type == 'search'">
+						<if test="sido_seq != null">
+						<![CDATA[
+							and tb_sido.sido_seq = #{sido_seq}
+						]]>
+						</if>
+					
+						<if test="sigungu_seq != null">
+						<![CDATA[
+							and tb_sigungu.sigungu_seq = #{sigungu_seq}
+						]]>
+						</if>
+					
+						<if test="dong_seq != null">
+						<![CDATA[
+							and tb_dong.dong_seq = #{dong_seq}
+						]]>
+						</if>
+					
+						<if test="search_text != null || search_text != ''">
+						<![CDATA[
+							and 
+								( 1 = 1
+									and
+										tb_sido.sido_name like '%'+ #{search_text} + '%'
+									or
+										tb_sigungu.sigungu_name like '%'+ #{search_text} +'%'
+									or 
+										tb_dong.dong_name like '%'+ #{search_text} + '%'
+									or
+										tb_build.build_name like '%'+ #{search_text} + '%'		
+									or 
+										tb_owner.store_name like '%'+ #{search_text} + '%'
+								)
+						]]>
+						</if>
+					</if>	
+					
+					<if test="build_type != null">
+						<if test="build_type  == 2">
+						<![CDATA[
+							and convert(char(10), getdate(), 23) between convert(char(10), banner_start_day , 23) and convert(char(10), banner_end_day, 23)
+						]]>			
+						</if>
+						
+						<if test="build_type  == 3">
+						<![CDATA[
+							and convert(char(10), banner_end_day, 23) <  convert(char(10), getdate(), 23)
+						]]>						
+						</if>
+						
+						<if test="build_type  == 4">
+						<![CDATA[
+							and convert(char(10), getdate(), 23) < convert(char(10), banner_start_day ,23)
+						]]>
+						</if>
+					
+					</if>			
+				union  all
+				select
+					  tb_sido.sido_name
+				 	, tb_sido.sido_seq
+					, tb_sigungu.sigungu_name 
+					, tb_sigungu.sigungu_seq
+					, tb_dong.dong_name 
+					, tb_dong.dong_seq
+					, '' as build_seq
+					, '' as build_name 
+					, tb_ext_banner.banner_seq 
+					, tb_ext_banner.banner_type
+					, '' as owner_id 
+					, '' as store_name 
+					, tb_ext_banner.owner_name 
+					, convert(char(10), tb_ext_banner.banner_start_day, 23) as banner_start_day
+					, convert(char(10), tb_ext_banner.banner_end_day, 23) as banner_end_day
+				from 
+					tb_sido 
+				inner join tb_sigungu
+					on tb_sido.sido_seq = tb_sigungu.sido_seq 
+					and tb_sigungu.del_flag ='N'
+				inner join tb_dong
+					on tb_sigungu.sigungu_seq  = tb_dong.sigungu_seq 
+					and tb_dong.del_flag ='N'
+				inner join tb_ext_banner
+					on tb_dong.dong_seq = tb_ext_banner.dong_seq 
+					and tb_ext_banner.del_flag ='N'
+					and tb_ext_banner.banner_type  = 1
+				where
+					tb_sido.del_flag ='N'				
+					<if test="type == 'search'">
+						<if test="sido_seq != null">
+						<![CDATA[
+							and tb_sido.sido_seq = #{sido_seq}
+						]]>
+						</if>
+					
+						<if test="sigungu_seq != null">
+						<![CDATA[
+							and tb_sigungu.sigungu_seq = #{sigungu_seq}
+						]]>
+						</if>
+					
+						<if test="dong_seq != null">
+						<![CDATA[
+							and tb_dong.dong_seq = #{dong_seq}
+						]]>
+						</if>
+					
+						<if test="search_text != null || search_text != ''">
+						<![CDATA[
+							and 
+								( 1 = 1
+									and
+										tb_sido.sido_name like '%'+ #{search_text} + '%'
+									or
+										tb_sigungu.sigungu_name like '%'+ #{search_text} +'%'
+									or 
+										tb_dong.dong_name like '%'+ #{search_text} + '%'
+									or 
+										tb_ext_banner.owner_name like '%'+ #{search_text} + '%'
+								)
+						]]>
+						</if>
+					</if>	
+					
+					<if test="build_type != null">
+						<if test="build_type  == 2">
+						<![CDATA[
+							and convert(char(10), getdate(), 23) between convert(char(10), banner_start_day , 23) and convert(char(10), banner_end_day, 23)
+						]]>			
+						</if>
+						
+						<if test="build_type  == 3">
+						<![CDATA[
+							and convert(char(10), banner_end_day, 23) <  convert(char(10), getdate(), 23)
+						]]>						
+						</if>
+						
+						<if test="build_type  == 4">
+						<![CDATA[
+							and convert(char(10), getdate(), 23) < convert(char(10), banner_start_day ,23)
+						]]>
+						</if>
+					</if>
+					) t
+			) a
+		where
+			row_num between #{start_num} and #{end_num}
+	</select>
+	
+	<update id="delBuildBanner" parameterType="honeyarcade.admin.ad.build.AdminAdBuildVO">
+		update
+			tb_banner
+		set
+			mod_dt = getDate()
+			, mod_id = #{admin_id}
+			, del_flag = 'Y'
+		where
+				banner_seq = #{banner_seq}
+			and banner_type = #{banner_type}
+			and owner_id = #{owner_id}		
+	
+	</update>
+	
+	<update id="delBuildBannerOfExt" parameterType="honeyarcade.admin.ad.build.AdminAdBuildVO">
+		update
+			tb_ext_banner
+		set
+			mod_dt = getDate()
+			, mod_id = #{admin_id}
+			, del_flag = 'Y'
+		where
+				banner_seq = #{banner_seq}
+			and banner_type = #{banner_type}
+	</update>
+	
+	<select id="insertExtBanner" parameterType="honeyarcade.admin.ad.build.AdminAdBuildVO" resultType="Integer">
+	<![CDATA[
+		insert into 
+			tb_ext_banner
+			(
+				  banner_type	
+				, sido_seq
+				, sigungu_seq
+				, dong_seq
+				, owner_name
+				, banner_url
+				, banner_img
+				, banner_main_img
+				, banner_start_day
+				, banner_end_day
+				, banner_sort
+				, add_dt
+				, add_id
+				, del_flag
+			)
+		values
+			(
+				  #{banner_type}
+				, #{sido_seq}
+				, #{sigungu_seq}
+				, #{dong_seq}
+				, #{owner_name}
+				, #{banner_url}
+				, #{banner_img}
+				, #{banner_main_img}
+				, #{banner_start_day}
+				, #{banner_end_day}
+				, #{banner_sort}
+				, getDate()
+				, #{admin_id}
+				, 'N'
+			
+			)
+			
+			SELECT @@IDENTITY AS banner_seq
+	]]>
+	</select>
+	
+	<insert id="insertBuildExtBanner" parameterType="honeyarcade.admin.ad.build.AdminAdBuildVO">
+	<![CDATA[
+		insert into
+			tb_build_ext_banner
+			(
+				  build_seq
+				, banner_seq
+			)
+		values
+			(
+				  #{build_seq}
+				, #{banner_seq}
+			)
+	]]>
+	</insert>
+	
+	<select id="getBuildBannerOfExt" parameterType="honeyarcade.admin.ad.build.AdminAdBuildVO" resultType="honeyarcade.admin.ad.build.AdminAdBuildVO">
+	<![CDATA[
+		select
+			banner_seq
+			, banner_type
+			, sido_seq
+			, sigungu_seq 
+			, dong_seq 
+			, owner_name 
+			, banner_url 
+			, banner_img
+			, banner_sort
+			, tb_file_dtl.file_dtl_desc		as banner_file_dtl_desc
+			, tb_file_dtl.file_dtl_ext 		as banner_file_dtl_ext
+			, tb_file_dtl.file_dtl_origin	as banner_file_dtl_origin
+			, tb_file_dtl.file_dtl_path 	as banner_file_dtl_path
+			, tb_file_dtl.file_dtl_url_path as banner_dtl_url_path
+			, tb_file_dtl.file_type 		as banner_file_type
+			, tb_file_dtl.file_dtl_seq		as banner_file_dtl_seq
+			, banner_main_img
+			, main_dtl.file_dtl_desc		as main_file_dtl_desc
+			, main_dtl.file_dtl_ext 		as main_file_dtl_ext
+			, main_dtl.file_dtl_origin		as main_file_dtl_origin
+			, main_dtl.file_dtl_path 		as main_file_dtl_path
+			, main_dtl.file_dtl_url_path 	as main_dtl_url_path
+			, main_dtl.file_type 			as main_file_type
+			, main_dtl.file_dtl_seq			as main_file_dtl_seq
+			, convert(char(10), banner_start_day, 23) as banner_start_day 
+			, convert(char(10), banner_end_day, 23) as banner_end_day
+		from 
+			tb_ext_banner
+		inner join tb_file
+			on tb_file.file_seq  = banner_img
+			and tb_file.del_flag ='N'
+		inner join tb_file_dtl 
+			on tb_file.file_seq = tb_file_dtl.file_seq 
+		inner join tb_file main
+			on main.file_seq = tb_ext_banner.banner_main_img 
+			and tb_file.del_flag ='N'
+		inner join tb_file_dtl main_dtl
+			on main_dtl.file_seq = main.file_seq 
+		where 
+			banner_seq = #{banner_seq}
+			and tb_ext_banner.del_flag = 'N'
+			and tb_ext_banner.banner_type = #{banner_type} 
+	]]>
+	</select>
+	
+	<select id="getBudilExtBanner" parameterType="Integer" resultType="honeyarcade.admin.ad.build.AdminAdBuildVO">
+	<![CDATA[
+		select 
+			tb_dong.dong_seq
+			, tb_dong.dong_name
+			, tb_build.build_seq 
+			, tb_build.build_name 
+			, tb_build_ext_banner.build_seq 
+			, tb_build_ext_banner.banner_seq 
+		from 
+			tb_dong
+		inner join tb_build
+			on tb_dong.dong_seq  = tb_build.build_seq
+			and tb_build.del_flag = 'N'
+		inner join tb_build_ext_banner
+			on tb_build.build_seq = tb_build_ext_banner.build_seq 
+		where
+			tb_dong.del_flag = 'N'
+			and tb_build_ext_banner.banner_seq = #{banner_seq}
+	]]>
+	</select>
+	
+	<delete id="delBuildExtBanner" parameterType="Integer" >
+	<![CDATA[
+		delete from
+			tb_build_ext_banner
+		where
+			tb_build_ext_banner.banner_seq = #{banner_seq}
+	]]>
+	</delete>
+	
+	<update id="updateExtBanner" parameterType="honeyarcade.admin.ad.build.AdminAdBuildVO">
+	<![CDATA[
+		update
+			tb_ext_banner
+		set
+			  sido_seq 		  	= #{sido_seq}
+			, sigungu_seq	  	= #{sigungu_seq}
+			, dong_seq 		  	= #{dong_seq}
+			, owner_name 	  	= #{owner_name}
+			, banner_url 	  	= #{banner_url}
+			, banner_img 	  	= #{banner_img}
+			, banner_main_img 	= #{banner_main_img}
+			, banner_start_day	= #{banner_start_day}
+			, banner_end_day	= #{banner_end_day}
+			, banner_sort 		= #{banner_sort}
+			, mod_dt			= getDate()
+			, mod_id			= #{admin_id}
+		where
+			tb_ext_banner.banner_seq = #{banner_seq}
+	]]>
+	</update>
+	
+	<insert id="insertBanner" parameterType="honeyarcade.admin.ad.build.AdminAdBuildVO">
+	<![CDATA[
+		insert into tb_banner
+			(
+				  banner_seq
+				, banner_type
+				, owner_id
+				, banner_img
+				, banner_main_img
+				, banner_start_day
+				, banner_end_day
+				, banner_sort
+				, add_dt
+				, add_id
+				, del_flag
+			)
+		values
+			(
+				  #{banner_seq}
+				, #{banner_type}
+				, #{owner_id}
+				, #{banner_img}
+				, #{banner_main_img}
+				, #{banner_start_day}
+				, #{banner_end_day}
+				, #{banner_sort}
+				, getDate()
+				, #{admin_id}
+				, 'N'
+			)	
+			
+	]]>
+	</insert>
+	
+	<insert id="insertBuildBanner" parameterType="honeyarcade.admin.ad.build.AdminAdBuildVO">
+	<![CDATA[
+		insert into
+			tb_build_banner
+			(
+				  build_seq
+				, banner_seq
+				, banner_type
+				, owner_id	
+			)
+		values
+			(
+				  #{build_seq}
+				, #{banner_seq}
+				, #{banner_type}
+				, #{owner_id}
+			)
+	]]>
+	</insert>
+	
+	<select id="getBanner" parameterType="honeyarcade.admin.ad.build.AdminAdBuildVO" resultType="honeyarcade.admin.ad.build.AdminAdBuildVO">
+	<![CDATA[
+		select
+			  banner_seq
+			, banner_type
+			, tb_owner.store_name  
+			, tb_banner.owner_id  
+			, banner_img
+			, banner_sort
+			, tb_file_dtl.file_dtl_desc		as banner_file_dtl_desc
+			, tb_file_dtl.file_dtl_ext 		as banner_file_dtl_ext
+			, tb_file_dtl.file_dtl_origin	as banner_file_dtl_origin
+			, tb_file_dtl.file_dtl_path 	as banner_file_dtl_path
+			, tb_file_dtl.file_dtl_url_path as banner_dtl_url_path
+			, tb_file_dtl.file_type 		as banner_file_type
+			, tb_file_dtl.file_dtl_seq		as banner_file_dtl_seq
+			, banner_main_img
+			, main_dtl.file_dtl_desc		as main_file_dtl_desc
+			, main_dtl.file_dtl_ext 		as main_file_dtl_ext
+			, main_dtl.file_dtl_origin		as main_file_dtl_origin
+			, main_dtl.file_dtl_path 		as main_file_dtl_path
+			, main_dtl.file_dtl_url_path 	as main_dtl_url_path
+			, main_dtl.file_type 			as main_file_type
+			, main_dtl.file_dtl_seq			as main_file_dtl_seq
+			, convert(char(10), banner_start_day, 23) as banner_start_day 
+			, convert(char(10), banner_end_day, 23) as banner_end_day
+		from 
+			tb_banner
+		inner join tb_file
+			on tb_file.file_seq  = tb_banner.banner_img
+			and tb_file.del_flag ='N'
+		inner join tb_file_dtl 
+			on tb_file.file_seq = tb_file_dtl.file_seq 
+		inner join tb_file main
+			on main.file_seq = tb_banner.banner_main_img 
+			and tb_file.del_flag ='N'
+		inner join tb_file_dtl main_dtl
+			on main_dtl.file_seq = main.file_seq
+		inner join tb_owner
+			on tb_banner.owner_id = tb_owner.owner_id 
+			and tb_owner.del_flag ='N'			 
+		where 
+				banner_seq = #{banner_seq}
+			and tb_banner.del_flag = 'N'
+			and tb_banner.banner_type = #{banner_type} 
+	]]>
+	</select>
+		
+	<select id="getBuildBanner" parameterType="honeyarcade.admin.ad.build.AdminAdBuildVO" resultType="honeyarcade.admin.ad.build.AdminAdBuildVO">
+	<![CDATA[
+		select
+			  tb_build_banner.build_seq
+			, tb_build_banner.banner_seq
+			, tb_build_banner.banner_type
+			, tb_build_banner.owner_id
+			, tb_build.build_name
+		from
+			tb_build_banner
+		inner join tb_build 
+			on tb_build.build_seq = tb_build_banner.build_seq 
+			and tb_build.del_flag = 'N'	
+		where
+				 tb_build_banner.banner_seq  = #{banner_seq}
+			and  tb_build_banner.banner_type = #{banner_type}
+	]]>
+	</select>
+	
+	<update id="updateBanner" parameterType="honeyarcade.admin.ad.build.AdminAdBuildVO">
+	<![CDATA[
+		update
+			tb_banner
+		set
+			  banner_img 		= #{banner_img}
+			, banner_main_img 	= #{banner_main_img}
+			, banner_start_day	= #{banner_start_day}
+			, banner_end_day	= #{banner_end_day}
+			, banner_sort		= #{banner_sort}	
+			, mod_dt			= getDate()
+			, mod_id			= #{admin_id}	
+		where
+				banner_seq	= #{banner_seq}
+			and banner_type	= #{banner_type}
+			and owner_id	= #{owner_id}				
+	]]>
+	</update>
+	
+	<delete id="deleteBuildBanner" parameterType="honeyarcade.admin.ad.build.AdminAdBuildVO">
+	<![CDATA[
+		delete from
+			tb_build_banner
+		where
+				banner_seq	= #{banner_seq}
+			and banner_type	= #{banner_type}
+			and owner_id	= #{owner_id}
+	]]>
+	</delete>
+	
+</mapper>

@@ -1,0 +1,99 @@
+package honeyarcade.admin.member.owner;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import honeyarcade.admin.common.api.CommonApiService;
+import honeyarcade.admin.common.api.CommonApiVO;
+import honeyarcade.admin.util.PageUtil;
+import lombok.extern.slf4j.Slf4j;
+
+@Controller
+@RequestMapping("/admin/member")
+@Slf4j
+public class AdminMemberOwnerController {
+	
+	@Autowired
+	private AdminMemberOwnerService adminMemberOwnerService;
+	
+	@Autowired
+	private CommonApiService commonApiService;
+
+	@GetMapping("/owner/list")
+	public String ownerList(Model model, @ModelAttribute AdminMemberOwnerVO adminMemberOwnerVO
+			, @RequestParam(value="nowPage", defaultValue="1")int nowPage
+			, @RequestParam(value="listCount", defaultValue = "25") int listCount
+			, @RequestParam(value="type", defaultValue="list") String type
+			, @RequestParam(value="search_text", defaultValue="") String search_text 
+			, @RequestParam(value="owner_type", defaultValue="0") int owner_type
+			) throws Exception {
+		
+		List<CommonApiVO> sidoList = commonApiService.getSido();
+		List<CommonApiVO> sigunguList = null;
+		List<CommonApiVO> dongList = null;
+		List<CommonApiVO> buildList = null;
+		
+		adminMemberOwnerVO.setType(type);				//	type - list:목록, search:검색
+		adminMemberOwnerVO.setOwner_type(owner_type);	//	0 전체회원, 1 무료 회원, 2 유료 회원, 3 만료 회원
+			
+		if(type.equals("search")) {	//	검색 조건 일때
+			CommonApiVO commonApiVO = new CommonApiVO();
+			
+			if(adminMemberOwnerVO.getSido_seq() != null) {
+				commonApiVO.setSido_seq(adminMemberOwnerVO.getSido_seq()); 
+				sigunguList = commonApiService.getSigungu(commonApiVO); 
+				model.addAttribute("sigunguList", sigunguList);
+			}
+			
+			if(adminMemberOwnerVO.getSigungu_seq() != null) {
+				commonApiVO.setSigungu_seq(adminMemberOwnerVO.getSigungu_seq());
+				dongList = commonApiService.getDong(commonApiVO);
+				model.addAttribute("dongList", dongList); 
+			}
+			
+			if(adminMemberOwnerVO.getDong_seq() != null) {
+				commonApiVO.setDong_seq(adminMemberOwnerVO.getDong_seq());
+				buildList = commonApiService.getBuild(commonApiVO);
+				model.addAttribute("buildList", buildList);
+			}
+		}
+		
+		//	점주 회원 분류별 회원 수 조회
+		AdminMemberOwnerVO countVO = adminMemberOwnerService.getOwnerTypeCount(adminMemberOwnerVO); 
+		
+		int totalCount = adminMemberOwnerService.getTotalCount(adminMemberOwnerVO);
+		
+		PageUtil pageUtil = new PageUtil(nowPage, totalCount, listCount);
+		
+		adminMemberOwnerVO.setStart_num(pageUtil.getStartNum());
+		adminMemberOwnerVO.setEnd_num(pageUtil.getEndNum());
+		
+		List<AdminMemberOwnerVO> ownerList = adminMemberOwnerService.getOwnerList(adminMemberOwnerVO);
+		
+		model.addAttribute("countVO", countVO);
+		model.addAttribute("pageUtil", pageUtil);
+		model.addAttribute("ownerList", ownerList);
+		model.addAttribute("listCount", listCount);
+		model.addAttribute("adminMemberOwnerVO", adminMemberOwnerVO);
+		model.addAttribute("nowPage", nowPage);
+		model.addAttribute("sidoList", sidoList);
+		model.addAttribute("type", type);
+		model.addAttribute("owner_type", owner_type);
+		model.addAttribute("search_text", search_text);
+		
+		return "admin/member/owner/adminMemberOwnerList";
+	}
+	
+	@GetMapping("/owner/view")
+	public String owneView() {
+		return "admin/member/owner/adminMemberOwnerView";
+	}
+	
+}

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="honeyarcade.admin.member.user.AdminMemberUserMapper">
+
+	<select id="getUserCount" resultType="Integer" >
+	<![CDATA[
+		select count(tb_user.user_id) as total_count from tb_user where del_flag = 'N'
+	]]>	
+	</select>
+	
+	<select id="getUserList" parameterType="honeyarcade.admin.member.user.AdminMemberUserVO" resultType="honeyarcade.admin.member.user.AdminMemberUserVO">
+	<![CDATA[
+		select 
+			*
+			from ( 
+				select
+					ROW_NUMBER () over (order by tb_user.user_id) as row_num
+					, tb_user.user_id
+					, tb_user.user_email 
+					, tb_user.user_name
+					, isnull( (select tb_user_provider.USER_PROVIDER from TB_USER_PROVIDER where tb_user_provider.USER_ID = tb_user.USER_ID), 1) as user_provider
+					, convert (char(10), tb_user.USER_JOIN_DT , 23) as user_join_dt
+					, (select count(tb_user_coupon.USER_ID) from TB_USER_COUPON where tb_user.USER_ID = tb_user_coupon.USER_ID) as total_coupon
+					, (select count(tb_user_coupon.USER_ID) from TB_USER_COUPON where tb_user.USER_ID = tb_user_coupon.USER_ID and tb_user_coupon.COUPON_USED_FLAG = 'Y') as used_coupon
+					, (select count(tb_user_login.USER_ID) from TB_USER_LOGIN where tb_user.USER_ID = tb_user_login.USER_ID) as count_login
+				from 
+					tb_user
+				where
+					tb_user.DEL_FLAG = 'N'
+				) t
+			where
+				t.row_num between  #{start_num} and #{end_num}
+	]]>
+	</select>
+	
+<!-- 	<select id="getUserList" parameterType="honeyarcade.admin.member.user.AdminMemberUserVO" resultType="honeyarcade.admin.member.user.AdminMemberUserVO">
+	<![CDATA[
+		with 
+			t1 as(
+				select count(tb_user_coupon.user_id) as total_coupon, tb_user_coupon.user_id  from tb_user_coupon group by tb_user_coupon.user_id
+			), 
+			t2 as (
+				select count(tb_user_coupon.user_id) as used_coupon, tb_user_coupon.user_id from tb_user_coupon where tb_user_coupon.coupon_used_flag = 'Y' group by tb_user_coupon.user_id
+			),
+			t3 as (
+				select count(tb_user_login.user_id) as count_login, tb_user_login.user_id from tb_user_login group by tb_user_login.user_id 
+			),
+			t4 as (
+				select tb_user_provider.user_provider, tb_user_provider.user_id from tb_user_provider
+			)
+		select
+			* 
+		from 
+			(	
+				select
+					row_number () over (order by tb_user.user_id) as row_num
+					, tb_user.user_id
+					, tb_user.user_email 
+					, isnull(t1.total_coupon, 0) as total_coupon
+					, isnull(t2.used_coupon, 0) as used_coupon
+					, convert (char(10), tb_user.user_join_dt , 23) as user_join_dt
+					, isnull(t3.count_login, 0) as count_login
+					, isnull(t4.user_provider, 1) as user_provider
+					, tb_user.user_name
+				from  tb_user
+				left outer join t1
+					on tb_user.user_id = t1.user_id
+				left outer join t2
+					on tb_user.user_id = t2.user_id
+				left outer join t3
+					on tb_user.user_id = t3.user_id
+				left outer join t4
+					on tb_user.user_id = t4.user_id
+				where
+					tb_user.del_flag = 'N'
+			) t
+		where
+			row_num between #{start_num} and #{end_num}
+	]]>
+	</select> -->
+
+	
+</mapper>

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5" >
+<head>
+	<th:block th:replace="fragments/meta :: metaFragment(title='결제 현황')"></th:block>
+	
+	
+	<!--  css style  -->
+	<th:block th:replace="fragments/style :: styleFragment"></th:block>
+	<link rel="stylesheet" type="text/css" th:href="@{/resources/cork/plugins/table/datatable/datatables.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/resources/cork/assets/css/elements/custom-pagination.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/resources/cork/plugins/bootstrap-select/bootstrap-select.min.css}">
+</head>
+
+
+<body class="sidebar-noneoverflow">
+    
+	<!--  header  -->
+	<th:block th:replace="fragments/header :: headerFragment"></th:block>
+	
+
+    <!--  BEGIN MAIN CONTAINER  -->
+    <div class="main-container" id="container">
+
+        <div class="overlay"></div>
+        <div class="search-overlay"></div>
+
+		<!--  sidebar  -->
+		<th:block th:replace="fragments/sidebar :: sidebarFragment(main='member', sub='member-payment')"></th:block>
+		        
+        <!--  BEGIN CONTENT AREA  -->
+        <div id="content" class="main-content">
+            <div class="layout-px-spacing">
+
+
+                <!-- CONTENT AREA -->
+                <div class="row layout-top-spacing">
+                    
+					<div id="tableHover" class="col-lg-12 col-12 layout-spacing">
+						<div class="statbox widget box box-shadow">
+							<div class="widget-header">
+								<div class="row">
+									<div class="col-xl-12 col-md-12 col-sm-12 col-12">
+										<h4>결제 현황</h4>
+									</div>
+								</div>
+							</div>
+							<div class="widget-content widget-content-area">
+								<div class="d-flex justify-content-end">
+									<select class="selectpicker" data-width="fit">
+									    <option>전체</option>
+									    <option>미확인</option>
+									    <option>확인</option>
+									</select>
+			          			</div>
+		          				<div class="table-responsive mb-4 mt-2 text-center">
+	                                <table id="zero-config" class="table table-hover" style="width:100%">
+	                                    <thead>
+	                                        <tr>
+	                                            <th>No.</th>
+	                                            <th>ID</th>
+	                                            <th>점포 코드</th>
+	                                            <th>신청 서비스</th>
+	                                            <th>결제일</th>
+	                                            <th>결제년월</th>
+	                                            <th>결제금액</th>
+	                                        </tr>
+	                                    </thead>
+	                                    <tbody>
+	                                        <tr>
+	                                            <td>1</td>
+	                                            <td>honeyarcade</td>
+	                                            <td>MEB001</td>
+	                                            <td>홍보하기</td>
+	                                            <td>15</td>
+	                                            <td>2021.09</td>
+	                                            <td>300,000</td>
+	                                        </tr>
+	                                         <tr>
+	                                            <td>1</td>
+	                                            <td>honeyarcade</td>
+	                                            <td>MEB001</td>
+	                                            <td>홍보하기</td>
+	                                            <td>15</td>
+	                                            <td>2021.09</td>
+	                                            <td>300,000</td>
+	                                        </tr>
+	                                        <tr>
+	                                            <td>1</td>
+	                                            <td>honeyarcade</td>
+	                                            <td>MEB001</td>
+	                                            <td>홍보하기</td>
+	                                            <td>15</td>
+	                                            <td>2021.09</td>
+	                                            <td>300,000</td>
+	                                        </tr>
+	                                    </tbody>
+	                                </table>
+		          				</div>
+		          				<div class="row justify-content-center dataTables_paginate paging_simple_numbers" id="zero-config_paginate">
+			          				<div class="paginating-container pagination-solid">
+									    <ul class="pagination">
+									        <li  class="prev"><a href="javascript:void(0);"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg></a></li>
+									        <li><a href="javascript:void(0);">1</a></li>
+									        <li class="active"><a href="javascript:void(0);">2</a></li>
+									        <li><a href="javascript:void(0);">3</a></li>
+									        <li class="next"><a href="javascript:void(0);"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></a></li>
+									    </ul>
+									</div>
+		          				</div>
+							</div>
+						</div>
+					</div>
+                    
+
+                </div>
+
+
+                <!-- CONTENT AREA -->
+
+            </div>
+            
+            
+            <!--  footer   -->
+            <th:block th:replace="fragments/footer"></th:block>
+			
+            
+        </div>
+        <!--  END CONTENT AREA  -->
+
+    </div>
+    <!-- END MAIN CONTAINER -->
+	
+
+
+
+	<th:block th:replace="fragments/script :: scriptFragment"></th:block>
+	<script th:src="@{/resources/cork/plugins/bootstrap-select/bootstrap-select.min.js}"></script>
+	<script th:src="@{/resources/honeyArcade/admin/common/js/areaSelect.js}"></script>
+	<script th:src="@{/resources/cork/plugins/table/datatable/datatables.js}"></script>
+	<script th:inline="javascript">
+	/* <![CDATA[ */
+		
+	/*]] */
+	</script>
+</body>
+
+</html>

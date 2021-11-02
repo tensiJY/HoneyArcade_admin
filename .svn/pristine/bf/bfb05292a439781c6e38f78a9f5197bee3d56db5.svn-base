@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="honeyarcade.admin.set.dir.AdminSetDirMapper">
+	<select id="getTotalCount" resultType="Integer">
+	<![CDATA[
+		select count(admin_id) as cnt from tb_admin where del_flag = 'N'
+	]]>
+	</select>
+	
+	<select id="getAdminList" parameterType="honeyarcade.admin.set.dir.AdminSetDirVO" resultType="honeyarcade.admin.set.dir.AdminSetDirVO">
+	<![CDATA[
+		select 
+			*
+		from (
+			select 
+				  row_number () over (order by tb_admin.add_dt desc) as row_num 
+				, case when admin_grade = 1 then '마스터'  
+					   when admin_grade = 2 then '직원' 
+				  else '지점' end as admin_grade_text
+				, tb_admin.admin_id
+				, tb_admin.admin_grade
+				, tb_admin.admin_name
+				, convert(char(19), tb_admin.add_dt, 23) as add_dt
+				, isnull(tb_admin_grade.build_seq, 0)  as build_seq
+			from  
+				tb_admin
+			left outer join tb_admin_grade
+				on tb_admin.admin_id = tb_admin_grade.admin_id
+				and tb_admin_grade.del_flag = 'N'				 
+			where 
+				tb_admin.del_flag = 'N'
+			) t 
+		where 
+		row_num between #{start_num} and #{end_num}		
+	]]>
+	</select>
+	
+	<update id="deleteAdminId" parameterType="honeyarcade.admin.set.dir.AdminSetDirVO">
+	<![CDATA[
+		update
+			tb_admin
+		set
+			  del_id = #{del_id}
+			, del_dt = getDate()
+			, del_flag = 'Y'
+		where
+			admin_id = #{admin_id}
+	]]>
+	</update>
+	
+	<select id="getDongList" parameterType="Integer" resultType="honeyarcade.admin.set.dir.AdminSetDirVO">
+	<![CDATA[
+		select 
+			  tb_dong.dong_seq 
+			, tb_dong.dong_name 
+		from
+			tb_dong
+		where
+			tb_dong.del_flag ='N'
+			
+	]]>
+	
+	<if test="type == 1">
+	<![CDATA[
+		order by
+			tb_dong.dong_name asc
+	]]>					
+	</if>
+	
+	<if test="type == 2">
+	<![CDATA[
+		order by
+			tb_dong.dong_name desc	
+	]]>		
+	</if>
+	
+	</select>
+	
+	<select id="getBuildList" parameterType="Integer" resultType="honeyarcade.admin.set.dir.AdminSetDirVO">
+	<![CDATA[
+		select 
+			  tb_build.build_seq
+			, tb_build.build_name 
+		from
+			tb_build
+		where
+			tb_build.dong_seq = #{dong_seq}
+			and tb_build.del_flag ='N'
+		order by
+			tb_build.build_name asc
+			
+	]]>
+	</select>
+</mapper>

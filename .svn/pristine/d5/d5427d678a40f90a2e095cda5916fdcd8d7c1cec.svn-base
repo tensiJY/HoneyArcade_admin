@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="honeyarcade.admin.member.owner.AdminMemberOwnerMapper">
+	
+	<select id="getOwnerTypeCount" resultType="honeyarcade.admin.member.owner.AdminMemberOwnerVO">
+		select 
+			count(owner_id) as 'total_owner'
+			, count(case when owner_type = 1 then 1 end) as free_owner
+			, count(case when owner_type = 2 then 1 end) as pre_owner
+			, count(case when owner_type = 3 then 1 end) as exp_owner
+		from
+			(
+				select
+					tb_owner.owner_id
+					 , case when used_money is null then 1 
+					  when total_count - used_coupon ! = 0 then 2
+					  else 3 end as 'owner_type'
+				from 
+					tb_sido 
+				inner join tb_sigungu
+					on tb_sido.sido_seq = tb_sigungu.sido_seq 
+					and tb_sigungu.del_flag ='N'
+				inner join tb_dong
+					on tb_sigungu.sigungu_seq  = tb_dong.sigungu_seq 
+					and tb_dong.del_flag ='N'
+				inner join tb_build
+					on tb_build.dong_seq = tb_dong.dong_seq
+				inner join tb_owner 
+					on tb_build.build_seq = tb_owner.build_seq 
+					and tb_owner.del_flag = 'N'
+				left outer join (
+									select 
+										tb_pay.owner_id 
+										, count(tb_pay_dtl.pay_seq) as total_count
+										, count(case when tb_pay_dtl.pay_dtl_use = 5 then 1 end) as used_coupon
+										, sum(tb_pay.pay_money) as used_money
+									from 
+										tb_pay
+									inner join tb_pay_dtl 
+										on tb_pay.pay_seq = tb_pay_dtl.pay_seq 
+									group by
+										tb_pay.owner_id 	
+								)t
+					on tb_owner.owner_id = t.owner_id
+				where	
+					tb_sido.del_flag = 'N'
+					<if test="type == 'search'">
+						<if test="sido_seq != null">
+						<![CDATA[
+							and tb_sido.sido_seq = #{sido_seq}
+						]]>
+						</if>
+								
+						<if test="sigungu_seq != null">
+						<![CDATA[
+							and tb_sigungu.sigungu_seq = #{sigungu_seq}
+						]]>
+						</if>
+								
+						<if test="dong_seq != null">
+						<![CDATA[
+							and tb_dong.dong_seq = #{dong_seq}
+						]]>
+						</if>
+						
+						<if test="build_seq != null">
+						<![CDATA[
+							and tb_build.build_seq = #{build_seq}
+						]]>
+						</if>
+						
+						<if test="search_text != null || search_text != ''">
+						<![CDATA[
+							and 
+								( 1 = 1
+									and
+										tb_sido.sido_name like '%'+ #{search_text} + '%'
+									or
+										tb_sigungu.sigungu_name like '%'+ #{search_text} +'%'
+									or 
+										tb_dong.dong_name like '%'+ #{search_text} + '%'
+									or
+										tb_build.build_name like '%'+ #{search_text} + '%'	
+									or 
+										tb_owner.store_name like '%'+ #{search_text} + '%'
+								)
+						]]>
+						</if>
+					</if>						
+			) a
+	</select>
+	
+	<select id="getTotalCount" parameterType="honeyarcade.admin.member.owner.AdminMemberOwnerVO" resultType="Integer">
+	select
+		count(*) as total_count
+	from (
+		select
+			tb_owner.owner_id
+			 , case when used_money is null then 1 
+			  when total_count - used_coupon ! = 0 then 2
+			  else 3 end as 'owner_type'
+		from 
+			tb_sido 
+		inner join tb_sigungu
+			on tb_sido.sido_seq = tb_sigungu.sido_seq 
+			and tb_sigungu.del_flag ='N'
+		inner join tb_dong
+			on tb_sigungu.sigungu_seq  = tb_dong.sigungu_seq 
+			and tb_dong.del_flag ='N'
+		inner join tb_build
+			on tb_build.dong_seq = tb_dong.dong_seq
+		inner join tb_owner 
+			on tb_build.build_seq = tb_owner.build_seq 
+			and tb_owner.del_flag = 'N'
+		left outer join (
+							select 
+								tb_pay.owner_id 
+								, count(tb_pay_dtl.pay_seq) as total_count
+								, count(case when tb_pay_dtl.pay_dtl_type=1 and tb_pay_dtl.pay_dtl_use !=5 then 1 end) as remain_build
+								, count(case when tb_pay_dtl.pay_dtl_type=2 and tb_pay_dtl.pay_dtl_use !=5 then 1 end) as remain_area
+								, count(case when tb_pay_dtl.pay_dtl_type=3 and tb_pay_dtl.pay_dtl_use !=5 then 1 end) as remain_coupon
+								, count(case when tb_pay_dtl.pay_dtl_use = 5 then 1 end) as used_coupon
+								, sum(tb_pay.pay_money) as used_money
+							from 
+								tb_pay
+							inner join tb_pay_dtl 
+								on tb_pay.pay_seq = tb_pay_dtl.pay_seq 
+							group by
+								tb_pay.owner_id 	
+						)t
+			on tb_owner.owner_id = t.owner_id
+		where	
+			tb_sido.del_flag = 'N'
+		<if test="type == 'search'">
+			<if test="sido_seq != null">
+			<![CDATA[
+				and tb_sido.sido_seq = #{sido_seq}
+			]]>
+			</if>
+					
+			<if test="sigungu_seq != null">
+			<![CDATA[
+				and tb_sigungu.sigungu_seq = #{sigungu_seq}
+			]]>
+			</if>
+					
+			<if test="dong_seq != null">
+			<![CDATA[
+				and tb_dong.dong_seq = #{dong_seq}
+			]]>
+			</if>
+			
+			<if test="build_seq != null">
+			<![CDATA[
+				and tb_build.build_seq = #{build_seq}
+			]]>
+			</if>
+			
+			<if test="search_text != null || search_text != ''">
+			<![CDATA[
+				and 
+					( 1 = 1
+						and
+							tb_sido.sido_name like '%'+ #{search_text} + '%'
+						or
+							tb_sigungu.sigungu_name like '%'+ #{search_text} +'%'
+						or 
+							tb_dong.dong_name like '%'+ #{search_text} + '%'
+						or
+							tb_build.build_name like '%'+ #{search_text} + '%'	
+						or 
+							tb_owner.store_name like '%'+ #{search_text} + '%'
+					)
+			]]>
+			</if>
+		</if>			
+	)a
+	<if test="type == 'search'">
+		<if test="owner_type != 0">
+			where
+				owner_type = #{owner_type}
+		</if>
+	</if>
+	
+	</select>
+	
+	
+	<select id="getOwnerList" parameterType="honeyarcade.admin.member.owner.AdminMemberOwnerVO" resultType="honeyarcade.admin.member.owner.AdminMemberOwnerVO">
+	select
+		*
+	from
+		(select 
+			row_number () over (order by owner_id) as row_num
+			, *
+		from 
+			(select
+				tb_build.build_name 
+				, tb_owner.owner_id 
+				, tb_owner.store_name
+				, t.used_money as used_money
+				, remain_build
+				, remain_area
+				, remain_coupon
+				, case when used_money is null then 1 
+				  when total_count - used_coupon ! = 0 then 2
+				  else 3 end as 'owner_type'
+				, tb_owner.owner_status  
+				, tb_dong.dong_name
+			from 
+				tb_sido 
+			inner join tb_sigungu
+				on tb_sido.sido_seq = tb_sigungu.sido_seq 
+				and tb_sigungu.del_flag ='N'
+			inner join tb_dong
+				on tb_sigungu.sigungu_seq  = tb_dong.sigungu_seq 
+				and tb_dong.del_flag ='N'
+			inner join tb_build
+				on tb_build.dong_seq = tb_dong.dong_seq
+			inner join tb_owner 
+				on tb_build.build_seq = tb_owner.build_seq 
+				and tb_owner.del_flag = 'N'
+			left outer join (
+								select 
+									tb_pay.owner_id 
+									, count(tb_pay_dtl.pay_seq) as total_count
+									, count(case when tb_pay_dtl.pay_dtl_type=1 and tb_pay_dtl.pay_dtl_use !=5 then 1 end) as remain_build
+									, count(case when tb_pay_dtl.pay_dtl_type=2 and tb_pay_dtl.pay_dtl_use !=5 then 1 end) as remain_area
+									, count(case when tb_pay_dtl.pay_dtl_type=3 and tb_pay_dtl.pay_dtl_use !=5 then 1 end) as remain_coupon
+									, count(case when tb_pay_dtl.pay_dtl_use = 5 then 1 end) as used_coupon
+									, sum(tb_pay.pay_money) as used_money
+								from 
+									tb_pay
+								inner join tb_pay_dtl 
+									on tb_pay.pay_seq = tb_pay_dtl.pay_seq 
+								group by
+									tb_pay.owner_id 	
+							)t
+								on tb_owner.owner_id = t.owner_id
+			where
+				tb_sido.del_flag = 'N'
+			<if test="type == 'search'">
+				<if test="sido_seq != null">
+				<![CDATA[
+					and tb_sido.sido_seq = #{sido_seq}
+				]]>
+				</if>
+						
+				<if test="sigungu_seq != null">
+				<![CDATA[
+					and tb_sigungu.sigungu_seq = #{sigungu_seq}
+				]]>
+				</if>
+						
+				<if test="dong_seq != null">
+				<![CDATA[
+					and tb_dong.dong_seq = #{dong_seq}
+				]]>
+				</if>
+				
+				<if test="build_seq != null">
+				<![CDATA[
+					and tb_build.build_seq = #{build_seq}
+				]]>
+				</if>
+				
+				<if test="search_text != null || search_text != ''">
+				<![CDATA[
+					and 
+						( 1 = 1
+							and
+								tb_sido.sido_name like '%'+ #{search_text} + '%'
+							or
+								tb_sigungu.sigungu_name like '%'+ #{search_text} +'%'
+							or 
+								tb_dong.dong_name like '%'+ #{search_text} + '%'
+							or
+								tb_build.build_name like '%'+ #{search_text} + '%'	
+							or 
+								tb_owner.store_name like '%'+ #{search_text} + '%'
+						)
+				]]>
+				</if>
+			</if>					
+		)s
+		<if test="type == 'search'">
+			<if test="owner_type != 0">
+				where
+					owner_type = #{owner_type}
+			</if>
+		</if>
+	)a
+	where
+		row_num between #{start_num} and #{end_num}
+	</select>
+	
+	<select id="getOwnerInfo" parameterType="honeyarcade.admin.member.owner.AdminMemberOwnerVO" resultType="honeyarcade.admin.member.owner.AdminMemberOwnerVO">
+	<![CDATA[
+		select
+			  tb_sido.sido_seq
+			, tb_sigungu.sigungu_seq
+			, tb_dong.dong_seq
+			, tb_build.build_seq
+			, tb_owner.owner_id 
+			, tb_owner.store_name 
+			, tb_owner.store_sort 
+			, tb_owner.store_ho
+			, tb_owner.store_status
+			, tb_owner.lcate_seq 
+			, tb_owner.mcate_seq 
+			, tb_owner.owner_email
+			, tb_owner.owner_phone
+			, tb_owner.store_floor
+			, tb_owner.store_link
+			, tb_owner.store_keyword
+			, tb_owner.store_text
+		from 
+			tb_sido 
+		inner join tb_sigungu
+			on tb_sido.sido_seq = tb_sigungu.sido_seq 
+			and tb_sigungu.del_flag ='N'
+		inner join tb_dong
+			on tb_sigungu.sigungu_seq  = tb_dong.sigungu_seq 
+			and tb_dong.del_flag ='N'
+		inner join tb_build
+			on tb_build.dong_seq = tb_dong.dong_seq
+		inner join tb_owner 
+			on tb_build.build_seq = tb_owner.build_seq 
+			and tb_owner.del_flag = 'N'
+		where
+			tb_owner.owner_id = #{owner_id}
+	]]>
+	</select>
+	
+</mapper>

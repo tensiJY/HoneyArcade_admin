@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+	<th:block th:replace="fragments/meta :: metaFragment(title='건물 광고', useMetaCsrf='true')"></th:block>
+	<!--  css style  -->
+	<th:block th:replace="fragments/style :: styleFragment"></th:block>
+	<!--  select  -->
+	<link rel="stylesheet" type="text/css" th:href="@{/resources/honeyArcade/admin/ad/build/css/adminAdBuildList.css}">
+	<link rel="stylesheet" type="text/css"
+		th:href="@{/resources/cork/plugins/bootstrap-select/bootstrap-select.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/resources/cork/assets/css/forms/theme-checkbox-radio.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/resources/cork/plugins/table/datatable/datatables.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/resources/cork/assets/css/elements/custom-pagination.css}">
+</head>
+
+
+<body class="sidebar-noneoverflow">
+
+	<!--  header  -->
+	<th:block th:replace="fragments/header :: headerFragment"></th:block>
+
+
+	<!--  BEGIN MAIN CONTAINER  -->
+	<div class="main-container" id="container">
+
+		<div class="overlay"></div>
+		<div class="search-overlay"></div>
+
+		<!--  sidebar  -->
+		<th:block th:replace="fragments/sidebar :: sidebarFragment(main='ad', sub='ad-build')"></th:block>
+
+		<!--  BEGIN CONTENT AREA  -->
+		<div id="content" class="main-content">
+			<div class="layout-px-spacing">
+				<!-- CONTENT AREA -->
+				<div class="row layout-top-spacing">
+					<div id="tableHover" class="col-lg-12 col-12 layout-spacing">
+						<div class="statbox widget box box-shadow">
+							<div class="widget-header">
+								<h4>지역 광고</h4>
+							</div>
+							<div class="widget-content widget-content-area">
+								<!-- select Area -->
+								<div class="row">
+									<div class="col-sm-12">
+										<form id="searchForm" name="searchForm" th:action="@{/admin/ad/build/list}">
+											<select class="select-picker" data-live-search="true" title="시,도"
+												id="sidoSelect" name="sido_seq" data-width="fit">
+												<th:block th:if="${sidoList.size()!=0}">
+													<th:block th:each="list : ${sidoList}">
+														<option th:value="${list.sido_seq}" th:text="${list.sido_name}"
+															th:selected="${adminAdBuildVO.sido_seq == list.sido_seq}">
+														</option>
+													</th:block>
+												</th:block>
+											</select>
+											<select class="select-picker" data-live-search="true" title="군,구"
+												id="sigunguSelect" name="sigungu_seq" data-width="fit">
+												<!-- 검색 조건이면 -->
+												<th:block th:if="${type == 'search'}">
+													<th:block th:if="${sigunguList != null}">
+														<th:block th:if="${sigunguList.size() != 0}">
+															<!-- 값이 있는경우 -->
+															<th:block th:each="list : ${sigunguList}">
+																<option th:value="${list.sigungu_seq}"
+																	th:text="${list.sigungu_name}"
+																	th:selected="${adminAdBuildVO.sigungu_seq == list.sigungu_seq}">
+																</option>
+															</th:block>
+														</th:block>
+													</th:block>
+												</th:block>
+											</select>
+											<select class="select-picker" data-live-search="true" title="지역"
+												id="dongSelect" name="dong_seq" data-width="fit">
+												<th:block th:if="${type == 'search'}">
+													<th:block th:if="${dongList != null}">
+														<th:block th:if="${dongList.size() != 0}">
+															<th:block th:each="list : ${dongList}">
+																<option th:value="${list.dong_seq}"
+																	th:text="${list.dong_name}"
+																	th:selected="${adminAdBuildVO.dong_seq == list.dong_seq}">
+																</option>
+															</th:block>
+														</th:block>
+													</th:block>
+												</th:block>
+											</select>
+
+											<select id="build_type" class="select-picker" data-width="fit"
+												name="build_type">
+												<option th:value="1" th:selected="${adminAdBuildVO.build_type == 1}"
+													th:text="'모든 광고'"></option>
+												<option th:value="2" th:selected="${adminAdBuildVO.build_type == 2}"
+													th:text="'현재 활성화 광고'"></option>
+												<option th:value="3" th:selected="${adminAdBuildVO.build_type == 3}"
+													th:text="'지난 광고'"></option>
+												<option th:value="4" th:selected="${adminAdBuildVO.build_type == 4}"
+													th:text="'예약 광고'"></option>
+											</select>
+
+											<select class="select-picker" data-width="fit" data-live-search="true"
+												title="결과" id="listCount" name="listCount">
+												<option th:value="20" th:text="20" th:selected="${listCount == 20}">
+												</option>
+												<option th:value="25" th:text="25" th:selected="${listCount == 25}">
+												</option>
+												<option th:value="30" th:text="30" th:selected="${listCount == 30}">
+												</option>
+												<option th:value="35" th:text="35" th:selected="${listCount == 35}">
+												</option>
+												<option th:value="40" th:text="40" th:selected="${listCount == 40}">
+												</option>
+												<option th:value="45" th:text="45" th:selected="${listCount == 45}">
+												</option>
+												<option th:value="50" th:text="50" th:selected="${listCount == 50}">
+												</option>
+											</select>
+
+											<input type="search" id="searchText" name="search_text"
+												placeholder="검색어를 입력하세요" class="d-inline-block form-control col-3"
+												th:value="${adminAdBuildVO.search_text}">
+											<input type="button" id="searchBtn" class="btn btn-primary mb-2" value="검색">
+
+											<input type="hidden" id="type" name="type" th:value="${type}">
+											<input type="button" id="writeBtn"
+												class="btn btn-info mb-4 d-block float-right" value="외부 점포 등록">
+										</form>
+
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="statbox widget box-shadow mt-1 p-1">
+							<div class="widget-content widget-content-area">
+								<div id="zero-config_wrapper" class="dataTables_wrapper container-fluid dt-bootstrap4">
+									<div class="dt--top-section">
+										<div class="row">
+											<div
+												class="col-12 col-sm-6 d-flex justify-content-sm-start justify-content-center">
+												<div class="dataTables_length" id="zero-config_length"><label>Results :
+														<span th:text="${totalCount}"></span>
+													</label>
+												</div>
+											</div>
+											<div
+												class="col-12 col-sm-6 d-flex justify-content-sm-end justify-content-center mt-sm-0 mt-3">
+											</div>
+										</div>
+										<div class="table-responsive">
+											<table id="zero-config" class="table dt-table-hover text-center"
+												style="width:100%" role="grid" aria-describedby="zero-config_info">
+												<thead>
+													<tr role="row">
+														<th class="">
+															선택
+														</th>
+														<th>
+															NO.
+														</th>
+														<th>
+															시, 도
+														</th>
+														<th>
+															군, 구
+														</th>
+														<th>
+															지역
+														</th>
+														<th>
+															건물
+														</th>
+														<th>
+															점포 유형
+														</th>
+														<th>
+															상호명
+														</th>
+														<th>
+															시작일
+														</th>
+														<th>
+															종료일
+														</th>
+														<th>
+															관리
+														</th>
+													</tr>
+												</thead>
+												<tbody>
+													<th:block th:if="${adBuildList.size() == 0}">
+														<tr>
+															<td colspan="11">
+																조회된 데이터가 없습니다
+															</td>
+														</tr>
+													</th:block>
+
+													<th:block th:if="${adBuildList.size() != 0}">
+														<th:block th:each="list : ${adBuildList}">
+															<tr role="row">
+																<td class="checkbox-column sorting_1">
+																	<label
+																		class="new-control new-checkbox checkbox-outline-info  m-auto">
+																		<input type="checkbox"
+																			class="new-control-input child-chk select-customers-info"
+																			name="check_box"
+																			th:data-banner-seq="${list.banner_seq}"
+																			th:data-banner-type="${list.banner_type}"
+																			th:data-owner-id="${list.owner_id}"
+																			th:data-ad-owner-type="${list.ad_owner_type}">
+																		<span class="new-control-indicator"></span>
+																		<span style="visibility:hidden">c</span>
+																	</label>
+																</td>
+																<td th:text="${list.row_num}"></td>
+																<td th:text="${list.sido_name}"></td>
+																<td th:text="${list.sigungu_name}"></td>
+																<td th:text="${list.dong_name}"></td>
+																<td th:text="${list.build_name}"></td>
+																<td th:text="${list.ad_owner_type_text}"></td>
+																<th:block th:if="${list.owner_id != ''}">
+																	<td th:text="${list.store_name}"></td>
+																</th:block>
+																<th:block th:if="${list.owner_id == ''}">
+																	<td th:text="${list.owner_name}"></td>
+																</th:block>
+																<td th:text="${list.banner_start_day}"></td>
+																<td th:text="${list.banner_end_day}"></td>
+																<td class="text-center">
+																	<form name="modForm" method="POST"
+																		th:action="@{/admin/ad/build/mod}">
+																		<input type="hidden" name="banner_seq"
+																			th:value="${list.banner_seq}">
+																		<input type="hidden" name="banner_type"
+																			th:value="${list.banner_type}">
+																		<input type="hidden" name="owner_id"
+																			th:value="${list.owner_id}">
+																		<input type="hidden" name="ad_owner_type"
+																			th:value="${list.ad_owner_type}">
+																		<input type="hidden" name="type"
+																			th:value="${type}">
+																		<input type="hidden" name="nowPage"
+																			th:value="${nowPage}">
+																		<input type="hidden" name="listCount"
+																			th:value="${listCount}">
+																		<input type="hidden" name="sido_seq"
+																			th:value="${list.sido_seq}">
+																		<input type="hidden" name="sigungu_seq"
+																			th:value="${list.sigungu_seq}">
+																		<input type="hidden" name="dong_seq"
+																			th:value="${list.dong_seq}">
+																		<input type="hidden" name="search_text"
+																			th:value="${list.search_text}">
+																		<input type="hidden" name="build_type"
+																			th:value="${adminAdBuildVO.build_type}">
+																		<input type="hidden" name="build_seq"
+																			th:value="${list.build_seq}">
+																	</form>
+
+																	<input type="button"
+																		class="btn btn-dark btn-sm mod modBtn"
+																		value="편집">
+																</td>
+															</tr>
+														</th:block>
+													</th:block>
+												</tbody>
+											</table>
+										</div>
+										<div
+											class="row justify-content-center dataTables_paginate paging_simple_number">
+											<th:block th:if="${adBuildList.size() == 0}">
+												<div class="dt--pagination">
+													<div class="paginating-container pagination-solid"
+														id="zero-config_paginate">
+														<ul class="pagination">
+
+															<li class="paginate_button page-item previous disabled"
+																id="zero-config_previous">
+																<a href="javascript:void(0);"
+																	aria-controls="zero-config" class="page-link">
+																	<svg xmlns="http://www.w3.org/2000/svg" width="24"
+																		height="24" viewBox="0 0 24 24" fill="none"
+																		stroke="currentColor" stroke-width="2"
+																		stroke-linecap="round" stroke-linejoin="round"
+																		class="feather feather-arrow-left">
+																		<line x1="19" y1="12" x2="5" y2="12"></line>
+																		<polyline points="12 19 5 12 12 5"></polyline>
+																	</svg>
+																</a>
+															</li>
+
+															<li class="paginate_button page-item active">
+																<a th:href="@{/admin/ad/build/list/}"
+																	aria-controls="zero-config" class="page-link">1</a>
+															</li>
+
+															<li class="paginate_button page-item next disabled"
+																id="zero-config_next">
+																<a href="javascript:void(0);"
+																	aria-controls="zero-config" class="page-link">
+																	<svg xmlns="http://www.w3.org/2000/svg" width="24"
+																		height="24" viewBox="0 0 24 24" fill="none"
+																		stroke="currentColor" stroke-width="2"
+																		stroke-linecap="round" stroke-linejoin="round"
+																		class="feather feather-arrow-right">
+																		<line x1="5" y1="12" x2="19" y2="12"></line>
+																		<polyline points="12 5 19 12 12 19"></polyline>
+																	</svg>
+																</a>
+															</li>
+														</ul>
+													</div>
+												</div>
+											</th:block>
+
+											<th:block th:if="${adBuildList.size() != 0}">
+												<div class="dt--pagination">
+													<div class="paginating-container pagination-solid"
+														id="zero-config_paginate">
+														<ul class="pagination">
+															<!--  이전  -->
+															<th:block th:if="${pageUtil.startPage == 1}">
+																<li class="prev"
+																	id="zero-config_previous">
+																	<a href="javascript:void(0);"
+																		aria-controls="zero-config">
+																		<svg xmlns="http://www.w3.org/2000/svg"
+																			width="24" height="24" viewBox="0 0 24 24"
+																			fill="none" stroke="currentColor"
+																			stroke-width="2" stroke-linecap="round"
+																			stroke-linejoin="round"
+																			class="feather feather-arrow-left">
+																			<line x1="19" y1="12" x2="5" y2="12"></line>
+																			<polyline points="12 19 5 12 12 5">
+																			</polyline>
+																		</svg>
+																	</a>
+																</li>
+															</th:block>
+
+															<!--  이전  -->
+															<th:block th:if="${pageUtil.startPage != 1}">
+																<li class="paginate_button page-item previous"
+																	id="zero-config_previous">
+																	<a th:href="@{/admin/ad/build/list(nowPage=${pageUtil.startPage-1}, type=${type}, listCount=${listCount}, search_text=${adminAdBuildVO.search_text}, build_type=${adminAdBuildVO.build_type}, sido_seq=${adminAdBuildVO.sido_seq}, sigungu_seq=${adminAdBuildVO.sigungu_seq}, dong_seq=${adminAdBuildVO.dong_seq} )}"
+																		aria-controls="zero-config">
+																		<svg xmlns="http://www.w3.org/2000/svg"
+																			width="24" height="24" viewBox="0 0 24 24"
+																			fill="none" stroke="currentColor"
+																			stroke-width="2" stroke-linecap="round"
+																			stroke-linejoin="round"
+																			class="feather feather-arrow-left">
+																			<line x1="19" y1="12" x2="5" y2="12"></line>
+																			<polyline points="12 19 5 12 12 5">
+																			</polyline>
+																		</svg>
+																	</a>
+																</li>
+															</th:block>
+
+															<!--  [1][2][3]  -->
+															<li class="paginate_button page-item" th:each="page : ${#numbers.sequence(pageUtil.startPage, pageUtil.endPage)}" th:classappend="${page == nowPage}? 'active'">
+			                            			<a th:text="${page}" th:href="@{/admin/ad/build/list(nowPage=${page}, type=${type}, listCount=${listCount}, search_text=${adminAdBuildVO.search_text}, build_type=${adminAdBuildVO.build_type}, sido_seq=${adminAdBuildVO.sido_seq}, sigungu_seq=${adminAdBuildVO.sigungu_seq}, dong_seq=${adminAdBuildVO.dong_seq} )}" aria-controls="zero-config" >1</a>
+			                            		</li>
+			                            		
+			                            		<!--  다음 -->
+			                            		<th:block th:if="${pageUtil.endPage == pageUtil.totalPage}">
+			                            		<li class="paginate_button page-item next disabled" id="zero-config_next">
+			                          				<a href="javascript:void(0);" aria-controls="zero-config">
+			                          					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right">
+			                          						<line x1="5" y1="12" x2="19" y2="12"></line>
+			                          						<polyline points="12 5 19 12 12 19"></polyline>
+			                          					</svg>
+			                          				</a>
+		                          				</li>
+			                            		</th:block>
+			                            		
+			                          			<!--  다음 -->
+			                          			<th:block th:if="${pageUtil.endPage != pageUtil.totalPage}">
+			                          			<li class="paginate_button page-item next" id="zero-config_next">
+			                          				<a th:href="@{/admin/ad/build/list(nowPage=${pageUtil.endPage+1}, type=${type}, listCount=${listCount}, search_text=${adminAdBuildVO.search_text}, build_type=${adminAdBuildVO.build_type}, sido_seq=${adminAdBuildVO.sido_seq}, sigungu_seq=${adminAdBuildVO.sigungu_seq}, dong_seq=${adminAdBuildVO.dong_seq} )}" aria-controls="zero-config">
+			                          					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right">
+			                          						<line x1="5" y1="12" x2="19" y2="12"></line>
+			                          						<polyline points="12 5 19 12 12 19"></polyline>
+			                          					</svg>
+			                          				</a>
+		                          				</li>
+												</th:block>
+		                         			</ul>
+		                         		</div>
+		                         	</div>
+		                        	</th:block>
+		                         	
+		                        </div>
+		                        
+		                       	<div class="float-right">
+		                       		<input type="button" class="btn btn-danger"id="delBtn" value="삭제">
+		                       	</div>
+		                        
+                        			</div>
+								</div>
+							</div>
+						</div>
+            		</div>
+        <!-- CONTENT AREA -->
+        		</div>
+       		</div>
+            <!--  footer   -->
+            <th:block th:replace="fragments/footer"></th:block>
+        <!--  END CONTENT AREA  -->
+    <!-- END MAIN CONTAINER -->
+
+	
+	<div style="display: none;">
+		<form id="writeForm" th:action="@{/admin/ad/build/write}" method="POST">
+			<input type="hidden" name="type" 		th:value="${type}">
+			<input type="hidden" name="nowPage" 	th:value="${nowPage}">
+			<input type="hidden" name="listCount" 	th:value="${listCount}">
+			<input type="hidden" name="sido_seq" 	th:value="${adminAdBuildVO.sido_seq}">
+			<input type="hidden" name="sigungu_seq" th:value="${adminAdBuildVO.sigungu_seq}">
+			<input type="hidden" name="dong_seq" 	th:value="${adminAdBuildVO.dong_seq}">
+			<input type="hidden" name="search_text" th:value="${adminAdBuildVO.search_text}">
+			<input type="hidden" name="build_type" 	th:value="${adminAdBuildVO.build_type}">
+			<input type="hidden" id="banner_type" name="banner_type" th:value="1"> <!-- , 건물광고 1, 지역광고 2 -->
+		</form>
+	</div>
+
+
+	<th:block th:replace="fragments/script :: scriptFragment(useScriptCsrf='true')"></th:block>
+	<script th:src="@{/resources/cork/plugins/bootstrap-select/bootstrap-select.min.js}"></script>
+	<script th:src="@{/resources/honeyArcade/admin/common/js/areaSelect.js}"></script>
+	<script th:src="@{/resources/honeyArcade/admin/ad/build/js/adminAdBuildList.js}"></script>
+	<script th:src="@{/resources/cork/plugins/table/datatable/datatables.js}"></script>
+	<script th:inline="javascript">
+		/* <![CDATA[ */
+
+		/*]] */
+	</script>
+</body>
+
+</html>
